@@ -11,11 +11,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table (name = "groups")
+@Table (name = "teams")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Group {
+public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,6 +35,6 @@ public class Group {
     @JoinColumn(nullable = false)
     private User leaderId;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "teams", fetch = FetchType.EAGER)
     private Set<User> users = new HashSet<>();
 }

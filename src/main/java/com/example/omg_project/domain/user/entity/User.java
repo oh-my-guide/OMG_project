@@ -2,7 +2,7 @@ package com.example.omg_project.domain.user.entity;
 
 import com.example.omg_project.domain.reviewpost.entity.Wishlist;
 import com.example.omg_project.domain.role.entity.Role;
-import com.example.omg_project.domain.trip.entity.Group;
+import com.example.omg_project.domain.trip.entity.Team;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -51,21 +51,21 @@ public class User {
 
     private String filepath; // 파일 경로
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
-            name = "user_roles",
+            name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
-            name = "user_groups",
+            name = "team_user",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
+            inverseJoinColumns = @JoinColumn(name = "team_id")
     )
-    private Set<Group> groups = new HashSet<>();
+    private Set<Team> teams = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Wishlist> wishlists;
