@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table
+@Table(name = "join_post_likes")
 @Getter
 @Setter
 @NoArgsConstructor

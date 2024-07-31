@@ -29,9 +29,9 @@ public class ChatMessage {
     @Column(nullable = false, length = 500)
     private String message;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "user_nickname", nullable = false, length = 50)
     private String userNickname;
 }

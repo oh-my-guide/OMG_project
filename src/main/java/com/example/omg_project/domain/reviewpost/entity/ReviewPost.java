@@ -1,22 +1,29 @@
 package com.example.omg_project.domain.reviewpost.entity;
 
+import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "review_posts")
+@Getter
+@Setter
+@NoArgsConstructor
 public class ReviewPost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "trip_id", nullable = false)
-//    private Trip trip;
+    @ManyToOne
+    @JoinColumn(name = "trip_id", nullable = false)
+    private Trip trip;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
