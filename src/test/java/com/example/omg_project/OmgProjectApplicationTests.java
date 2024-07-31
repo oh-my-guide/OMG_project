@@ -9,5 +9,4 @@ class OmgProjectApplicationTests {
     @Test
     void contextLoads() {
     }
-
 }
