@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: OMG_project
+  datasource:
+    url: jdbc:mysql://localhost:3306/omg
+    username: root
+    password: root1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  security:
+    user:
+      name: user
+      password: 1234
+server:
+  port: 8080
+
+
+jwt:
+  secretKey: 12345678901234567890123456789012
+  refreshKey: 12345678901234567890123456789012
