@@ -24,6 +24,8 @@ repositories {
 }
 
 dependencies {
+
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
 
