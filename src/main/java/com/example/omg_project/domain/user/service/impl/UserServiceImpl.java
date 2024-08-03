@@ -9,6 +9,7 @@ import com.example.omg_project.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
+    @Transactional
     public void signUp(UserSignUpDto userSignUpDto) {
         if (!userSignUpDto.getPassword().equals(userSignUpDto.getPasswordCheck())) {
             throw new RuntimeException("비밀번호가 다릅니다.");
@@ -62,6 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(String email) {
         Optional<User> userOptional = userRepository.findByUsername(email);
         if (userOptional.isPresent()) {

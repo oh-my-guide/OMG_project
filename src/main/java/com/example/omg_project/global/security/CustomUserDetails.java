@@ -15,6 +15,7 @@ public class CustomUserDetails implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
+    // DB 에서 사용자 인증/인가
     public CustomUserDetails(String username, String password, Set<Role> roles) {
         this.username = username;
         this.password = password;

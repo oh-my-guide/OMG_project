@@ -47,9 +47,9 @@ public class User {
     @Column(nullable = false)
     private String gender; // 성별
 
-    private String filename; // 파일 이름
+    private String filename; // 이미지 파일 이름
 
-    private String filepath; // 파일 경로
+    private String filepath; // 이미지 파일 경로
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

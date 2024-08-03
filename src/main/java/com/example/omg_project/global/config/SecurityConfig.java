@@ -21,13 +21,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/api/users/signup", "/api/users/login", "/").permitAll()
+                        .requestMatchers("/signup", "/signin", "/", "/css/**", "/js/**", "/files/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/api/users/login")
+                        .loginPage("/signin")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/api/users/info")
+                        .defaultSuccessUrl("/mypage")
                         .permitAll()
                 )
                 .logout(logout -> logout

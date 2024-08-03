@@ -16,6 +16,6 @@ public class UserSignUpDto {
     private String passwordCheck;
     private String usernick; // 닉네임
     private LocalDate birthdate; // 생년월일
-    private String gender;
-    private String phoneNumber;
+    private String gender; // 성별
+    private String phoneNumber; // 연락처
 }
