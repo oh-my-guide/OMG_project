@@ -72,26 +72,27 @@ CREATE TABLE `chat_rooms` (
                               PRIMARY KEY (`id`)
 );
 
--- Groups Table
-CREATE TABLE `groups` (
-                          `id` BIGINT NOT NULL AUTO_INCREMENT,
-                          `chat_room_id` BIGINT NOT NULL,
-                          `trip_id` BIGINT NOT NULL,
-                          `invite_code` VARCHAR(50) NOT NULL,
-                          `leader_id` BIGINT NOT NULL,
-                          PRIMARY KEY (`id`),
-                          FOREIGN KEY (`chat_room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE CASCADE,
-                          FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE,
-                          FOREIGN KEY (`leader_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+-- Teams Table
+CREATE TABLE `teams` (
+                         `id` BIGINT NOT NULL AUTO_INCREMENT,
+                         `chat_room_id` BIGINT NOT NULL,
+                         `trip_id` BIGINT NOT NULL,
+                         `invite_code` VARCHAR(50) NOT NULL,
+                         `leader_id` BIGINT NOT NULL,
+                         PRIMARY KEY (`id`),
+                         FOREIGN KEY (`chat_room_id`) REFERENCES `chat_rooms` (`id`) ON DELETE CASCADE,
+                         FOREIGN KEY (`trip_id`) REFERENCES `trips` (`id`) ON DELETE CASCADE,
+                         FOREIGN KEY (`leader_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 );
 
--- Users Groups Table
-CREATE TABLE `users_groups` (
+
+-- Users Teams Table
+CREATE TABLE `team_user` (
                                 `user_id` BIGINT NOT NULL,
-                                `group_id` BIGINT NOT NULL,
-                                PRIMARY KEY (`user_id`, `group_id`),
+                                `team_id` BIGINT NOT NULL,
+                                PRIMARY KEY (`user_id`, `team_id`),
                                 FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-                                FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE
+                                FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`) ON DELETE CASCADE
 );
 
 -- Chat Messages Table
@@ -175,7 +176,7 @@ CREATE TABLE `roles` (
 );
 
 -- Users Roles Table
-CREATE TABLE `users_roles` (
+CREATE TABLE `user_role` (
                                `user_id` BIGINT NOT NULL,
                                `role_id` BIGINT NOT NULL,
                                PRIMARY KEY (`user_id`, `role_id`),
