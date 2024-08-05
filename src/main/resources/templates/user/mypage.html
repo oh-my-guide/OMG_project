@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 정보</title>
+</head>
+<body>
+<h2>로그인에 성공하셨습니다. 축하합니다!</h2>
+<p>당신의 이메일 주소 :: <span th:text="${user.username}"></span>님</p>
+<p>당신의 이름 :: <span th:text="${user.name}"></span></p>
+<p>당신의 생일 :: <span th:text="${user.birthdate}"></span></p>
+</body>
+</html>
