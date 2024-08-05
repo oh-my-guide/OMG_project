@@ -73,4 +73,10 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("삭제할 사용자가 존재하지 않습니다.");
         }
     }
+
+    @Override
+    public boolean existsByUsernick(String usernick) {
+        return userRepository.existsByUsernick(usernick);
+    }
+
 }

@@ -16,6 +16,21 @@ spring:
     user:
       name: user
       password: 1234
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ch9800113@gmail.com
+    password: edck rqay htcz nzrk
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+
+
 server:
   port: 8080
 

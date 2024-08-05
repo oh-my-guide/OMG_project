@@ -16,4 +16,6 @@ public interface UserService {
     Optional<User> findByUsername(String username);
 
     void deleteUser(String email);
+
+    boolean existsByUsernick(String usernick);
 }
