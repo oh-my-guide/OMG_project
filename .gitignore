@@ -35,5 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
-!**/resources
 
+# Spring Boot application configuration file
+src/main/resources/application.yml
