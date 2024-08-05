@@ -27,7 +27,7 @@ public class JoinPostCommentApiController {
      * 일행 모집 댓글 조회
      */
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<JoinPostCommentDto.Response>> getAllComments(@PathVariable Long postId) {
+    public ResponseEntity<List<JoinPostCommentDto.Response>> findAllByPostId(@PathVariable Long postId) {
         List<JoinPostCommentDto.Response> allByPostId = joinPostCommentService.findAllByPostId(postId);
         return ResponseEntity.ok(allByPostId);
     }
