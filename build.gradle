@@ -41,6 +41,7 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     implementation group: 'org.springframework.data', name: 'spring-data-jpa', version: '3.3.1'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     //타임리프에서 스프링시큐리티를 쓸수있게.
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
