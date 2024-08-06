@@ -13,11 +13,10 @@ public class ChatController {
 
     private final ChatService chatService;
 
-//     채팅방 화면을 렌더링하는 엔드포인트
+     // 채팅방 화면을 렌더링하는 엔드포인트
     @GetMapping("/rooms/{roomId}")
     public String getChatRoom(@PathVariable Long roomId, Model model) {
-        // 채팅방 ID를 모델에 추가하여 타임리프 템플릿으로 전달
-        model.addAttribute("roomId", roomId);
-        return "chat";
+        model.addAttribute("roomId", roomId);   // 채팅방 ID를 모델에 추가하여 타임리프 템플릿으로 전달
+        return "chat/chat";
     }
 }

@@ -21,7 +21,9 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// Kafka 메시지 리스너 서비스 클래스
+/**
+ * Kafka 메시지 리스너 서비스 클래스
+ */
 @Service
 @RequiredArgsConstructor
 public class ChatMessageListener {
@@ -35,19 +37,35 @@ public class ChatMessageListener {
     @KafkaListener(topicPattern = "chat-room-.*", groupId = "chat-room-listener")
     public void listen(@Payload String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws Exception {
         try {
-            String roomId = topic.substring("chat-room-".length());
-            ChatMessage chatMessage = parseMessage(message, roomId);
-            chatMessageRepository.save(chatMessage);
-            broadcastMessage(roomId, chatMessage);
+            String roomId = topic.substring("chat-room-".length()); // topic에서 채팅방 ID 추출
+            ChatMessage chatMessage = parseMessage(message, roomId);    // 받아온 message를 ChatMessage로 파싱
+            chatMessageRepository.save(chatMessage);    // DB에 저장
+            broadcastMessage(roomId, chatMessage);  //같은 채팅방에 연결되어있는 모두에게 브로드캐스팅
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error processing message", e);
+        }
+    }
+
+    private void broadcastMessage(String roomId, ChatMessage chatMessage) throws IOException {
+        Set<WebSocketSession> sessions = WebSocketHandler.getSessions(roomId);
+        if (sessions != null) {
+            ChatMessageDTO chatMessageDto = convertToDto(chatMessage);  // DTO로 변환
+
+            // DTO를 JSON으로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonMessage = objectMapper.writeValueAsString(chatMessageDto);
+            for (WebSocketSession session : sessions) {
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(jsonMessage));
+                }
+            }
         }
     }
 
     private ChatMessage parseMessage(String message, String roomId) {
         String[] parts = message.split(":", 2);
         if (parts.length < 2) {
-            throw new IllegalArgumentException("Invalid message format");
+            throw new IllegalArgumentException("올바른 메세지 형식이 아닙니다");
         }
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(parts[1].trim());
@@ -64,23 +82,6 @@ public class ChatMessageListener {
         dto.setUserNickname(chatMessage.getUserNickname());
         dto.setCreatedAt(chatMessage.getCreatedAt().toString());
         return dto;
-    }
-
-    private void broadcastMessage(String roomId, ChatMessage chatMessage) throws IOException {
-        Set<WebSocketSession> sessions = WebSocketHandler.getSessions(roomId);
-        if (sessions != null) {
-            // DTO로 변환
-            ChatMessageDTO chatMessageDto = convertToDto(chatMessage);
-
-            // DTO를 JSON으로 변환
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonMessage = objectMapper.writeValueAsString(chatMessageDto);
-            for (WebSocketSession session : sessions) {
-                if (session.isOpen()) {
-                    session.sendMessage(new TextMessage(jsonMessage));
-                }
-            }
-        }
     }
 }
 

@@ -12,14 +12,13 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
-    //security와 함께쓰기위해서 추가
-    private final CustomHandshakeInterceptor customHandshakeInterceptor;
+
+    private final CustomHandshakeInterceptor customHandshakeInterceptor;    //security와 함께쓰기위해서 추가
     private final WebSocketHandler myWebSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(myWebSocketHandler, "/chat/{roomId}").setAllowedOrigins("*")
-                //security와 함께쓰기위해서 추가
-                .addInterceptors(customHandshakeInterceptor);
+                .addInterceptors(customHandshakeInterceptor);   //security와 함께쓰기위해서 추가
     }
 }

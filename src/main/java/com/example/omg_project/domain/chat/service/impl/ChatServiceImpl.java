@@ -12,15 +12,17 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// 채팅 서비스 클래스
+/**
+ * 채팅 서비스 클래스
+ */
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 
-    // ChatMessageRepository와 ChatRoomRepository 주입
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
 
+    // 해당 채팅방의 모든 메세지를 ChatMessageDTO로 변경하여 반환하는 메서드
     public List<ChatMessageDTO> getMessagesByRoomId(Long roomId) {
         List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomId(roomId);
         return chatMessages.stream()
@@ -28,6 +30,7 @@ public class ChatServiceImpl implements ChatService {
                 .collect(Collectors.toList());
     }
 
+    // ChatMessage를 ChatMessageDTO로 변경
     private ChatMessageDTO convertToDTO(ChatMessage chatMessage) {
         ChatMessageDTO dto = new ChatMessageDTO();
         dto.setId(chatMessage.getId());

@@ -9,21 +9,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// REST 컨트롤러로 설정
 @RestController
 @RequestMapping("/api/chat")
 @RequiredArgsConstructor
 public class ChatApiController {
 
-    // ChatService 주입
     private final ChatService chatService;
 
-    // 새로운 채팅방 생성 엔드포인트
+    // 새로운 채팅방 생성
     @PostMapping("/rooms")
     public ChatRoom createRoom() {
         return chatService.createRoom();
     }
 
+    // 채팅방 메세지 초기 데이터 반환
     @GetMapping("/rooms/{roomId}/messages")
     public ResponseEntity<List<ChatMessageDTO>> getMessages(@PathVariable Long roomId) {
         List<ChatMessageDTO> messages = chatService.getMessagesByRoomId(roomId);
