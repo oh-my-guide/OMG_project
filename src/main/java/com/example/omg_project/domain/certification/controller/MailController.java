@@ -24,30 +24,42 @@ public class MailController {
     private final MailService mailService;
     private final UserServiceImpl userServiceimpl;
 
+    /**
+     * 이메일 전송 메서드
+     */
     @PostMapping("/api/mail")
     public CompletableFuture<String> mailSend(@RequestBody MailRequest mailRequest) {
         return mailService.sendMail(mailRequest.getMail())
                 .thenApply(number -> String.valueOf(number));
     }
 
+    /**
+     * 인증 코드 검증 메서드
+     */
     @PostMapping("/api/verify-code")
     public String verifyCode(@RequestBody VerificationRequest verificationRequest) {
         boolean isVerified = mailService.verifyCode(verificationRequest.getMail(), verificationRequest.getCode());
         return isVerified ? "Verified" : "Verification failed";
     }
 
+    /**
+     * 이메일 중복 체크 메서드
+     */
     @PostMapping("/api/check-email")
     public ResponseEntity<String> checkEmail(@RequestBody Map<String, String> request) {
         String email = request.get("mail");
         Optional<User> existingUser = userServiceimpl.findByUsername(email);
 
         if (existingUser.isPresent()) {
-            return ResponseEntity.ok("아이디가 이미 존재합니다."); // 이메일이 이미 존재함
+            return ResponseEntity.ok("아이디가 이미 존재합니다.");
         } else {
-            return ResponseEntity.ok("사용 가능한 아이디입니다."); // 이메일 사용 가능
+            return ResponseEntity.ok("사용 가능한 아이디입니다.");
         }
     }
 
+    /**
+     * 닉네임 중복 체크 메서드
+     */
     @PostMapping("/api/check-usernick")
     public ResponseEntity<Boolean> checkUsername(@RequestBody Map<String, String> request) {
         return ResponseEntity.ok(userServiceimpl.existsByUsernick(request.get("usernick")));
