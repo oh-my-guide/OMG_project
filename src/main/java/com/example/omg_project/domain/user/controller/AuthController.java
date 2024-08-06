@@ -29,7 +29,7 @@ public class AuthController {
     // 회원가입
     @GetMapping("/signup")
     public String signup(Model model) {
-        return "/main/signupform";
+        return "/main/signupform"; // 회원가입 폼 이동
     }
 
     @PostMapping("/signup")
