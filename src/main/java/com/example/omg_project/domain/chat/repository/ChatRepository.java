@@ -1,4 +1,7 @@
 package com.example.omg_project.domain.chat.repository;
 
-public interface ChatRepository {
+import com.example.omg_project.domain.chat.entity.ChatRoom;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ChatRepository extends JpaRepository<ChatRoom, Long> {
 }
