@@ -1,17 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>로그인 페이지</title>
+    <title>로그인</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
 <h1>로그인 페이지</h1>
 <hr/>
-<form action="/login" method="post">
-    <input type="text" name="username" />
-    <input type="password" name="password" />
-    <button>로그인</button>
+<form id="loginForm" action="/api/login" method="post">
+    <input type="text" id="username" name="username" placeholder="이메일" required />
+    <input type="password" id="password" name="password" placeholder="비밀번호" required />
+    <button type="button" onclick="loginUser()">로그인</button>
 </form>
 <a href="/signup">회원가입을 아직 하지 않으셨나요?</a>
+
+<script>
+    function loginUser() {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        var data = {
+            username: username,
+            password: password
+        };
+
+        axios.post('/api/login', data)
+            .then(response => {
+                // 로그인 성공 시 토큰을 쿠키에 저장
+                var accessToken = response.data.accessToken;
+                var refreshToken = response.data.refreshToken;
+
+                document.cookie = "accessToken=" + accessToken + "; HttpOnly; path=/";
+                document.cookie = "refreshToken=" + refreshToken + "; HttpOnly; path=/";
+
+                window.location.href = '/mypage';
+            })
+            .catch(error => {
+                console.error('로그인 에러:', error);
+
+                alert('로그인 실패. 다시 시도해주세요.');
+            });
+    }
+</script>
 </body>
 </html>

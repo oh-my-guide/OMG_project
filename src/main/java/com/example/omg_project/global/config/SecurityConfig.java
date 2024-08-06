@@ -4,7 +4,7 @@ import com.example.omg_project.global.jwt.exception.CustomAuthenticationEntryPoi
 import com.example.omg_project.global.jwt.filter.JWTFilter;
 import com.example.omg_project.global.jwt.service.JwtBlacklistService;
 import com.example.omg_project.global.jwt.service.RefreshTokenService;
-import com.example.omg_project.global.jwt.util.JWTUtil;
+import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,23 +29,36 @@ public class SecurityConfig {
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final JwtBlacklistService jwtBlacklistService;
     private final RefreshTokenService refreshTokenService;
-    private final JWTUtil jwtUtil;
+    private final JwtTokenizer jwtTokenizer;
+
+    // 모든 유저 허용 페이지
+    String[] allAllowPage = new String[] {
+            "/",        // 메인페이지
+            "/signup", // 회원가입 페이지
+            "/signin", // 로그인 페이지
+            "/css/**", "/js/**", "/files/**", // css, js, 이미지 url
+            "/api/login", // 로그인 페이지
+            "/api/signup", // 회원가입 페이지
+            "/api/refreshToken", // 토큰 재발급 페이지
+            "/api/mail","/api/verify-code", "/api/check-email","/api/check-usernick" // 인증 메일 페이지
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/signup", "/signin", "/", "/css/**", "/js/**", "/files/**").permitAll()
-                        .requestMatchers("/api/login","/api/signup").permitAll()
-                        .requestMatchers("/api/mail/**","/api/verify-code", "/api/check-email","/api/check-usernick").permitAll()
-                        .anyRequest().authenticated()
+                                .requestMatchers(allAllowPage).permitAll()
+                                .anyRequest().authenticated()
+//                        .requestMatchers("/signup", "/signin", "/", "/css/**", "/js/**", "/files/**").permitAll()
+//                        .requestMatchers("/api/login","/api/signup").permitAll()
+//                        .requestMatchers("/api/mail/**","/api/verify-code", "/api/check-email","/api/check-usernick").permitAll()
                 )
-                .addFilterBefore(new JWTFilter(jwtUtil, jwtBlacklistService, refreshTokenService), UsernamePasswordAuthenticationFilter.class)
-                .formLogin(form -> form.disable())
+                .addFilterBefore(new JWTFilter(jwtTokenizer, jwtBlacklistService, refreshTokenService), UsernamePasswordAuthenticationFilter.class) // JWT 필터 사용
+                .formLogin(form -> form.disable()) // 로그인 폼 비활성화
                 .sessionManagement(sessionManagement -> sessionManagement
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf -> csrf.disable())
-                .httpBasic(httpBasic -> httpBasic.disable())
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 Stateless 설정(서버가 클라이언트 상태 저장x)
+                .csrf(csrf -> csrf.disable()) // cors 허용
+                .httpBasic(httpBasic -> httpBasic.disable()) // http 기본 인증(헤더) 비활성화
                 .cors(cors -> cors.configurationSource(configurationSource()))
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
@@ -62,7 +75,7 @@ public class SecurityConfig {
     public CorsConfigurationSource configurationSource(){
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOriginPattern("*"); // 모든 도메인 허용
         config.addAllowedOrigin("http://localhost:3000"); // 프론트의 주소
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
