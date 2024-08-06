@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequiredArgsConstructor
 @EnableAsync
-public class MailController {
+public class MailApiController {
 
     private final MailService mailService;
     private final UserServiceImpl userServiceimpl;
@@ -27,7 +27,7 @@ public class MailController {
     /**
      * 인증번호 발송 메소드
      */
-    @PostMapping("/api/mail")
+    @PostMapping("/api/users/mail")
     public CompletableFuture<String> mailSend(@RequestBody MailRequest mailRequest) {
         return mailService.sendMail(mailRequest.getMail())
                 .thenApply(number -> String.valueOf(number));
@@ -36,7 +36,7 @@ public class MailController {
     /**
      * 인증번호 검증 메소드
      */
-    @PostMapping("/api/verify-code")
+    @PostMapping("/api/users/verify-code")
     public String verifyCode(@RequestBody VerificationRequest verificationRequest) {
         boolean isVerified = mailService.verifyCode(verificationRequest.getMail(), verificationRequest.getCode());
         return isVerified ? "Verified" : "Verification failed";
@@ -45,7 +45,7 @@ public class MailController {
     /**
      * 이메일 중복 체크 메서드
      */
-    @PostMapping("/api/check-email")
+    @PostMapping("/api/users/check-email")
     public ResponseEntity<String> checkEmail(@RequestBody Map<String, String> request) {
         String email = request.get("mail");
         Optional<User> existingUser = userServiceimpl.findByUsername(email);
@@ -60,7 +60,7 @@ public class MailController {
     /**
      * 닉네임 중복 체크 메서드
      */
-    @PostMapping("/api/check-usernick")
+    @PostMapping("/api/users/check-usernick")
     public ResponseEntity<Boolean> checkUsername(@RequestBody Map<String, String> request) {
         return ResponseEntity.ok(userServiceimpl.existsByUsernick(request.get("usernick")));
     }
