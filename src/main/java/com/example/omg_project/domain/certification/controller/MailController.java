@@ -25,7 +25,7 @@ public class MailController {
     private final UserServiceImpl userServiceimpl;
 
     /**
-     * 이메일 전송 메서드
+     * 인증번호 발송 메소드
      */
     @PostMapping("/api/mail")
     public CompletableFuture<String> mailSend(@RequestBody MailRequest mailRequest) {
@@ -34,7 +34,7 @@ public class MailController {
     }
 
     /**
-     * 인증 코드 검증 메서드
+     * 인증번호 검증 메소드
      */
     @PostMapping("/api/verify-code")
     public String verifyCode(@RequestBody VerificationRequest verificationRequest) {
