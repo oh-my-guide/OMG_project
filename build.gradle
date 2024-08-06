@@ -54,6 +54,12 @@ dependencies {
     //gson - json 메시지를 다루기 위한 라이브러리
     implementation 'com.google.code.gson:gson'
 
+    // Kafka for messaging
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // WebSocket for real-time communication
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
