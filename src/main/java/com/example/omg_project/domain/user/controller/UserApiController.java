@@ -35,7 +35,7 @@ import static com.example.omg_project.global.jwt.util.JwtTokenizer.REFRESH_TOKEN
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserApiController {
 
     private final JwtTokenizer jwtTokenizer;

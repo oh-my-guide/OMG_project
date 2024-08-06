@@ -48,8 +48,8 @@ public class JWTFilter extends OncePerRequestFilter {
      * 접근 허용 앤드 포인트 목록
      */
     private static final List<String> PERMIT_ALL_PATHS = List.of(
-            "/signup", "/signin", "/", "/api/login", "/mail/.*","/verify-code", "/api/signup",
-            "/api/check-email", "/css/.*", "/js/.*", "/files/.*", "/api/check-usernick", "/api/refreshToken"
+            "/signup", "/signin", "/", "/api/users/login", "/api/users/signup",
+            "/api/users/mail","/api/users/verify-code", "/api/users/check-email","/api/users/check-usernick"
     );
 
     /**

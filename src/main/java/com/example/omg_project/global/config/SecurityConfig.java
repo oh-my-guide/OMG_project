@@ -37,10 +37,9 @@ public class SecurityConfig {
             "/signup", // 회원가입 페이지
             "/signin", // 로그인 페이지
             "/css/**", "/js/**", "/files/**", // css, js, 이미지 url
-            "/api/login", // 로그인 페이지
-            "/api/signup", // 회원가입 페이지
-            "/api/refreshToken", // 토큰 재발급 페이지
-            "/api/mail","/api/verify-code", "/api/check-email","/api/check-usernick" // 인증 메일 페이지
+            "/api/users/login", // 로그인 페이지
+            "/api/users/signup", // 회원가입 페이지
+            "/api/users/mail","/api/users/verify-code", "/api/users/check-email","/api/users/check-usernick" // 인증 메일 페이지
     };
 
     @Bean
