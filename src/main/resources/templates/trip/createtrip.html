@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 일정 생성</title>
+    <link rel="stylesheet" href="/css/createtrip.css">
+</head>
+<body>
+<form id="tripForm">
+    <h1>여행 일정 생성</h1>
+    <label for="tripName">여행 이름</label>
+    <input type="text" id="tripName" name="tripName" placeholder="여행 이름을 입력해주세요" required><br>
+
+    <label for="startDate">시작 날짜</label>
+    <input type="date" id="startDate" name="startDate" required onchange="updateTripDates()"><br>
+
+    <label for="endDate">종료 날짜</label>
+    <input type="date" id="endDate" name="endDate" required onchange="updateTripDates()"><br>
+
+    <label>지역 선택</label>
+    <div class="region-container">
+        <ul class="region-list">
+            <li onclick="toggleCities('특별시/광역시', this)">특별시/광역시</li>
+            <li onclick="toggleCities('강원도', this)">강원도</li>
+            <li onclick="toggleCities('경기도', this)">경기도</li>
+            <li onclick="toggleCities('경상남도', this)">경상남도</li>
+            <li onclick="toggleCities('경상북도', this)">경상북도</li>
+            <li onclick="toggleCities('충청남도', this)">충청남도</li>
+            <li onclick="toggleCities('충청북도', this)">충청북도</li>
+            <li onclick="toggleCities('전라남도', this)">전라남도</li>
+            <li onclick="toggleCities('전라북도', this)">전라북도</li>
+        </ul>
+    </div>
+
+    <div id="cityListContainer" class="cityListContainer">
+        <ul id="cityList" class="city-list"></ul>
+    </div>
+
+    <input type="hidden" id="cityId" name="cityId" required>
+
+    <h2>여행 일정</h2>
+    <div id="tripDates"></div>
+
+    <button type="submit">일정 생성</button>
+</form>
+
+<div id="map">지도 부분</div>
+
+<script>
+    const regions = {
+        "특별시/광역시": [
+            "서울특별시",
+            "부산광역시",
+            "대구광역시",
+            "인천광역시",
+            "광주광역시",
+            "대전광역시",
+            "울산광역시",
+            "세종특별자치시"
+        ],
+        "강원도": [
+            "춘천시",
+            "원주시",
+            "강릉시",
+            "동해시",
+            "태백시",
+            "속초시",
+            "삼척시",
+            "홍천군",
+            "횡성군",
+            "평창군",
+            "정선군",
+            "영월군"
+        ],
+        "경기도": [
+            "수원시",
+            "고양시",
+            "용인시",
+            "성남시",
+            "부천시",
+            "남양주시",
+            "안산시",
+            "안양시",
+            "평택시",
+            "의정부시",
+            "군포시",
+            "오산시",
+            "시흥시",
+            "하남시",
+            "의왕시",
+            "양주시",
+            "파주시",
+            "광명시",
+            "구리시",
+            "여주시"
+        ],
+        "경상남도": [
+            "창원시",
+            "김해시",
+            "진주시",
+            "양산시",
+            "거제시",
+            "통영시",
+            "사천시",
+            "밀양시",
+            "함안군",
+            "거창군",
+            "창녕군",
+            "산청군",
+            "의령군",
+            "고성군",
+            "하동군",
+            "합천군"
+        ],
+        "경상북도": [
+            "포항시",
+            "경주시",
+            "구미시",
+            "김천시",
+            "안동시",
+            "영주시",
+            "상주시",
+            "문경시",
+            "경산시",
+            "영천시",
+            "청송군",
+            "영양군",
+            "봉화군",
+            "울릉군",
+            "예천군",
+            "성주군",
+            "군위군",
+            "의성군"
+        ],
+        "충청남도": [
+            "천안시",
+            "아산시",
+            "서산시",
+            "논산시",
+            "보령시",
+            "계룡시",
+            "당진시",
+            "금산군",
+            "부여군",
+            "서천군",
+            "홍성군",
+            "예산군",
+            "청양군",
+            "태안군"
+        ],
+        "충청북도": [
+            "청주시",
+            "충주시",
+            "제천시",
+            "보은군",
+            "옥천군",
+            "영동군"
+        ],
+        "전라남도": [
+            "여수시",
+            "순천시",
+            "목포시",
+            "나주시",
+            "광양시",
+            "담양군",
+            "곡성군",
+            "구례군",
+            "고흥군",
+            "보성군",
+            "장흥군",
+            "강진군",
+            "해남군",
+            "완도군",
+            "진도군",
+            "신안군",
+            "무안군",
+            "영암군"
+        ],
+        "전라북도": [
+            "전주시",
+            "군산시",
+            "익산시",
+            "남원시",
+            "정읍시",
+            "김제시",
+            "완주군",
+            "진안군",
+            "무주군",
+            "장수군",
+            "고창군",
+            "임실군",
+            "순창군"
+        ]
+    };
+
+    function toggleCities(region, regionElement) {
+        const cityListContainer = document.getElementById('cityListContainer');
+        const cityList = document.getElementById('cityList');
+
+        if (cityListContainer.style.display === 'block') {
+            cityListContainer.style.display = 'none';
+            cityList.innerHTML = '';
+        } else {
+            cityListContainer.style.display = 'block';
+            cityList.innerHTML = '';
+
+            const rect = regionElement.getBoundingClientRect();
+            cityListContainer.style.top = `${rect.bottom + window.scrollY}px`;
+            cityListContainer.style.left = `${rect.left + window.scrollX}px`;
+            cityListContainer.style.width = `${rect.width}px`;
+
+            regions[region].forEach(cityName => {
+                const listItem = document.createElement('li');
+                listItem.textContent = cityName;
+                listItem.setAttribute('onclick', `selectCity('${cityName}')`);
+                cityList.appendChild(listItem);
+            });
+        }
+    }
+
+    function selectCity(cityName) {
+        const cityListItems = document.querySelectorAll('.city-list li');
+        cityListItems.forEach(item => item.classList.remove('selected'));
+
+        const selectedCity = document.querySelector(`.city-list li[onclick="selectCity('${cityName}')"]`);
+        if (selectedCity) {
+            selectedCity.classList.add('selected');
+        }
+
+        const encodedCityName = encodeURIComponent(cityName);
+
+        fetch(`/api/cities/name/${encodedCityName}`)
+            .then(response => response.json())
+            .then(city => {
+                if (city) {
+                    document.getElementById('cityId').value = city.id;
+                    console.log(`City selected: ${city.name} with id ${city.id}`);
+                } else {
+                    alert('City not found in database.');
+                    console.error('City not found in database.');
+                }
+            })
+            .catch(error => console.error('Error fetching city by name:', error));
+    }
+
+    document.getElementById('tripForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const tripName = document.getElementById('tripName').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const cityId = parseInt(document.getElementById('cityId').value, 10);
+
+        const tripDates = [];
+        document.querySelectorAll('.tripDate').forEach(function (tripDateElement) {
+            const tripDate = tripDateElement.querySelector('input[name="tripDate"]').value;
+
+            const tripLocations = [];
+            tripDateElement.querySelectorAll('.locations').forEach(function (locationElement) {
+                const placeName = locationElement.querySelector('input[name="placeName"]').value;
+                const latitude = locationElement.querySelector('input[name="latitude"]').value;
+                const longitude = locationElement.querySelector('input[name="longitude"]').value;
+
+                tripLocations.push({ placeName, latitude, longitude });
+                console.log(`Location added: ${placeName}, ${latitude}, ${longitude}`);
+            });
+
+            tripDates.push({ tripDate, tripLocations });
+            console.log(`TripDate added: ${tripDate} with locations: ${JSON.stringify(tripLocations)}`);
+        });
+
+        const data = {
+            tripName,
+            startDate,
+            endDate,
+            cityId,
+            tripDates
+        };
+
+        console.log('서버로 데이터 전송:', JSON.stringify(data));
+
+        fetch('/api/trips', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+                return data;
+            }))
+            .then(data => {
+                alert(data.message);
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                alert(error.message);
+                console.error('Error:', error);
+            });
+    });
+
+    function updateTripDates() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const tripDates = document.getElementById('tripDates');
+            tripDates.innerHTML = '';
+
+            for (let date = new Date(start), dayCount = 1; date <= end; date.setDate(date.getDate() + 1), dayCount++) {
+                const tripDateHtml = `
+                    <div class="tripDate">
+                        <div class="dayHeader" onclick="toggleTripDate(this)">
+                            <span>Day ${dayCount} - ${date.toISOString().split('T')[0]}</span>
+                        </div>
+                        <div class="dayContent">
+                            <label for="tripDate">날짜:</label>
+                            <input type="date" name="tripDate" value="${date.toISOString().split('T')[0]}" required readonly><br>
+                            <h4>장소</h4>
+                            <div class="locations">
+                                <label for="placeName">장소 이름:</label>
+                                <input type="text" name="placeName" required><br>
+                                <label for="latitude">위도:</label>
+                                <input type="number" step="0.000001" name="latitude"><br>
+                                <label for="longitude">경도:</label>
+                                <input type="number" step="0.000001" name="longitude"><br>
+                            </div>
+                            <button type="button" onclick="addLocation(this)">장소 추가</button>
+                        </div>
+                    </div>
+                `;
+                tripDates.insertAdjacentHTML('beforeend', tripDateHtml);
+                console.log(`TripDate added: Day ${dayCount}, Date: ${date.toISOString().split('T')[0]}`);
+            }
+        }
+    }
+
+    function toggleTripDate(element) {
+        const dayContent = element.nextElementSibling;
+        dayContent.classList.toggle('show');
+    }
+
+    function addLocation(button) {
+        const locationHtml = `
+            <div class="locations">
+                <label for="placeName">장소 이름:</label>
+                <input type="text" name="placeName" required><br>
+                <label for="latitude">위도:</label>
+                <input type="number" step="0.000001" name="latitude"><br>
+                <label for="longitude">경도:</label>
+                <input type="number" step="0.000001" name="longitude"><br>
+            </div>
+        `;
+        button.insertAdjacentHTML('beforebegin', locationHtml);
+        console.log('Location added.');
+    }
+</script>
+</body>
+</html>
+
