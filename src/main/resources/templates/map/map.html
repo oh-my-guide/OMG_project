@@ -78,6 +78,9 @@
     // 마커를 담을 배열입니다.
     let markers = [];
 
+    // 선택된 장소들을 저장할 배열
+    let selectedPlaces = [];
+
     const mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
             center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
@@ -138,18 +141,19 @@
     /**
      * 장소 데이터를 백단으로 전송
      */
-    function sendPlaceData(place) {
-        const placeData = {
+    function sendPlaceData(places) {
+        // 백단에서 필요한 데이터만 포함된 배열 생성
+        const filteredPlaces = selectedPlaces.map(place => ({
             name: place.place_name,
             longitude: place.x,
             latitude: place.y
-        };
+        }));
 
         $.ajax({
             url: '/api/save-location',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(placeData),
+            data: JSON.stringify(filteredPlaces),
             success: function(data) {
                 console.log('success:', data);
             },
@@ -165,7 +169,32 @@
     function handleSelectBtnClick(event, place, placePosition, index) {
         event.stopPropagation();    // 이벤트 버블링 방지
         addSelectedMarker(placePosition, index);
-        sendPlaceData(place);
+
+        // selectedPlaces 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 같은지 확인
+        // .some()은 배열의 각 요소에 대한 테스트. true 또는 false 반환
+        const isAlreadySelected = selectedPlaces.some(p => p.id === place.id);
+        if (!isAlreadySelected) {
+            // 같은 id를 가진 장소가 없다면 배열에 추가 (장소 중복 방지)
+            selectedPlaces.push(place);
+            console.log(selectedPlaces);
+        }
+        // sendPlaceData(place);
+    }
+
+    /**
+     * 제거 버튼 클릭 이벤트 핸들러
+     */
+    function handleRemoveBtnClick(event, place, placePosition, index) {
+        event.stopPropagation();
+        removeSelectedMarker(placePosition);
+    }
+
+    function handleSelectCompleteBtnClick() {
+        if (selectedPlaces.length === 0) {
+            alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
+            return;
+        }
+        sendPlaceData(selectedPlaces);
     }
 
     // 검색 결과 목록과 마커를 표출하는 함수입니다
@@ -229,6 +258,12 @@
                 console.log(placePosition);
             });
 
+            const removeBtn = itemEl.querySelector('.remove-btn');
+            removeBtn.addEventListener('click', function (event) {
+                handleRemoveBtnClick(event, places[i], placePosition, i);
+            });
+
+
             fragment.appendChild(itemEl);
         }
 
@@ -245,8 +280,8 @@
 
         const el = document.createElement('li');
         let itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
-                '<div class="info">' +
-                '   <h5>' + places.place_name + '</h5>';
+            '<div class="info">' +
+            '   <h5>' + places.place_name + '</h5>';
 
         if (places.road_address_name) {
             itemStr += '    <span>' + places.road_address_name + '</span>' +
@@ -366,6 +401,11 @@
             el.removeChild (el.lastChild);
         }
     }
+
+    /**
+     * 선택 완료 버튼에 클릭 이벤트 리스너 추가
+     */
+    document.querySelector('button[type="button"]').addEventListener('click', handleSelectCompleteBtnClick);
 </script>
 </body>
 </html>

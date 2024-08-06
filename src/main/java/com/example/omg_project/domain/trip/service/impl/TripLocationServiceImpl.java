@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class TripLocationServiceImpl implements TripLocationService {
 
     /**
      * !! Repository 저장 로직 개발 필요 !!
-     * 선택된 장소 정보를 개별 장소마다 저장
+     * 선택된 장소 정보 하나를 받아서 개별로 저장
      */
     @Override
     @Transactional
@@ -38,6 +39,29 @@ public class TripLocationServiceImpl implements TripLocationService {
 
 //        tripLocationRepository.save(tripLocation);
 
+    }
+
+    /**
+     * !! Repository 저장 로직 개발 필요 !!
+     * 선택된 장소 정보 리스트를 받아서 개별로 저장
+     */
+    @Override
+    @Transactional
+    public void saveLocations(List<TripLocationDto> tripLocationDtoList) {
+        for (TripLocationDto tripLocationDto : tripLocationDtoList) {
+            log.info("place name: " + tripLocationDto.getName());
+            log.info("longitude: " + tripLocationDto.getLongitude());
+            log.info("latitude: " + tripLocationDto.getLatitude());
+
+            TripLocation tripLocation = new TripLocation();
+//        tripLocation.setTripDate();
+            tripLocation.setPlaceName(tripLocationDto.getName());
+            tripLocation.setLongitude(BigDecimal.valueOf(tripLocationDto.getLongitude()));
+            tripLocation.setLatitude(BigDecimal.valueOf(tripLocationDto.getLatitude()));
+//        tripLocation.setPlaceReviews();
+
+//        tripLocationRepository.save(tripLocation);
+        }
     }
 
 }
