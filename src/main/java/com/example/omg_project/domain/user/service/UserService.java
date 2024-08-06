@@ -11,9 +11,9 @@ public interface UserService {
 
     Optional<User> findById(Long id);
 
-    void signUp(UserSignUpDto userSignUpDto); // 회원가입
-
     Optional<User> findByUsername(String username); // 아이디 찾기
+
+    void signUp(UserSignUpDto userSignUpDto); // 회원가입
 
     void deleteUser(String username); // 회원 탈퇴
 
