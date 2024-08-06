@@ -25,7 +25,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'POST',
-            url: '/api/check-email',
+            url: '/api/users/check-email',
             contentType: 'application/json',
             data: JSON.stringify({ mail: email }),
             success: function(response) {
@@ -52,7 +52,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'POST',
-            url: '/api/mail',
+            url: '/api/users/mail',
             contentType: 'application/json',
             data: JSON.stringify({ mail: email }),
             success: function(response) {
@@ -72,7 +72,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'POST',
-            url: '/api/verify-code',
+            url: '/api/users/verify-code',
             contentType: 'application/json',
             data: JSON.stringify({ mail: email, code: code }),
             success: function(response) {
@@ -94,7 +94,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: 'POST',
-            url: '/api/check-usernick',
+            url: '/api/users/check-usernick',
             contentType: 'application/json',
             data: JSON.stringify({ usernick: usernick }),
             success: function(response) {
