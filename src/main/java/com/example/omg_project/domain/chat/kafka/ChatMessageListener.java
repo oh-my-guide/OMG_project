@@ -1,6 +1,6 @@
 package com.example.omg_project.domain.chat.kafka;
 
-// 필요한 클래스 임포트
+import com.example.omg_project.domain.chat.dto.ChatMessageDTO;
 import com.example.omg_project.domain.chat.entity.ChatMessage;
 import com.example.omg_project.domain.chat.repository.ChatMessageRepository;
 import com.example.omg_project.domain.chat.repository.ChatRoomRepository;
@@ -36,15 +36,15 @@ public class ChatMessageListener {
     public void listen(@Payload String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws Exception {
         try {
             String roomId = topic.substring("chat-room-".length());
-            ChatMessage chatMessage = parseMessage(message);
+            ChatMessage chatMessage = parseMessage(message, roomId);
             chatMessageRepository.save(chatMessage);
-            broadcastMessage(roomId, message);
+            broadcastMessage(roomId, chatMessage);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error processing message", e);
         }
     }
 
-    private ChatMessage parseMessage(String message) {
+    private ChatMessage parseMessage(String message, String roomId) {
         String[] parts = message.split(":", 2);
         if (parts.length < 2) {
             throw new IllegalArgumentException("Invalid message format");
@@ -52,17 +52,32 @@ public class ChatMessageListener {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(parts[1].trim());
         chatMessage.setUser(userRepository.findByUsernick(parts[0]));
-        chatMessage.setChatRoom(chatRoomRepository.findById(1L).orElseThrow());
+        chatMessage.setChatRoom(chatRoomRepository.findById((Long.parseLong(roomId))).orElseThrow());
         chatMessage.setUserNickname(parts[0]);
         return chatMessage;
     }
 
-    private void broadcastMessage(String roomId, String message) throws IOException {
+    private ChatMessageDTO convertToDto(ChatMessage chatMessage) {
+        ChatMessageDTO dto = new ChatMessageDTO();
+        dto.setId(chatMessage.getId());
+        dto.setMessage(chatMessage.getMessage());
+        dto.setUserNickname(chatMessage.getUserNickname());
+        dto.setCreatedAt(chatMessage.getCreatedAt().toString());
+        return dto;
+    }
+
+    private void broadcastMessage(String roomId, ChatMessage chatMessage) throws IOException {
         Set<WebSocketSession> sessions = WebSocketHandler.getSessions(roomId);
         if (sessions != null) {
+            // DTO로 변환
+            ChatMessageDTO chatMessageDto = convertToDto(chatMessage);
+
+            // DTO를 JSON으로 변환
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonMessage = objectMapper.writeValueAsString(chatMessageDto);
             for (WebSocketSession session : sessions) {
                 if (session.isOpen()) {
-                    session.sendMessage(new TextMessage(message));
+                    session.sendMessage(new TextMessage(jsonMessage));
                 }
             }
         }

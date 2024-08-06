@@ -1,6 +1,6 @@
 package com.example.omg_project.domain.chat.service.impl;
 
-// 필요한 클래스 임포트
+import com.example.omg_project.domain.chat.dto.ChatMessageDTO;
 import com.example.omg_project.domain.chat.entity.ChatMessage;
 import com.example.omg_project.domain.chat.entity.ChatRoom;
 import com.example.omg_project.domain.chat.repository.ChatMessageRepository;
@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 // 채팅 서비스 클래스
 @Service
@@ -20,14 +21,20 @@ public class ChatServiceImpl implements ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    // 메시지를 저장하는 메서드
-    public ChatMessage saveMessage(ChatMessage chatMessage) {
-        return chatMessageRepository.save(chatMessage);
+    public List<ChatMessageDTO> getMessagesByRoomId(Long roomId) {
+        List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomId(roomId);
+        return chatMessages.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    // 특정 채팅방의 메시지를 조회하는 메서드
-    public List<ChatMessage> getMessagesByRoomId(Long roomId) {
-        return chatMessageRepository.findByChatRoomId(roomId);
+    private ChatMessageDTO convertToDTO(ChatMessage chatMessage) {
+        ChatMessageDTO dto = new ChatMessageDTO();
+        dto.setId(chatMessage.getId());
+        dto.setUserNickname(chatMessage.getUserNickname());
+        dto.setMessage(chatMessage.getMessage());
+        dto.setCreatedAt(chatMessage.getCreatedAt().toString());
+        return dto;
     }
 
     // 채팅방을 생성하는 메서드

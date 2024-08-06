@@ -7,8 +7,6 @@ import lombok.Setter;
 @Setter
 public class ChatMessageDTO {
     private Long id;
-    private Long userId;
-    private Long chatRoomId;
     private String message;
     private String createdAt;
     private String userNickname;

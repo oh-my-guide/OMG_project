@@ -1,9 +1,10 @@
 package com.example.omg_project.domain.chat.controller;
-// 필요한 클래스 임포트
-import com.example.omg_project.domain.chat.entity.ChatMessage;
+
+import com.example.omg_project.domain.chat.dto.ChatMessageDTO;
 import com.example.omg_project.domain.chat.entity.ChatRoom;
 import com.example.omg_project.domain.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,15 +24,9 @@ public class ChatApiController {
         return chatService.createRoom();
     }
 
-//    // 특정 채팅방의 메시지 조회 엔드포인트
-//    @GetMapping("/rooms/{roomId}/messages")
-//    public List<ChatMessage> getMessages(@PathVariable Long roomId) {
-//        return chatService.getMessagesByRoomId(roomId);
-//    }
-
-    // 새로운 메시지 저장 엔드포인트
-    @PostMapping("/messages")
-    public ChatMessage postMessage(@RequestBody ChatMessage chatMessage) {
-        return chatService.saveMessage(chatMessage);
+    @GetMapping("/rooms/{roomId}/messages")
+    public ResponseEntity<List<ChatMessageDTO>> getMessages(@PathVariable Long roomId) {
+        List<ChatMessageDTO> messages = chatService.getMessagesByRoomId(roomId);
+        return ResponseEntity.ok(messages);
     }
 }
