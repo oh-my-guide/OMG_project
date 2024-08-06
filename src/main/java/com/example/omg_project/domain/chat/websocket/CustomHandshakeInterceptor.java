@@ -15,13 +15,18 @@ public class CustomHandshakeInterceptor extends HttpSessionHandshakeInterceptor 
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
-        //인증정보로부터 username을 얻어온다.
+        // 인증정보로부터 username을 얻어온다.
         SecurityContext context = SecurityContextHolder.getContext();
         if(context.getAuthentication() != null){
-            attributes.put("SPRING_SECURITY_CONTEXT",context);
+            attributes.put("SPRING_SECURITY_CONTEXT", context);
         }
 
-        return super.beforeHandshake(request, response, wsHandler, attributes);
+        // URL 경로에서 roomId 추출
+        String path = request.getURI().getPath();
+        String roomId = path.split("/")[2];
+        attributes.put("roomId", roomId);
+
+        return true;
     }
 
     @Override
