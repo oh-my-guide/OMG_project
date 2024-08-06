@@ -11,15 +11,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/joinPosts/comments")
 @RequiredArgsConstructor
-public class JoinPostReplyController {
+public class JoinPostReplyApiController {
     private final JoinPostReplyService joinPostReplyService;
 
     /**
      * 일행 모집 대댓글 등록
      */
     @PostMapping("/{commentId}/replies")
-    public ResponseEntity<JoinPostReplyDto.Response> createReply(@PathVariable Long commentIdId, @RequestParam Long userId, @RequestBody JoinPostReplyDto.Request replyRequest) {
-        JoinPostReplyDto.Response reply = joinPostReplyService.createReply(commentIdId, userId, replyRequest);
+    public ResponseEntity<JoinPostReplyDto.Response> createReply(@PathVariable Long commentId, @RequestParam Long userId, @RequestBody JoinPostReplyDto.Request replyRequest) {
+        JoinPostReplyDto.Response reply = joinPostReplyService.createReply(commentId, userId, replyRequest);
         return ResponseEntity.ok(reply);
     }
 
