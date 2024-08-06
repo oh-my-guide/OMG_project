@@ -20,7 +20,7 @@ public class AuthController {
 
     private final UserServiceImpl userServiceimpl;
 
-    // 비로그인, 메인
+    // 비로그인, 메인 홈 페이지
     @GetMapping("/")
     public String home() {
         return "/user/home";
@@ -29,7 +29,6 @@ public class AuthController {
     // 회원가입
     @GetMapping("/signup")
     public String signup(Model model) {
-        model.addAttribute("user", new UserSignUpDto());
         return "/main/signupform";
     }
 

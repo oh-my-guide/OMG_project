@@ -23,6 +23,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
+    /**
+     * 회원가입 메서드
+     */
     @Override
     @Transactional
     public void signUp(UserSignUpDto userSignUpDto) {
@@ -40,7 +43,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User 역할이 없습니다."));
 
         User user = new User();
-        user.setRoles(Collections.singleton(role));     // 단일 역할 --> ROLE_USER
+        user.setRoles(Collections.singleton(role));     // 단일 역할 지정 --> 모든 사용자는 ROLE_USER
         user.setUsername(userSignUpDto.getUsername());  // 이메일
         user.setPassword(passwordEncoder.encode(userSignUpDto.getPassword())); // 비밀번호 암호화
         user.setUsernick(userSignUpDto.getUsernick());  // 닉네임
@@ -63,10 +66,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username);
     }
 
+    /**
+     * 회원 탈퇴
+     */
     @Override
     @Transactional
-    public void deleteUser(String email) {
-        Optional<User> userOptional = userRepository.findByUsername(email);
+    public void deleteUser(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isPresent()) {
             userRepository.delete(userOptional.get());
         } else {
@@ -74,6 +80,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * 닉네임 중복 확인
+     */
     @Override
     public boolean existsByUsernick(String usernick) {
         return userRepository.existsByUsernick(usernick);
