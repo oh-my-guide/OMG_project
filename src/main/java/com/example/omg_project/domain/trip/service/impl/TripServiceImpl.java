@@ -22,6 +22,7 @@ public class TripServiceImpl implements TripService {
     private final TripDateRepository tripDateRepository;
     private final TripLocationRepository tripLocationRepository;
     private final ChatRepository chatRepository;
+    private final TeamRepository teamRepository;
 
     @Override
     @Transactional
@@ -66,6 +67,9 @@ public class TripServiceImpl implements TripService {
         team.setLeaderId(leader);
         team.setInviteCode(generateInviteCode());
         team.setChatRoom(savedChatRoom);
+
+        teamRepository.save(team);
+
         return savedTrip;
     }
 
