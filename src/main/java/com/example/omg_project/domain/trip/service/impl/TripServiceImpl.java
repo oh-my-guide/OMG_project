@@ -1,7 +1,7 @@
 package com.example.omg_project.domain.trip.service.impl;
 
 import com.example.omg_project.domain.chat.entity.ChatRoom;
-import com.example.omg_project.domain.chat.repository.ChatRepository;
+import com.example.omg_project.domain.chat.repository.ChatRoomRepository;
 import com.example.omg_project.domain.trip.dto.CreateTripDTO;
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.dto.UpdateTripDTO;
@@ -31,7 +31,7 @@ public class TripServiceImpl implements TripService {
     private final CityRepository cityRepository;
     private final TripDateRepository tripDateRepository;
     private final TripLocationRepository tripLocationRepository;
-    private final ChatRepository chatRepository;
+    private final ChatRoomRepository chatRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
 
@@ -96,18 +96,18 @@ public class TripServiceImpl implements TripService {
         int num = random.nextInt(100000);
         return String.format("INVITE-%05d", num);
     }
-    @Override
-    @Transactional
-    public void deleteTrip(Long id) {
-        Trip trip = tripRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
 
-        // 1. 관련된 팀 삭제 (팀과 채팅방도 삭제됨)
-        teamRepository.deleteByTrip(trip);
+
+    @Override
+    @Transactional // 트랜잭션을 관리합니다.
+    public void deleteTrip(Long id) {
+        // 1. 관련된 Team 데이터 삭제
+        teamRepository.deleteByTripId(id);
 
         // 2. Trip 데이터 삭제
         tripRepository.deleteById(id);
     }
+
 
 
 

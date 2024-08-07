@@ -11,13 +11,16 @@
     <h1>회원가입</h1>
     <hr/>
 
+    <div th:if="${error}" class="error-message">
+        <p th:text="${error}"></p>
+    </div>
 
     <label for="email">Email</label>
     <input type="email" id="email" name="username" placeholder="Email" required/>
     <button type="button" id="check-email-button">이메일 중복 체크</button>
     <span id="emailCheckMessage" class="error"></span>
 
-    <button type="button" id="send-code-button" disabled>인증 코드 발송</button>
+    <button type="button" id="send-code-button" style="display: none;">인증 코드 발송</button>
 
     <div id="verifyCodeSection">
         <label for="verificationCode">인증 코드</label>
@@ -28,10 +31,10 @@
 
     <label for="password">Password</label>
     <input type="password" id="password" name="password" placeholder="Password" autocomplete="new-password" required/>
-    <span id="passwordMessage" class="error"></span>
 
     <label for="passwordCheck">Confirm Password</label>
     <input type="password" id="passwordCheck" name="passwordCheck" placeholder="Confirm Password" autocomplete="new-password" required/>
+    <span id="passwordMessage" class="error"></span>
 
     <label for="name">Name</label>
     <input type="text" id="name" name="name" placeholder="name" required/>
@@ -55,128 +58,6 @@
 
     <button type="submit" id="signup-button" disabled>회원가입</button>
 </form>
-
-<script>
-    $(document).ready(function() {
-        function validateForm() {
-            let isValid = true;
-            if ($('#emailCheckMessage').hasClass('error')) {
-                isValid = false;
-            }
-            if ($('#usernickCheckMessage').hasClass('error')) {
-                isValid = false;
-            }
-            if ($('#passwordMessage').hasClass('error')) {
-                isValid = false;
-            }
-            $('#signup-button').prop('disabled', !isValid);
-        }
-
-        $('#check-email-button').on('click', function() {
-            let email = $('#email').val();
-
-            $.ajax({
-                type: 'POST',
-                url: '/api/check-email',
-                contentType: 'application/json',
-                data: JSON.stringify({ mail: email }),
-                success: function(response) {
-                    if (response === "아이디가 이미 존재합니다.") {
-                        $('#emailCheckMessage').text(response).removeClass('success').addClass('error');
-                        $('#send-code-button').prop('disabled', true);
-                    } else {
-                        $('#emailCheckMessage').text(response).removeClass('error').addClass('success');
-                        $('#send-code-button').prop('disabled', false);
-                    }
-                    validateForm();
-                },
-                error: function(error) {
-                    $('#emailCheckMessage').text('이메일 확인 중 오류가 발생했습니다. 다시 시도해주세요.').removeClass('success').addClass('error');
-                    $('#send-code-button').prop('disabled', true);
-                    validateForm();
-                }
-            });
-        });
-
-        $('#send-code-button').on('click', function() {
-            let email = $('#email').val();
-
-            $.ajax({
-                type: 'POST',
-                url: '/api/mail',
-                contentType: 'application/json',
-                data: JSON.stringify({ mail: email }),
-                success: function(response) {
-                    $('#verifyCodeSection').show();
-                    alert('인증 메일이 발송되었습니다. 인증 번호를 확인해주세요.');
-                },
-                error: function(error) {
-                    alert('메일 발송에 실패했습니다. 다시 시도해주세요.');
-                }
-            });
-        });
-
-        $('#verify-code-button').on('click', function() {
-            let email = $('#email').val();
-            let code = $('#verificationCode').val();
-
-            $.ajax({
-                type: 'POST',
-                url: '/api/verify-code',
-                contentType: 'application/json',
-                data: JSON.stringify({ mail: email, code: code }),
-                success: function(response) {
-                    if (response === 'Verified') {
-                        $('#verificationMessage').text('인증 성공').removeClass('error').addClass('success');
-                    } else {
-                        $('#verificationMessage').text('인증 실패. 올바른 코드를 입력하세요.').removeClass('success').addClass('error');
-                    }
-                },
-                error: function(error) {
-                    $('#verificationMessage').text('인증 실패. 다시 시도해주세요.').removeClass('success').addClass('error');
-                }
-            });
-        });
-
-        $('#check-usernick-button').on('click', function() {
-            let usernick = $('#usernick').val();
-
-            $.ajax({
-                type: 'POST',
-                url: '/api/check-usernick',
-                contentType: 'application/json',
-                data: JSON.stringify({ usernick: usernick }),
-                success: function(response) {
-                    if (response) {
-                        $('#usernickCheckMessage').text('닉네임이 이미 존재합니다.').removeClass('success').addClass('error');
-                    } else {
-                        $('#usernickCheckMessage').text('사용 가능한 닉네임입니다.').removeClass('error').addClass('success');
-                    }
-                    validateForm();
-                },
-                error: function(error) {
-                    $('#usernickCheckMessage').text('닉네임 확인 중 오류가 발생했습니다. 다시 시도해주세요.').removeClass('success').addClass('error');
-                    validateForm();
-                }
-            });
-        });
-
-        $('#passwordCheck').on('input', function() {
-            let password = $('#password').val();
-            let passwordCheck = $('#passwordCheck').val();
-
-            if (password !== passwordCheck) {
-                $('#passwordMessage').text('비밀번호가 일치하지 않습니다.').addClass('error');
-            } else {
-                $('#passwordMessage').text('').removeClass('error');
-            }
-            validateForm();
-        });
-
-        $('#password').on('input', function() {
-            $('#passwordCheck').trigger('input');
-        });
-    });
-</script>
+<script src="/js/signup.js"></script>
 </body>
 </html>
