@@ -2,6 +2,7 @@ package com.example.omg_project.domain.trip.controller;
 
 import com.example.omg_project.domain.trip.dto.CreateTripDTO;
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
+import com.example.omg_project.domain.trip.dto.UpdateTripDTO;
 import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.service.TripService;
 import com.example.omg_project.domain.user.entity.User;
@@ -56,6 +57,15 @@ public class TripApiController {
     public ResponseEntity<List<ReadTripDTO>> getTripsByUserId(@PathVariable Long userId) {
         List<ReadTripDTO> trips = tripService.getTripsByUserId(userId);
         return ResponseEntity.ok(trips);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateTripDTO> updateTrip(@PathVariable Long id, @RequestBody UpdateTripDTO updateTripDTO) {
+        UpdateTripDTO updatedTrip = tripService.updateTrip(id, updateTripDTO);
+        if (updatedTrip != null) {
+            return ResponseEntity.ok(updatedTrip);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
 

@@ -4,6 +4,7 @@ import com.example.omg_project.domain.chat.entity.ChatRoom;
 import com.example.omg_project.domain.chat.repository.ChatRepository;
 import com.example.omg_project.domain.trip.dto.CreateTripDTO;
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
+import com.example.omg_project.domain.trip.dto.UpdateTripDTO;
 import com.example.omg_project.domain.trip.entity.*;
 import com.example.omg_project.domain.trip.repository.*;
 import com.example.omg_project.domain.trip.service.TripService;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -119,4 +122,75 @@ public class TripServiceImpl implements TripService {
         List<Trip> trips = tripRepository.findByUserId(userId);
         return trips.stream().map(ReadTripDTO::fromEntity).collect(Collectors.toList());
     }
+
+    @Override
+    public UpdateTripDTO updateTrip(Long id, UpdateTripDTO updateTripDTO) {
+        Optional<Trip> tripOptional = tripRepository.findById(id);
+        if (tripOptional.isPresent()) {
+            Trip trip = tripOptional.get();
+            trip.setTripName(updateTripDTO.getTripName());
+            trip.setStartDate(updateTripDTO.getStartDate());
+            trip.setEndDate(updateTripDTO.getEndDate());
+
+            // 기존 TripDates 및 TripLocations 업데이트 로직
+            Map<Long, TripDate> existingTripDates = new HashMap<>();
+            for (TripDate tripDate : trip.getTripDates()) {
+                existingTripDates.put(tripDate.getId(), tripDate);
+            }
+
+            for (UpdateTripDTO.TripDateDTO tripDateDTO : updateTripDTO.getTripDates()) {
+                TripDate tripDate;
+                if (tripDateDTO.getId() != null && existingTripDates.containsKey(tripDateDTO.getId())) {
+                    tripDate = existingTripDates.get(tripDateDTO.getId());
+                    tripDate.setTripDate(tripDateDTO.getTripDate());
+                    existingTripDates.remove(tripDateDTO.getId());
+                } else {
+                    tripDate = new TripDate();
+                    tripDate.setTripDate(tripDateDTO.getTripDate());
+                    tripDate.setTrip(trip);
+                    trip.getTripDates().add(tripDate);
+                }
+
+                Map<Long, TripLocation> existingTripLocations = new HashMap<>();
+                for (TripLocation tripLocation : tripDate.getTripLocations()) {
+                    existingTripLocations.put(tripLocation.getId(), tripLocation);
+                }
+
+                for (UpdateTripDTO.TripLocationDTO tripLocationDTO : tripDateDTO.getTripLocations()) {
+                    TripLocation tripLocation;
+                    if (tripLocationDTO.getId() != null && existingTripLocations.containsKey(tripLocationDTO.getId())) {
+                        tripLocation = existingTripLocations.get(tripLocationDTO.getId());
+                        tripLocation.setPlaceName(tripLocationDTO.getPlaceName());
+                        tripLocation.setLatitude(tripLocationDTO.getLatitude());
+                        tripLocation.setLongitude(tripLocationDTO.getLongitude());
+                        existingTripLocations.remove(tripLocationDTO.getId());
+                    } else {
+                        tripLocation = new TripLocation();
+                        tripLocation.setPlaceName(tripLocationDTO.getPlaceName());
+                        tripLocation.setLatitude(tripLocationDTO.getLatitude());
+                        tripLocation.setLongitude(tripLocationDTO.getLongitude());
+                        tripLocation.setTripDate(tripDate);
+                        tripDate.getTripLocations().add(tripLocation);
+                    }
+                }
+
+                // 제거된 TripLocations 삭제
+                for (TripLocation tripLocation : existingTripLocations.values()) {
+                    tripDate.getTripLocations().remove(tripLocation);
+                }
+            }
+
+            // 제거된 TripDates 삭제
+            for (TripDate tripDate : existingTripDates.values()) {
+                trip.getTripDates().remove(tripDate);
+            }
+
+            tripRepository.save(trip);
+            return updateTripDTO;
+        } else {
+            return null;
+        }
+    }
 }
+
+

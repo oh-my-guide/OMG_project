@@ -55,4 +55,10 @@ public class TripController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/update/{id}")
+    public String showUpdateTripPage(@PathVariable Long id, Model model) {
+        ReadTripDTO trip = tripService.getTripById(id);
+        model.addAttribute("trip", trip);
+        return "trip/updateTrip";
+    }
 }
