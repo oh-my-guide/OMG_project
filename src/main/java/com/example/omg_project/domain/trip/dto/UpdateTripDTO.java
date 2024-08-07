@@ -21,7 +21,7 @@ public class UpdateTripDTO {
     @Getter
     @Setter
     public static class TripDateDTO {
-        private Long id;  // 추가
+        private Long id;
         private LocalDate tripDate;
         private List<TripLocationDTO> tripLocations;
     }
@@ -29,7 +29,7 @@ public class UpdateTripDTO {
     @Getter
     @Setter
     public static class TripLocationDTO {
-        private Long id;  // 추가
+        private Long id;
         private String placeName;
         private BigDecimal latitude;
         private BigDecimal longitude;

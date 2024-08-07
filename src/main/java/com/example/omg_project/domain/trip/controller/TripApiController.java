@@ -5,7 +5,6 @@ import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.dto.UpdateTripDTO;
 import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.service.TripService;
-import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
@@ -27,6 +26,7 @@ public class TripApiController {
     private final TripService tripService;
     private final JwtTokenizer jwtTokenizer;
 
+    //여행 일정 생성
     @PostMapping
     public ResponseEntity<?> createTrip(@RequestBody CreateTripDTO createTripDTO, HttpServletRequest request) {
         try {
@@ -41,23 +41,18 @@ public class TripApiController {
                     }
                 }
             }
-
             if (jwtToken == null) {
                 throw new RuntimeException("JWT 토큰이 없습니다.");
             }
 
-            // JWT 토큰 로그 출력
             System.out.println("Received JWT Token: " + jwtToken);
 
             // JWT 토큰 파싱하여 사용자 정보 추출
             Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
-            String username = claims.getSubject();
-
-            // 사용자 정보 로그 출력
-            System.out.println("Username from JWT Token: " + username);
+            claims.getSubject();
 
             // 여행 일정 생성
-            Trip trip = tripService.createTrip(createTripDTO, jwtToken);
+            tripService.createTrip(createTripDTO, jwtToken);
 
             Map<String, String> successResponse = new HashMap<>();
             successResponse.put("message", "여행 일정이 생성되었습니다.");
@@ -69,6 +64,7 @@ public class TripApiController {
         }
     }
 
+    //tripId로 일정 조회
     @GetMapping("/{id}")
     public ResponseEntity<ReadTripDTO> getTripById(@PathVariable Long id) {
         ReadTripDTO trip = tripService.getTripById(id);
@@ -79,11 +75,14 @@ public class TripApiController {
         }
     }
 
+    //userId로 일정 조회
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ReadTripDTO>> getTripsByUserId(@PathVariable Long userId) {
         List<ReadTripDTO> trips = tripService.getTripsByUserId(userId);
         return ResponseEntity.ok(trips);
     }
+
+    //여행 일정 수정
     @PutMapping("/{id}")
     public ResponseEntity<UpdateTripDTO> updateTrip(@PathVariable Long id, @RequestBody UpdateTripDTO updateTripDTO) {
         UpdateTripDTO updatedTrip = tripService.updateTrip(id, updateTripDTO);
@@ -92,6 +91,13 @@ public class TripApiController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    //여행 일정 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTrip(@PathVariable Long id) {
+        tripService.deleteTrip(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

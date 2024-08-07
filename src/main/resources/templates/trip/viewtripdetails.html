@@ -49,13 +49,12 @@
 </div>
 
 <script>
-    // Thymeleaf에서 tripId를 JavaScript 변수로 설정
     var tripId = [[${trip.id}]]; // 서버에서 tripId 값을 삽입합니다.
     console.log('Trip ID:', tripId); // 디버깅을 위한 콘솔 출력
 
     document.getElementById('deleteButton').addEventListener('click', function() {
         if (confirm('정말로 이 여행 일정을 삭제하시겠습니까?')) {
-            fetch(`/trips/${tripId}`, { // URL 수정
+            fetch(`/api/trips/${tripId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

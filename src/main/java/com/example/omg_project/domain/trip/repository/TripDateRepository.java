@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface TripDateRepository extends JpaRepository<TripDate, Long> {
-    List<TripDate> findByTrip(Trip trip);
+//    List<TripDate> findByTrip(Trip trip);
+    List<TripDate> findByTripId(Long tripId);
 }

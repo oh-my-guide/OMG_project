@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/cities")
 @RequiredArgsConstructor
+
+//도시 이름으로 도시 id 조회
 public class CityApiController {
     private final CityService cityService;
 

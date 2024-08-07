@@ -21,13 +21,13 @@ public class TripController {
 
     private final TripService tripService;
 
-    // 여행 일정 생성 페이지 이동
+    // 여행 일정 생성 페이지
     @GetMapping("/createtrip")
     public String createTripPage() {
         return "trip/createtrip";
     }
 
-
+    //여행 세부 정보 표시
     @GetMapping("/{id}")
     public String viewTripDetailsPage(@PathVariable Long id, Model model) {
         ReadTripDTO trip = tripService.getTripById(id);
@@ -39,6 +39,7 @@ public class TripController {
         }
     }
 
+    //사용자의 일정 리스트 표시
     @GetMapping("/user/{userId}")
     public String viewTripsByUserIdPage(@PathVariable Long userId, Model model) {
         List<ReadTripDTO> trips = tripService.getTripsByUserId(userId);
@@ -46,15 +47,7 @@ public class TripController {
         return "trip/usertrip";
     }
 
-    @DeleteMapping("/trips/{id}")
-    public ResponseEntity<Void> deleteTrip(@PathVariable Long id) {
-        try {
-            tripService.deleteTrip(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    //여행 일정 수정 페이지
     @GetMapping("/update/{id}")
     public String showUpdateTripPage(@PathVariable Long id, Model model) {
         ReadTripDTO trip = tripService.getTripById(id);

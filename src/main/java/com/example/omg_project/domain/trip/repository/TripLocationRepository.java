@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface TripLocationRepository extends JpaRepository<TripLocation, Long> {
-    List<TripLocation> findByTripDate(TripDate tripDate);
+//    List<TripLocation> findByTripDate(TripDate tripDate);
+    void deleteAllByTripDateId(Long tripDateId);
 }

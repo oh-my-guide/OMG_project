@@ -20,7 +20,6 @@ public class CreateTripDTO {
     private Long cityId;
     private List<TripDateDTO> tripDates;
 
-    public CreateTripDTO() {}
 
     public CreateTripDTO(Trip trip) {
         this.tripName = trip.getTripName();
@@ -38,7 +37,6 @@ public class CreateTripDTO {
         private LocalDate tripDate;
         private List<TripLocationDTO> tripLocations;
 
-        public TripDateDTO() {}
 
         public TripDateDTO(TripDate tripDate) {
             this.tripDate = tripDate.getTripDate();
@@ -54,8 +52,6 @@ public class CreateTripDTO {
         private String placeName;
         private BigDecimal latitude;
         private BigDecimal longitude;
-
-        public TripLocationDTO() {}
 
         public TripLocationDTO(TripLocation tripLocation) {
             this.placeName = tripLocation.getPlaceName();

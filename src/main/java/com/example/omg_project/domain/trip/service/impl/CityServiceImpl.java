@@ -12,6 +12,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
+
+    //도시 이름 검색
     @Override
     public Optional<City> getCityByName(String cityName) {
         return cityRepository.findByName(cityName);

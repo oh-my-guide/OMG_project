@@ -33,11 +33,12 @@ public class TripServiceImpl implements TripService {
     private final CityRepository cityRepository;
     private final TripDateRepository tripDateRepository;
     private final TripLocationRepository tripLocationRepository;
-    private final ChatRoomRepository chatRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final JwtTokenizer jwtTokenizer;
 
+    //여행 일정 생성
     @Override
     @Transactional
     public Trip createTrip(CreateTripDTO createTripDTO, String jwtToken) {
@@ -46,9 +47,11 @@ public class TripServiceImpl implements TripService {
         User leader = userRepository.findById(leaderId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        //도시 조회
         City city = cityRepository.findById(createTripDTO.getCityId())
                 .orElseThrow(() -> new RuntimeException("City not found"));
 
+        //여행 일정 생성
         Trip trip = new Trip();
         trip.setTripName(createTripDTO.getTripName());
         trip.setStartDate(createTripDTO.getStartDate());
@@ -57,16 +60,19 @@ public class TripServiceImpl implements TripService {
 
         Trip savedTrip = tripRepository.save(trip);
 
+        //날짜 정보 저장
         for (CreateTripDTO.TripDateDTO tripDateDTO : createTripDTO.getTripDates()) {
             TripDate tripDate = new TripDate();
             tripDate.setTripDate(tripDateDTO.getTripDate());
             tripDate.setTrip(savedTrip);
 
+            //며칠 차인지 계산
             int day = (int) ChronoUnit.DAYS.between(createTripDTO.getStartDate(), tripDateDTO.getTripDate()) + 1;
             tripDate.setDay(day);
 
             TripDate savedTripDate = tripDateRepository.save(tripDate);
 
+            //위치 정보 저장
             for (CreateTripDTO.TripLocationDTO tripLocationDTO : tripDateDTO.getTripLocations()) {
                 TripLocation tripLocation = new TripLocation();
                 tripLocation.setPlaceName(tripLocationDTO.getPlaceName());
@@ -78,8 +84,9 @@ public class TripServiceImpl implements TripService {
             }
         }
 
+        //채팅룸 생성
         ChatRoom chatRoom = new ChatRoom();
-        ChatRoom savedChatRoom = chatRepository.save(chatRoom);
+        ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
         Team team = new Team();
         team.setTrip(savedTrip);
@@ -99,38 +106,58 @@ public class TripServiceImpl implements TripService {
         return savedTrip;
     }
 
+    //초대코드 생성
     private String generateInviteCode() {
         SecureRandom random = new SecureRandom();
         int num = random.nextInt(100000);
         return String.format("INVITE-%05d", num);
     }
 
+    public void deleteTrip(Long tripId) {
+        log.info("Deleting trip with ID: {}", tripId);
 
-    @Override
-    @Transactional // 트랜잭션을 관리합니다.
-    public void deleteTrip(Long id) {
-        // 1. 관련된 Team 데이터 삭제
-        teamRepository.deleteByTripId(id);
+        // 관련된 Team 삭제
+        List<Team> teams = teamRepository.findByTripId(tripId);
+        log.info("Found {} teams associated with trip ID: {}", teams.size(), tripId);
+        for (Team team : teams) {
+            Long chatRoomId = team.getChatRoom().getId();
+            log.info("Deleting chat room with ID: {}", chatRoomId);
+            chatRoomRepository.deleteById(chatRoomId);
+            log.info("Deleting team with ID: {}", team.getId());
+            teamRepository.delete(team);
+        }
 
-        // 2. Trip 데이터 삭제
-        tripRepository.deleteById(id);
+        // 관련된 TripDates 및 TripLocations 삭제
+        List<TripDate> tripDates = tripDateRepository.findByTripId(tripId);
+        log.info("Found {} trip dates associated with trip ID: {}", tripDates.size(), tripId);
+        for (TripDate tripDate : tripDates) {
+            log.info("Deleting trip locations for trip date ID: {}", tripDate.getId());
+            tripLocationRepository.deleteAllByTripDateId(tripDate.getId());
+            log.info("Deleting trip date with ID: {}", tripDate.getId());
+            tripDateRepository.delete(tripDate);
+        }
+
+        // Trip 삭제
+        log.info("Deleting trip with ID: {}", tripId);
+        tripRepository.deleteById(tripId);
+        log.info("Successfully deleted trip with ID: {}", tripId);
     }
 
-
-
-
+    //각각의 여행 일정 조회
     @Override
     public ReadTripDTO getTripById(Long id) {
         Trip trip = tripRepository.findById(id).orElseThrow(() -> new RuntimeException("Trip not found"));
         return ReadTripDTO.fromEntity(trip);
     }
 
+    //사용자의 여행 일정 조회
     @Override
     public List<ReadTripDTO> getTripsByUserId(Long userId) {
         List<Trip> trips = tripRepository.findByUserId(userId);
         return trips.stream().map(ReadTripDTO::fromEntity).collect(Collectors.toList());
     }
 
+    //여행 일정 수정 (날짜 고정)
     @Override
     public UpdateTripDTO updateTrip(Long id, UpdateTripDTO updateTripDTO) {
         Optional<Trip> tripOptional = tripRepository.findById(id);
