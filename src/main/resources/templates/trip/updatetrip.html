@@ -120,7 +120,6 @@
     tripDateElement.innerHTML = `
             <div class="trip-date-title">
                 <input type="date" class="tripDateInput" value="${tripDateData.tripDate || ''}" disabled>
-                <span class="dayLabel"> ${tripDateId + 1}일째</span>
                 <button type="button" onclick="removeElement(this.parentNode.parentNode)">삭제</button>
             </div>
             <div class="trip-locations">

@@ -21,11 +21,17 @@ public class MailService {
     private static final String senderEmail = "OMG@gmail.com";
     private static final Map<String, Integer> verificationCodes = new HashMap<>();
 
+    /**
+     * 인증 코드 자동 생성 메서드
+     */
     public static void createNumber(String email){
         int number = new Random().nextInt(900000) + 100000; // 100000-999999 사이의 숫자 생성
         verificationCodes.put(email, number);
     }
 
+    /**
+     * 이메일 생성 메서드
+     */
     public MimeMessage createMail(String mail){
         createNumber(mail);
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -44,6 +50,9 @@ public class MailService {
         return message;
     }
 
+    /**
+     * createMail() 메서드의 내용을 이메일로 전송 메서드
+     */
     @Async
     public CompletableFuture<Integer> sendMail(String mail) {
         MimeMessage message = createMail(mail);
@@ -51,6 +60,9 @@ public class MailService {
         return CompletableFuture.completedFuture(verificationCodes.get(mail));
     }
 
+    /**
+     * 인증 코드 검증 메서드
+     */
     public boolean verifyCode(String email, int code) {
         Integer storedCode = verificationCodes.get(email);
         return storedCode != null && storedCode == code;

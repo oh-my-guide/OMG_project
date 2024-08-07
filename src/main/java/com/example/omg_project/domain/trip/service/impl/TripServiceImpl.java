@@ -1,7 +1,7 @@
 package com.example.omg_project.domain.trip.service.impl;
 
 import com.example.omg_project.domain.chat.entity.ChatRoom;
-import com.example.omg_project.domain.chat.repository.ChatRepository;
+import com.example.omg_project.domain.chat.repository.ChatRoomRepository;
 import com.example.omg_project.domain.trip.dto.CreateTripDTO;
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.dto.UpdateTripDTO;
@@ -31,7 +31,7 @@ public class TripServiceImpl implements TripService {
     private final CityRepository cityRepository;
     private final TripDateRepository tripDateRepository;
     private final TripLocationRepository tripLocationRepository;
-    private final ChatRepository chatRepository;
+    private final ChatRoomRepository chatRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
 
