@@ -10,6 +10,8 @@ import com.example.omg_project.domain.trip.repository.*;
 import com.example.omg_project.domain.trip.service.TripService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.jwt.util.JwtTokenizer;
+import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +36,16 @@ public class TripServiceImpl implements TripService {
     private final ChatRoomRepository chatRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
+    private final JwtTokenizer jwtTokenizer;
 
     @Override
     @Transactional
-    public Trip createTrip(CreateTripDTO createTripDTO, User leader) {
+    public Trip createTrip(CreateTripDTO createTripDTO, String jwtToken) {
+        Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
+        Long leaderId = claims.get("userId", Long.class);
+        User leader = userRepository.findById(leaderId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         City city = cityRepository.findById(createTripDTO.getCityId())
                 .orElseThrow(() -> new RuntimeException("City not found"));
 

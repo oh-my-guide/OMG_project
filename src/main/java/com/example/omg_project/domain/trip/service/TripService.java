@@ -4,12 +4,11 @@ import com.example.omg_project.domain.trip.dto.CreateTripDTO;
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.dto.UpdateTripDTO;
 import com.example.omg_project.domain.trip.entity.Trip;
-import com.example.omg_project.domain.user.entity.User;
 
 import java.util.List;
 
 public interface TripService {
-    Trip createTrip(CreateTripDTO createTripDTO, User leader);
+    Trip createTrip(CreateTripDTO createTripDTO, String jwtToken);
     ReadTripDTO getTripById(Long id);
     List<ReadTripDTO> getTripsByUserId(Long userId);
     void deleteTrip(Long tripId);
