@@ -1,6 +1,7 @@
 package com.example.omg_project.domain.trip.controller;
 
 import com.example.omg_project.domain.trip.dto.CreateTripDTO;
+import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.service.TripService;
 import com.example.omg_project.domain.user.entity.User;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -40,4 +42,20 @@ public class TripApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<ReadTripDTO> getTripById(@PathVariable Long id) {
+        ReadTripDTO trip = tripService.getTripById(id);
+        if (trip != null) {
+            return ResponseEntity.ok(trip);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ReadTripDTO>> getTripsByUserId(@PathVariable Long userId) {
+        List<ReadTripDTO> trips = tripService.getTripsByUserId(userId);
+        return ResponseEntity.ok(trips);
+    }
 }
+

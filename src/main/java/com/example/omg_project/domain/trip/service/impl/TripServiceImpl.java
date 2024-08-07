@@ -3,16 +3,21 @@ package com.example.omg_project.domain.trip.service.impl;
 import com.example.omg_project.domain.chat.entity.ChatRoom;
 import com.example.omg_project.domain.chat.repository.ChatRepository;
 import com.example.omg_project.domain.trip.dto.CreateTripDTO;
+import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.entity.*;
 import com.example.omg_project.domain.trip.repository.*;
 import com.example.omg_project.domain.trip.service.TripService;
 import com.example.omg_project.domain.user.entity.User;
+import com.example.omg_project.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class TripServiceImpl implements TripService {
     private final TripLocationRepository tripLocationRepository;
     private final ChatRepository chatRepository;
     private final TeamRepository teamRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -68,7 +74,14 @@ public class TripServiceImpl implements TripService {
         team.setInviteCode(generateInviteCode());
         team.setChatRoom(savedChatRoom);
 
-        teamRepository.save(team);
+        // 팀과 리더를 사용자 목록에 추가
+        team.getUsers().add(leader);
+
+        Team savedTeam = teamRepository.save(team);
+
+        // 사용자의 팀 목록에 새 팀 추가
+        leader.getTeams().add(savedTeam);
+        userRepository.save(leader); // 변경된 사용자 정보 저장
 
         return savedTrip;
     }
@@ -77,5 +90,17 @@ public class TripServiceImpl implements TripService {
         SecureRandom random = new SecureRandom();
         int num = random.nextInt(100000);
         return String.format("INVITE-%05d", num);
+    }
+
+    @Override
+    public ReadTripDTO getTripById(Long id) {
+        Trip trip = tripRepository.findById(id).orElseThrow(() -> new RuntimeException("Trip not found"));
+        return ReadTripDTO.fromEntity(trip);
+    }
+
+    @Override
+    public List<ReadTripDTO> getTripsByUserId(Long userId) {
+        List<Trip> trips = tripRepository.findByUserId(userId);
+        return trips.stream().map(ReadTripDTO::fromEntity).collect(Collectors.toList());
     }
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 일정 상세 조회</title>
+<!--    <link rel="stylesheet" href="/css/viewtripdetails.css">-->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .trip-detail {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .trip-detail h2, .trip-detail h3 {
+            margin: 0 0 10px 0;
+        }
+        .trip-detail p {
+            margin: 5px 0;
+        }
+        .trip-detail div {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<h1>여행 일정 상세 조회</h1>
+<div class="trip-detail">
+    <h2 th:text="${trip.tripName}">여행 이름</h2>
+    <p>시작 날짜: <span th:text="${trip.startDate}">시작 날짜</span></p>
+    <p>종료 날짜: <span th:text="${trip.endDate}">종료 날짜</span></p>
+    <p>도시 이름: <span th:text="${trip.city.name}">도시 이름</span></p>
+    <h3>여행 일정</h3>
+    <div th:each="date : ${trip.tripDates}">
+        <h4 th:text="${date.tripDate}">여행 날짜</h4>
+        <ul>
+            <li th:each="location : ${date.tripLocations}">
+                <span th:text="${location.placeName}">장소 이름</span> (위도: <span th:text="${location.latitude}">위도</span>, 경도: <span th:text="${location.longitude}">경도</span>)
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>
