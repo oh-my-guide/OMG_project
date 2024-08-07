@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
     List<Team> findByTrip(Trip trip);
-    void deleteByTripId(Long tripId);
+    void deleteByTrip(Trip trip);
 }

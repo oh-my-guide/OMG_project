@@ -94,16 +94,17 @@ public class TripServiceImpl implements TripService {
         return String.format("INVITE-%05d", num);
     }
     @Override
-    @Transactional // 트랜잭션을 관리합니다.
+    @Transactional
     public void deleteTrip(Long id) {
-        // 1. 관련된 Team 데이터 삭제
-        teamRepository.deleteByTripId(id);
+        Trip trip = tripRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Trip not found"));
+
+        // 1. 관련된 팀 삭제 (팀과 채팅방도 삭제됨)
+        teamRepository.deleteByTrip(trip);
 
         // 2. Trip 데이터 삭제
         tripRepository.deleteById(id);
     }
-
-
 
 
 
