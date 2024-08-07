@@ -11,4 +11,5 @@ public interface TripService {
     Trip createTrip(CreateTripDTO createTripDTO, User leader);
     ReadTripDTO getTripById(Long id);
     List<ReadTripDTO> getTripsByUserId(Long userId);
+    void deleteTrip(Long tripId);
 }

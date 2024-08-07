@@ -11,6 +11,7 @@ import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TripServiceImpl implements TripService {
@@ -91,6 +93,19 @@ public class TripServiceImpl implements TripService {
         int num = random.nextInt(100000);
         return String.format("INVITE-%05d", num);
     }
+    @Override
+    @Transactional // 트랜잭션을 관리합니다.
+    public void deleteTrip(Long id) {
+        // 1. 관련된 Team 데이터 삭제
+        teamRepository.deleteByTripId(id);
+
+        // 2. Trip 데이터 삭제
+        tripRepository.deleteById(id);
+    }
+
+
+
+
 
     @Override
     public ReadTripDTO getTripById(Long id) {

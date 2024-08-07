@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,5 +44,15 @@ public class TripController {
         List<ReadTripDTO> trips = tripService.getTripsByUserId(userId);
         model.addAttribute("trips", trips);
         return "trip/usertrip";
+    }
+
+    @DeleteMapping("/trips/{id}")
+    public ResponseEntity<Void> deleteTrip(@PathVariable Long id) {
+        try {
+            tripService.deleteTrip(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
