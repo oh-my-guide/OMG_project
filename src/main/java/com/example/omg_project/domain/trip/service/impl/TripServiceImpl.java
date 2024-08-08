@@ -164,6 +164,7 @@ public class TripServiceImpl implements TripService {
 
     //여행 일정 수정 (날짜 고정)
     @Override
+    @Transactional
     public UpdateTripDTO updateTrip(Long id, UpdateTripDTO updateTripDTO) {
         Optional<Trip> tripOptional = tripRepository.findById(id);
         if (tripOptional.isPresent()) {

@@ -4,162 +4,50 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>여행 일정 수정</title>
-  <link rel="stylesheet" href="/css/updatetrip.css">
+  <link rel="stylesheet" href="/css/createtrip.css">
   <style>
     body {
-      display: flex;
       font-family: Arial, sans-serif;
-      background-color: #f0f0f0;
-      margin: 0;
-      padding: 0;
+      margin: 20px;
     }
-
-    form {
-      width: 35%;
-      padding: 20px;
-      background-color: #fff;
-      border-right: 1px solid #ddd;
-    }
-
     h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-top: 10px;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
-
-    input[type="text"]::placeholder {
-      color: #aaa;
-    }
-
-    .region-container {
-      position: relative;
-      margin-bottom: 10px;
-    }
-
-    .cityListContainer {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      z-index: 10;
-      width: 100%;
-    }
-
-    .region-list, .city-list {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .region-list li, .city-list li {
-      cursor: pointer;
-      padding: 10px;
-      border: 1px solid #ddd;
-      margin-bottom: 5px;
-      border-radius: 5px;
-    }
-
-    .region-list li {
-      background-color: #e0e0e0;
       color: #333;
     }
-
-    .city-list li {
-      background-color: #fff;
-      color: #007bff;
-    }
-
-    .region-list li:hover, .city-list li:hover {
-      background-color: #ddd;
-    }
-
-    .selected {
-      font-weight: bold;
-      color: blue;
-    }
-
-    .tripDate {
-      margin-bottom: 20px;
-      padding: 10px;
+    form {
       border: 1px solid #ccc;
+      padding: 20px;
       border-radius: 5px;
-      background-color: #fff;
     }
-
-    .locations {
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input[type="text"], input[type="date"], button {
+      width: 100%;
+      padding: 8px;
       margin-bottom: 10px;
     }
-
-    button[type="submit"] {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
+    input[type="date"]:disabled {
+      background-color: #e9e9e9;
     }
-
-    button[type="submit"]:hover {
-      background-color: #0056b3;
-    }
-
-    #map {
-      width: 65%;
-      height: 100vh;
-    }
-
-    .dayHeader {
-      cursor: pointer;
+    .trip-date, .trip-location {
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
       padding: 10px;
       border-radius: 5px;
+    }
+    .trip-date-title {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 18px;
-      background-color: #fff;
-    }
-
-    .dayContent {
-      display: none;
-      padding: 10px;
-      border-top: 1px solid #ccc;
-    }
-
-    .dayContent.show {
-      display: block;
     }
   </style>
 </head>
 <body>
+<h1>여행 일정 수정</h1>
 <form id="tripForm">
-  <h1>여행 일정 수정</h1>
   <label for="tripName">여행 이름:</label>
-  <input type="text" id="tripName" name="tripName" placeholder="여행 이름을 입력하세요">
+  <input type="text" id="tripName" name="tripName">
 
   <label for="startDate">시작 날짜:</label>
   <input type="date" id="startDate" name="startDate" disabled>
@@ -175,8 +63,6 @@
   <button type="submit">저장</button>
 </form>
 
-<div id="map"></div>
-
 <script>
   let tripDatesCounter = 0;
 
@@ -189,7 +75,7 @@
       tripDates: []
     };
 
-    document.querySelectorAll('.tripDate').forEach(dateElement => {
+    document.querySelectorAll('.trip-date').forEach(dateElement => {
       const tripDate = {
         id: dateElement.dataset.id || null,
         tripDate: dateElement.querySelector('.tripDateInput').value,
@@ -228,19 +114,20 @@
   function addTripDate(tripDateData = {}) {
     const tripDateId = tripDatesCounter++;
     const tripDateElement = document.createElement('div');
-    tripDateElement.className = 'tripDate';
+    tripDateElement.className = 'trip-date';
     tripDateElement.dataset.id = tripDateData.id || '';
 
     tripDateElement.innerHTML = `
-          <div class="dayHeader">
-              <input type="date" class="tripDateInput" value="${tripDateData.tripDate || ''}" disabled>
-              <button type="button" onclick="removeElement(this.parentNode.parentNode)">삭제</button>
-          </div>
-          <div class="locations">
-              ${tripDateData.tripLocations ? tripDateData.tripLocations.map(loc => createTripLocationHtml(loc)).join('') : ''}
-          </div>
-          <button type="button" onclick="addTripLocation(this.parentNode)">장소 추가</button>
-      `;
+            <div class="trip-date-title">
+                <input type="date" class="tripDateInput" value="${tripDateData.tripDate || ''}" disabled>
+                <span class="dayLabel"> ${tripDateId + 1}일째</span>
+                <button type="button" onclick="removeElement(this.parentNode.parentNode)">삭제</button>
+            </div>
+            <div class="trip-locations">
+                ${tripDateData.tripLocations ? tripDateData.tripLocations.map(loc => createTripLocationHtml(loc)).join('') : ''}
+            </div>
+            <button type="button" onclick="addTripLocation(this.parentNode)">장소 추가</button>
+        `;
 
     document.getElementById('tripDatesContainer').appendChild(tripDateElement);
   }
@@ -251,32 +138,32 @@
     tripLocationElement.dataset.id = tripLocationData.id || '';
 
     tripLocationElement.innerHTML = `
-          <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
-          <input type="text" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
-          <input type="text" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
-          <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
-      `;
+            <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
+            <input type="text" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
+            <input type="text" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
+            <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+        `;
 
-    tripDateElement.querySelector('.locations').appendChild(tripLocationElement);
+    tripDateElement.querySelector('.trip-locations').appendChild(tripLocationElement);
   }
 
   function removeElement(element) {
     element.parentNode.removeChild(element);
+    updateDayCount();
   }
 
   function createTripLocationHtml(tripLocationData) {
     return `
-          <div class="trip-location" data-id="${tripLocationData.id || ''}">
-              <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
-              <input type="text" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
-              <input type="text" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
-              <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
-          </div>
-      `;
+            <div class="trip-location" data-id="${tripLocationData.id || ''}">
+                <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
+                <input type="text" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
+                <input type="text" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
+                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+            </div>
+        `;
   }
 
   function fetchTripData() {
-    const tripId = window.location.pathname.split('/').pop();
     fetch(`/api/trips/${tripId}`)
             .then(response => response.json())
             .then(trip => {
@@ -288,10 +175,23 @@
             });
   }
 
-  // 페이지 로드 시 여행 데이터를 가져옵니다.
-  window.onload = fetchTripData;
+  function updateDayCount() {
+    const tripDateInputs = document.querySelectorAll('.tripDateInput');
+    tripDateInputs.forEach((input, index) => {
+      const dayLabel = input.parentNode.querySelector('.dayLabel');
+      if (dayLabel) {
+        dayLabel.remove();
+      }
+      const newDayLabel = document.createElement('span');
+      newDayLabel.className = 'dayLabel';
+      newDayLabel.textContent = ` ${index + 1}일째`;
+      input.parentNode.insertBefore(newDayLabel, input.nextSibling);
+    });
+  }
+
+  // 페이지 로드 시 여행 데이터를 가져옴
+  const tripId = window.location.pathname.split('/').pop();
+  fetchTripData();
 </script>
 </body>
 </html>
-
-
