@@ -89,7 +89,7 @@ public class SecurityConfig {
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
-       // config.setAllowedMethods(List.of("GET", "POST", "DELETE"));
+        config.setAllowedMethods(List.of("GET", "POST", "DELETE"));
         config.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
         config.setAllowCredentials(true);
         source.registerCorsConfiguration("/**", config);
