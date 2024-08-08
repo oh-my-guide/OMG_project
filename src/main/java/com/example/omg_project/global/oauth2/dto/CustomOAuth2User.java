@@ -45,14 +45,10 @@ public class CustomOAuth2User implements OAuth2User {
     /**
      * 각 소셜 로그인마다 OAuth2 제공자의 ID 형식이 다르기 때문에 각 ID에 맞는 처리
      * @return getProviderId
-     * Google : 매우 큰 숫자,
-     * Naver : 문자열,
-     * Kakao : 작은 숫자
+     * Google : 매우 큰 숫자 BigInt
+     * Naver : 문자열 String
+     * Kakao : 작은 숫자 Long
      */
-//    public String getUserId() {
-//        return oAuth2Response.getProviderId();
-//    }
-
     public Long getUserIdAsLong() {
         String providerId = oAuth2Response.getProviderId();
 

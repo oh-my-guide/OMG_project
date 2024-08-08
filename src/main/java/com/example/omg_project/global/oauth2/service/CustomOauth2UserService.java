@@ -7,9 +7,6 @@ import com.example.omg_project.domain.user.repository.UserRepository;
 import com.example.omg_project.global.oauth2.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -20,7 +17,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -82,7 +78,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                     .providerId(oAuth2Response.getProviderId())
                     .provider(oAuth2Response.getProvider())
                     .password("")
-                    // 마이페이지에서 사용자가 직접 설정할 필드들
+                    // 마이페이지에서 직접 설정할 필드들
                     .phoneNumber("")
                     .birthdate(LocalDate.from(LocalDateTime.now()))
                     .gender("")

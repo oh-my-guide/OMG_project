@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import static com.example.omg_project.global.jwt.util.JwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT;
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -70,7 +68,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             refreshTokenService.addRefreshToken(refreshTokenEntity);
 
-            response.sendRedirect("/oauthPage");
+            response.sendRedirect("/oauthPage"); // 로그인 성공 후 보여질 페이지 --> 나중에 수정해야해욤
 
         } catch (Exception e) {
             log.error("Oauth2 로그인에 실패했습니다.", e);
