@@ -18,8 +18,8 @@ public class JoinPostCommentApiController {
      * 일행 모집 댓글 등록
      */
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<JoinPostCommentDto.Response> createComment(@PathVariable Long postId, @RequestParam Long userId, @RequestBody JoinPostCommentDto.Request commentRequest) {
-        JoinPostCommentDto.Response comment = joinPostCommentService.createComment(postId, userId, commentRequest);
+    public ResponseEntity<JoinPostCommentDto.Response> createComment(@PathVariable Long postId, @RequestBody JoinPostCommentDto.Request commentRequest) {
+        JoinPostCommentDto.Response comment = joinPostCommentService.createComment(postId, commentRequest.getUserId(), commentRequest);
         return ResponseEntity.ok(comment);
     }
 

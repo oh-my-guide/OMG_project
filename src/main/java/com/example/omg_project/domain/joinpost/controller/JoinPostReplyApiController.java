@@ -18,8 +18,8 @@ public class JoinPostReplyApiController {
      * 일행 모집 대댓글 등록
      */
     @PostMapping("/{commentId}/replies")
-    public ResponseEntity<JoinPostReplyDto.Response> createReply(@PathVariable Long commentId, @RequestParam Long userId, @RequestBody JoinPostReplyDto.Request replyRequest) {
-        JoinPostReplyDto.Response reply = joinPostReplyService.createReply(commentId, userId, replyRequest);
+    public ResponseEntity<JoinPostReplyDto.Response> createReply(@PathVariable Long commentId, @RequestBody JoinPostReplyDto.Request replyRequest) {
+        JoinPostReplyDto.Response reply = joinPostReplyService.createReply(commentId, replyRequest.getUserId(), replyRequest);
         return ResponseEntity.ok(reply);
     }
 
