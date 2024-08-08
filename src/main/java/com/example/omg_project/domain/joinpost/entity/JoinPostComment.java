@@ -1,9 +1,11 @@
 package com.example.omg_project.domain.joinpost.entity;
 
-import com.example.omg_project.domain.reviewpost.entity.ReviewPostReply;
 import com.example.omg_project.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +31,9 @@ public class JoinPostComment {
 
     @Column(nullable = false, length = 500)
     private String content;
+
+    @Column(nullable = false)
+    private boolean secret = false;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

@@ -31,6 +31,9 @@ public class JoinPostReply {
     @Column(nullable = false, length = 500)
     private String content;
 
+    @Column(nullable = false)
+    private boolean secret = false;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
