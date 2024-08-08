@@ -3,14 +3,14 @@ package com.example.omg_project.domain.joinpost.dto;
 import com.example.omg_project.domain.joinpost.entity.JoinPost;
 import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.user.entity.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-// Request, Response DTO 클래스를 하나로 묶어 Inner Static Class로 한 번에 관리
 public class JoinPostDto {
     // Request DTO
     @Getter
@@ -41,6 +41,9 @@ public class JoinPostDto {
         private String title;
         private String content;
         private LocalDateTime createdAt;
+        private Long userId;
+        private String username;
+        private String usernick;
 
         // 엔티티 -> DTO
         public static Response fromEntity(JoinPost joinPost) {
@@ -49,7 +52,16 @@ public class JoinPostDto {
                     .title(joinPost.getTitle())
                     .content(joinPost.getContent())
                     .createdAt(joinPost.getCreatedAt())
+                    .userId(joinPost.getUser().getId())
+                    .usernick(joinPost.getUser().getUsernick())
+                    .username(joinPost.getUser().getUsername())
                     .build();
+        }
+
+        // 날짜를 원하는 형식으로 변환
+        public String getFormattedCreatedAt() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+            return createdAt.format(formatter);
         }
     }
 }
