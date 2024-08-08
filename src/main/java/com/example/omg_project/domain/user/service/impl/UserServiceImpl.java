@@ -2,11 +2,13 @@ package com.example.omg_project.domain.user.service.impl;
 
 import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.role.repository.RoleRepository;
+import com.example.omg_project.domain.user.dto.UserEditDto;
 import com.example.omg_project.domain.user.dto.UserSignUpDto;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import com.example.omg_project.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -88,4 +91,26 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsernick(usernick);
     }
 
+    /**
+     * 사용자 페이지 수정
+     */
+    @Override
+    public Optional<User> updateUser(String username, UserEditDto userEditDto) {
+
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            log.error("사용자 없습니다. :: {}", username);
+            return Optional.empty();
+        }
+
+        User user = userOptional.get();
+
+        user.setUsernick(userEditDto.getUsernick());
+        user.setBirthdate(userEditDto.getBirthdate());
+        user.setGender(userEditDto.getGender());
+        user.setPhoneNumber(userEditDto.getPhoneNumber());
+
+        User updatedUser = userRepository.save(user);
+        return Optional.of(updatedUser);
+    }
 }
