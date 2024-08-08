@@ -47,11 +47,15 @@ public class User {
     @Column(nullable = false)
     private String gender; // 성별
 
-    private String filename; // 파일 이름
+    private String filename; // 이미지 파일 이름
 
-    private String filepath; // 파일 경로
+    private String filepath; // 이미지 파일 경로
 
-    @ManyToMany
+    private String provider; // oauth2 플랫폼
+
+    private String providerId; // 플랫폼 아이디
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),

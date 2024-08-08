@@ -24,38 +24,52 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
+    // email smtp
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-    //editor사용시 태그를 다루기 위해 사용
+    // oauth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // DB
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation group: 'org.springframework.data', name: 'spring-data-jpa', version: '3.3.1'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // editor
     implementation 'org.jsoup:jsoup:1.14.3'
 
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    // lombok
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation group: 'org.springframework.data', name: 'spring-data-jpa', version: '3.3.1'
 
-    //타임리프에서 스프링시큐리티를 쓸수있게.
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
 
-    // jwt & json
-    // jwts
+    // jwt
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-    //gson - json 메시지를 다루기 위한 라이브러리
+    // gson - json 메시지를 다루기 위한 라이브러리
     implementation 'com.google.code.gson:gson'
 
+    // Kafka for messaging
+    implementation 'org.springframework.kafka:spring-kafka'
+
+    // WebSocket for real-time communication
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    //validation사용
+    // validation
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 }
 
