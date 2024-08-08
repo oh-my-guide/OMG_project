@@ -9,7 +9,7 @@
 <h1>로그인 페이지</h1>
 <hr/>
 <form id="loginForm" action="/api/users/login" method="post">
-    <input type="email" id="username" name="username" placeholder="이메일" required />
+    <input type="text" id="username" name="username" placeholder="이메일" required />
     <input type="password" id="password" name="password" placeholder="비밀번호" required />
     <button type="button" onclick="loginUser()">로그인</button>
 </form>
@@ -36,7 +36,7 @@
 
                 document.cookie = "accessToken=" + accessToken + "; path=/; HttpOnly; SameSite=Strict;";
                 document.cookie = "refreshToken=" + refreshToken + "; path=/; HttpOnly; SameSite=Strict;";
-                window.location.href = '/mypage';
+                window.location.href = '/my';
             })
             .catch(error => {
                 console.error('로그인 에러:', error);
