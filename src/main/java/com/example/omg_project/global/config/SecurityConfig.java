@@ -45,7 +45,7 @@ public class SecurityConfig {
             "/api/users/login", // 로그인 페이지
             "/api/users/signup", // 회원가입 페이지
             "/api/users/mail","/api/users/verify-code", "/api/users/check-email","/api/users/check-usernick", // 인증 메일 페이지
-            "/oauth2/**", "/login/oauth2/**"
+            "/oauth2/**", "/login/oauth2/**" // OAuth2 로그인 허용
     };
 
     @Bean
