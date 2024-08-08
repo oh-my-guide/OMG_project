@@ -48,6 +48,11 @@ public class JwtTokenizer {
         return createToken(id, username, name, roles, REFRESH_TOKEN_EXPIRE_COUNT, refreshSecret);
     }
 
+    public Long getUserIdFromToken(String token) {
+        Claims claims = parseToken(token, accessSecret);
+        return Long.valueOf((Integer) claims.get("userId"));
+    }
+
     /**
      * Jwts 빌더를 사용하여 token 생성
      */

@@ -16,6 +16,7 @@ public class RefreshToken {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "value", length = 512)
     private String value; // 리프레시 토큰 값
 
     @Column(name = "user_id")
