@@ -251,6 +251,6 @@ public class JWTFilter extends OncePerRequestFilter {
         request.setAttribute("exception", exceptionCode.getCode());
         log.error(logMessage, e);
 //        throw new BadCredentialsException(logMessage, e);
-        log.info("로그인을 부탁드립니다.");
+        log.error("로그인을 부탁드립니다.");
     }
 }
