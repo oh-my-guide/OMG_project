@@ -48,11 +48,6 @@ public class JwtTokenizer {
         return createToken(id, username, name, roles, REFRESH_TOKEN_EXPIRE_COUNT, refreshSecret);
     }
 
-    public Long getUserIdFromToken(String token) {
-        Claims claims = parseToken(token, accessSecret);
-        return Long.valueOf((Integer) claims.get("userId"));
-    }
-
     /**
      * Jwts 빌더를 사용하여 token 생성
      */
@@ -73,6 +68,38 @@ public class JwtTokenizer {
                 .compact();
     }
 
+    //----------------------------------------------------------------------------------추가-------------------------------//
+    /**
+     * JWT 토큰에서 사용자 ID 추출
+     * @param token JWT 토큰
+     * @return 사용자 ID
+     */
+    public Long getUserIdFromToken(String token) {
+        Claims claims = parseToken(token, accessSecret);
+        return claims.get("userId", Long.class);
+    }
+
+    /**
+     * JWT 토큰에서 사용자 이름 추출
+     * @param token JWT 토큰
+     * @return 사용자 이름
+     */
+    public String getUsernameFromToken(String token) {
+        Claims claims = parseToken(token, accessSecret);
+        return claims.getSubject();
+    }
+
+    /**
+     * JWT 토큰에서 역할 정보 추출
+     * @param token JWT 토큰
+     * @return 역할 목록
+     */
+    public List<String> getRolesFromToken(String token) {
+        Claims claims = parseToken(token, accessSecret);
+        return claims.get("roles", List.class);
+    }
+
+//---------------------------------------------------------------------------------------------------------------------//
     /**
      * access token 파싱
      * @param accessToken access token
