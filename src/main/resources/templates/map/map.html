@@ -174,20 +174,32 @@
         // selectedPlaces 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 같은지 확인
         // .some()은 배열의 각 요소에 대한 테스트. true 또는 false 반환
         const isAlreadySelected = selectedPlaces.some(p => p.id === place.id);
-        if (!isAlreadySelected) {
-            // 같은 id를 가진 장소가 없다면 배열에 추가 (장소 중복 방지)
-            selectedPlaces.push(place);
 
-            // 배열 인덱스로 마커에 번호 부여
-            const index = selectedPlaces.length;
-            console.log('배열 길이: ', selectedPlaces.length);
-            addSelectedMarker(placePosition, index);
-
-            console.log('선택된 항목 배열: ', selectedPlaces);
-            console.log('마커 배열: ', markers);
-        } else {
+        // 이미 선택된 장소인지 확인
+        if (isAlreadySelected) {
             console.log('이미 선택된 장소입니다: ', place);
+            alert('이미 선택된 장소입니다.');
+            return;
         }
+
+        // 최대 15개까지만 선택되도록 제한
+        if (selectedPlaces.length >= 15) {
+            console.log('최대 15개의 장소만 추가할 수 있습니다.', selectedPlaces);
+            alert('최대 15개의 장소만 추가할 수 있습니다.');
+            return;
+        }
+
+        // 같은 id를 가진 장소가 없고, 15개 초과가 아니라면 선택 장소 목록 배열에 추가
+        selectedPlaces.push(place);
+
+        // 배열 인덱스로 마커에 번호 부여
+        const index = selectedPlaces.length;
+        console.log('배열 길이: ', selectedPlaces.length);
+        addSelectedMarker(placePosition, index);
+
+        console.log('선택된 항목 배열: ', selectedPlaces);
+        console.log('마커 배열: ', markers);
+
         // sendPlaceData(place);
     }
 
