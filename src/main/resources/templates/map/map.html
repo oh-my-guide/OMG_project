@@ -169,6 +169,8 @@
     function handleSelectBtnClick(event, place, placePosition) {
         event.stopPropagation();    // 이벤트 버블링 방지
 
+        console.log(' ----- handleSelectBtnClick ----- ');
+
         // selectedPlaces 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 같은지 확인
         // .some()은 배열의 각 요소에 대한 테스트. true 또는 false 반환
         const isAlreadySelected = selectedPlaces.some(p => p.id === place.id);
@@ -182,6 +184,7 @@
             addSelectedMarker(placePosition, index);
 
             console.log('선택된 항목 배열: ', selectedPlaces);
+            console.log('마커 배열: ', markers);
         } else {
             console.log('이미 선택된 장소입니다: ', place);
         }
@@ -191,9 +194,34 @@
     /**
      * 제거 버튼 클릭 이벤트 핸들러
      */
-    function handleRemoveBtnClick(event, place, placePosition, index) {
+    function handleRemoveBtnClick(event, place, placePosition) {
         event.stopPropagation();
-        removeSelectedMarker(placePosition);
+
+        console.log(' ----- handleRemoveBtnClick ----- ');
+        console.log('제거 전 배열 길이: ', selectedPlaces.length);
+        // 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 다른 요소만 filter해서 selectedPlaces에 남김 (넘어온 place를 배열에서 삭제)
+        selectedPlaces = selectedPlaces.filter(p => p.id !== place.id);
+
+        // findIndex는 배열에 각 요소에 대해 조건을 만족하는 첫 번째 요소의 인덱스 반환
+        // markers 배열에서 해당 장소 위치에 해당하는 marker 요소 제거
+        const tolerance = 0.00000001; // 허용 오차 범위 설정
+
+        const markerIndex = markers.findIndex(marker => {
+            const markerPos = marker.getPosition();
+            console.log('marker.getPosition(): ', markerPos);
+            return Math.abs(markerPos.La - placePosition.La) < tolerance &&
+                Math.abs(markerPos.Ma - placePosition.Ma) < tolerance;
+        });
+        console.log('제거 버튼 클릭 -- placePosition: ', placePosition);
+        console.log('제거 버튼 클릭 -- markerIndex: ', markerIndex);
+        if (markerIndex !== -1) {   // 해당 장소 위치의 마커가 존재한다면
+            markers[markerIndex].setMap(null);  // 지도에서 마커 제거
+            markers.splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
+        }
+
+        console.log('제거 후 배열 길이: ', selectedPlaces.length);
+        console.log('선택된 항목 배열: ', selectedPlaces);
+        console.log('마커 배열: ', markers);
     }
 
     /**
@@ -265,6 +293,7 @@
                 handleSelectBtnClick(event, places[i], placePosition);
                 // console.log(places);
                 console.log('선택한 항목 정보: ', places[i]);
+                console.log('선택 버튼 클릭 -- placePosition: ', placePosition);
                 // console.log('선택한 항목 위치 정보: ');
                 // console.log(placePosition);
             });
@@ -359,10 +388,6 @@
             markers[i].setMap(null);
         }
         markers = [];
-    }
-
-    function removeSelectedMarker() {
-
     }
 
     // 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
