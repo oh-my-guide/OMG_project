@@ -4,6 +4,7 @@ import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.entity.TripDate;
 import com.example.omg_project.domain.trip.entity.TripLocation;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class CreateTripDTO {
     private String tripName;
     private LocalDate startDate;
@@ -33,6 +35,7 @@ public class CreateTripDTO {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     public static class TripDateDTO {
         private LocalDate tripDate;
         private List<TripLocationDTO> tripLocations;
@@ -48,6 +51,7 @@ public class CreateTripDTO {
 
     @Getter
     @Setter
+    @NoArgsConstructor
     public static class TripLocationDTO {
         private String placeName;
         private BigDecimal latitude;

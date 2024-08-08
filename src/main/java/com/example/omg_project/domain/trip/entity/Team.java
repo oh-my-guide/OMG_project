@@ -32,9 +32,9 @@ public class Team {
     private String inviteCode;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
-    private User leaderId;
+    @JoinColumn(name = "leader_id", nullable = false)
+    private User leader;
 
-    @ManyToMany(mappedBy = "teams", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "teams", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<User> users = new HashSet<>();
 }

@@ -90,7 +90,7 @@ public class TripServiceImpl implements TripService {
 
         Team team = new Team();
         team.setTrip(savedTrip);
-        team.setLeaderId(leader);
+        team.setLeader(leader);
         team.setInviteCode(generateInviteCode());
         team.setChatRoom(savedChatRoom);
 
@@ -113,6 +113,8 @@ public class TripServiceImpl implements TripService {
         return String.format("INVITE-%05d", num);
     }
 
+    @Override
+    @Transactional
     public void deleteTrip(Long tripId) {
         log.info("Deleting trip with ID: {}", tripId);
 
@@ -120,10 +122,13 @@ public class TripServiceImpl implements TripService {
         List<Team> teams = teamRepository.findByTripId(tripId);
         log.info("Found {} teams associated with trip ID: {}", teams.size(), tripId);
         for (Team team : teams) {
+            // ManyToMany 관계 정리
+            for (User user : team.getUsers()) {
+                user.getTeams().remove(team);
+            }
+            team.getUsers().clear(); // ManyToMany 관계 정리
             Long chatRoomId = team.getChatRoom().getId();
             log.info("Deleting chat room with ID: {}", chatRoomId);
-            chatRoomRepository.deleteById(chatRoomId);
-            log.info("Deleting team with ID: {}", team.getId());
             teamRepository.delete(team);
         }
 
