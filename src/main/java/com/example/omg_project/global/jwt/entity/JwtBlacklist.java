@@ -19,6 +19,7 @@ public class JwtBlacklist {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "token", length = 512)
     private String token; // 엑세스 토큰 값
 
     @Column(name = "expiration_time")
