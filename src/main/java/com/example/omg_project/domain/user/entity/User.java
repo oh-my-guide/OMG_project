@@ -71,6 +71,6 @@ public class User {
     )
     private Set<Team> teams = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private List<Wishlist> wishlists;
 }
