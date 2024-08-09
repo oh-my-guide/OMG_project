@@ -63,7 +63,7 @@
     });
 
     // WebSocket 연결 설정
-    var socket = new WebSocket("ws://localhost:8082/chat/" + roomId);
+    var socket = new WebSocket("ws://localhost:8080/chat/" + roomId);
 
     socket.onopen = function() {
       console.log("Connected to WebSocket server");

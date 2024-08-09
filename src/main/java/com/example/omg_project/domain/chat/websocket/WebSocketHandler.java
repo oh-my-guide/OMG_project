@@ -3,6 +3,7 @@ package com.example.omg_project.domain.chat.websocket;
 import com.example.omg_project.domain.chat.kafka.ChatMessageProducer;
 import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.domain.user.entity.User;
+import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +25,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     private final ChatMessageProducer chatMessageProducer;
     private final UserService userService;
+    private final JwtTokenizer jwtTokenizer;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -47,14 +49,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
 
-        SecurityContext securityContext = (SecurityContext) session.getAttributes().get("SPRING_SECURITY_CONTEXT");
+        // JWT 토큰에서 사용자 정보를 추출
+        String token = (String) session.getAttributes().get("jwtToken");
         String username = "Unknown user";
         String nickname = "Unknown user";
 
-        if (securityContext != null && securityContext.getAuthentication() != null &&
-                securityContext.getAuthentication().getPrincipal() instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) securityContext.getAuthentication().getPrincipal();
-            username = userDetails.getUsername();
+        if (token != null && !jwtTokenizer.isAccessTokenExpired(token)) {
+            username = jwtTokenizer.getUsernameFromToken(token);
             Optional<User> userOptional = userService.findByUsername(username);
             User user = userOptional.orElseThrow();
             nickname = user.getUsernick();
