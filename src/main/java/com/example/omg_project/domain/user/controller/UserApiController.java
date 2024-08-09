@@ -4,6 +4,7 @@ import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.user.dto.UserLoginDto;
 import com.example.omg_project.domain.user.dto.UserLoginResponseDto;
 import com.example.omg_project.domain.user.dto.UserSignUpDto;
+import com.example.omg_project.domain.user.entity.RandomNickname;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
 import com.example.omg_project.global.jwt.entity.JwtBlacklist;
@@ -174,5 +175,13 @@ public class UserApiController {
             log.error("회원가입 실패 :: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패 :: " + e.getMessage());
         }
+    }
+
+    /**
+     * 랜덤 닉네임 생성
+     */
+    @GetMapping("/randomNickname")
+    public String getRandomNickname() {
+        return RandomNickname.generateRandomNickname();
     }
 }

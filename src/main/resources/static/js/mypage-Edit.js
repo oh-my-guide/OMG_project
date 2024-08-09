@@ -11,6 +11,27 @@ $(document).ready(function() {
         return isValid;
     }
 
+    // 랜덤 닉네임 생성
+    $("#generate-nickname-button").click(function() {
+        $.ajax({
+            url: '/api/users/randomNickname',
+            type: 'GET',
+            success: function(data) {
+                $("#usernick").val(data);
+                $("#usernickCheckMessage")
+                    .text("랜덤 닉네임이 생성되었습니다. 중복 확인을 해주세요.")
+                    .removeClass('error').addClass('success');
+                validateForm();
+            },
+            error: function(xhr, status, error) {
+                console.error("랜덤 닉네임 생성 중 오류 발생:", error);
+                $("#usernickCheckMessage")
+                    .text("랜덤 닉네임 생성에 실패했습니다.")
+                    .removeClass('success').addClass('error');
+            }
+        });
+    });
+
     // 닉네임 중복 확인
     $('#check-usernick-button').on('click', function() {
         let usernick = $('#usernick').val();
