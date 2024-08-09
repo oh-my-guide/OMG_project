@@ -540,7 +540,7 @@
     function deleteComment(commentId) {
         if (confirm("댓글을 삭제하시겠습니까?")) {
             $.ajax({
-                url: `/api/joinPosts/comments/${commentId}`,
+                url: `/api/joinPosts/${postId}/comments/${commentId}`,
                 type: 'DELETE',
                 success: function () {
                     alert("댓글이 삭제되었습니다.");
