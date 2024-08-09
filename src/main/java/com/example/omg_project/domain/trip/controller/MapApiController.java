@@ -19,27 +19,10 @@ public class MapApiController {
     private final TripLocationService tripLocationService;
 
     /**
-     * 선택된 개별 항목마다 저장
-     */
-//    @PostMapping("/api/save-location")
-//    public ResponseEntity<String> saveLocation(@RequestBody TripLocationDto tripLocationDto) {
-//        if (tripLocationDto.getName() == null || tripLocationDto.getName().isEmpty()) {
-//            return ResponseEntity.badRequest().body("장소명이 존재하지 않습니다.");
-//        }
-//        if (tripLocationDto.getLatitude() == null) {
-//            return ResponseEntity.badRequest().body("위도가 존재하지 않습니다.");
-//        }
-//
-//        if (tripLocationDto.getLongitude() == null) {
-//            return ResponseEntity.badRequest().body("경도가 존재하지 않습니다.");
-//        }
-//
-//        tripLocationService.saveLocation(tripLocationDto);
-//        return ResponseEntity.ok("장소가 추가되었습니다.");
-//    }
-
-    /**
-     * 선택된 항목들의 리스트를 받아서 개별 저장
+     * 선택된 장소들의 리스트를 받아서 개별 저장하는 함수입니다
+     *
+     * @param tripLocationDtoList - 저장할 장소 정보의 리스트
+     * @return ResponseEntity<String> - 저장 시 상태 코드와 메시지 응답 반환
      */
     @PostMapping("/api/save-location")
     public ResponseEntity<String> saveLocation(@RequestBody List<TripLocationDto> tripLocationDtoList) {

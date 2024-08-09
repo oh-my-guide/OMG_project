@@ -8,7 +8,6 @@ import java.util.List;
 @Service
 public interface TripLocationService {
 
-    void saveLocation(TripLocationDto tripLocationDto);
     void saveLocations(List<TripLocationDto> tripLocationDtoList);
 
 }
