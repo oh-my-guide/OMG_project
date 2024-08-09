@@ -239,8 +239,6 @@ public class TripServiceImpl implements TripService {
     @Transactional
     public Trip copyTripToUser(Long tripId, String jwtToken) {
         log.info("copyTripToUser 시작 - tripId: {}, jwtToken: {}", tripId, jwtToken);
-
-        try {
             // 기존 일정 조회
             Trip originalTrip = tripRepository.findById(tripId)
                     .orElseThrow(() -> {
@@ -301,28 +299,27 @@ public class TripServiceImpl implements TripService {
                 }
             }
 
-            // 채팅룸 생성
             ChatRoom chatRoom = new ChatRoom();
             ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
-            log.info("Created and saved ChatRoom: {}", savedChatRoom);
 
-            // 팀 생성 및 설정
             Team team = new Team();
             team.setTrip(savedTrip);
-            team.setLeader(leader);  // 리더로 현재 사용자 설정
+            team.setLeader(leader);
             team.setInviteCode(generateInviteCode());
             team.setChatRoom(savedChatRoom);
 
-            // 팀을 저장
-            teamRepository.save(team);
-            log.info("Created and saved Team: {}", team);
+            // 팀과 리더를 사용자 목록에 추가
+            team.getUsers().add(leader);
+
+            Team savedTeam = teamRepository.save(team);
+
+            // 사용자의 팀 목록에 새 팀 추가
+            leader.getTeams().add(savedTeam);
+            userRepository.save(leader); // 변경된 사용자 정보 저장
 
             return savedTrip;
-        } catch (Exception e) {
-            log.error("Error during copyTripToUser: ", e);
-            throw e;  // 예외를 다시 던져서 상위 레이어에서 처리할 수 있도록 합니다.
         }
     }
-}
+
 
 
