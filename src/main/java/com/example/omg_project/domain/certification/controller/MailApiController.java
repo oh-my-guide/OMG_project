@@ -19,36 +19,48 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequiredArgsConstructor
 @EnableAsync
-public class MailController {
+public class MailApiController {
 
     private final MailService mailService;
     private final UserServiceImpl userServiceimpl;
 
-    @PostMapping("/api/mail")
+    /**
+     * 인증번호 발송 메소드
+     */
+    @PostMapping("/api/users/mail")
     public CompletableFuture<String> mailSend(@RequestBody MailRequest mailRequest) {
         return mailService.sendMail(mailRequest.getMail())
                 .thenApply(number -> String.valueOf(number));
     }
 
-    @PostMapping("/api/verify-code")
+    /**
+     * 인증번호 검증 메소드
+     */
+    @PostMapping("/api/users/verify-code")
     public String verifyCode(@RequestBody VerificationRequest verificationRequest) {
         boolean isVerified = mailService.verifyCode(verificationRequest.getMail(), verificationRequest.getCode());
         return isVerified ? "Verified" : "Verification failed";
     }
 
-    @PostMapping("/api/check-email")
+    /**
+     * 이메일 중복 체크 메서드
+     */
+    @PostMapping("/api/users/check-email")
     public ResponseEntity<String> checkEmail(@RequestBody Map<String, String> request) {
         String email = request.get("mail");
         Optional<User> existingUser = userServiceimpl.findByUsername(email);
 
         if (existingUser.isPresent()) {
-            return ResponseEntity.ok("아이디가 이미 존재합니다."); // 이메일이 이미 존재함
+            return ResponseEntity.ok("아이디가 이미 존재합니다.");
         } else {
-            return ResponseEntity.ok("사용 가능한 아이디입니다."); // 이메일 사용 가능
+            return ResponseEntity.ok("사용 가능한 아이디입니다.");
         }
     }
 
-    @PostMapping("/api/check-usernick")
+    /**
+     * 닉네임 중복 체크 메서드
+     */
+    @PostMapping("/api/users/check-usernick")
     public ResponseEntity<Boolean> checkUsername(@RequestBody Map<String, String> request) {
         return ResponseEntity.ok(userServiceimpl.existsByUsernick(request.get("usernick")));
     }
