@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>후기 게시글 보기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .post-meta {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .post-author {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .post-date {
+            color: #aaa;
+        }
+
+        .post-content {
+            font-size: 1em;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .like-section {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .like-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #888;
+            margin-right: 10px;
+        }
+
+        .like-button.liked .fa-heart {
+            color: #e74c3c;
+        }
+
+        .like-button:hover .fa-heart {
+            color: #c0392b;
+        }
+
+        .button-container {
+            margin-top: 10px;
+        }
+
+        .button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .edit-button {
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+        }
+
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .comment-section {
+            margin-top: 20px;
+        }
+
+        .comment, .reply {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .reply {
+            margin-left: 20px;
+            border-left: 2px solid #ddd;
+            padding-left: 10px;
+            background-color: #f1f1f1;
+        }
+
+        .comment-form, .reply-form {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .comment-form input[type="text"], .reply-form input[type="text"] {
+            width: calc(100% - 110px); /* 버튼 너비 고려 */
+            padding: 8px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .comment-form label, .reply-form label {
+            margin-bottom: 10px; /* 체크박스와 텍스트에어리어 간의 간격 */
+        }
+
+        .comment-form-row, .reply-form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* 텍스트에어리어와 체크박스 간의 간격 */
+        }
+
+        .comment-buttons, .reply-buttons {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px; /* 작성자/작성일과 버튼 간의 간격을 넓힘 */
+        }
+
+        .comment-form button, .reply-form button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px; /* 버튼과 텍스트에어리어 사이의 간격 */
+            border-radius: 5px;
+            align-self: flex-start; /* 버튼을 텍스트에어리어의 오른쪽에 배치 */
+        }
+
+        .comment-form button:hover, .reply-form button:hover {
+            background-color: #45a049;
+        }
+
+        .comment-meta {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 3px; /* 간격 줄이기 */
+        }
+
+        .comment-author {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .comment-date {
+            color: #aaa;
+        }
+
+        .edit-form {
+            display: none;
+        }
+
+        .comment-content, .reply-content {
+            margin: 3px 0; /* 텍스트 위아래 간격을 줄임 */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="post-title" th:text="${post.title}"></h1>
+    <div class="post-meta">
+        <span class="post-author" th:text="${post.usernick}"></span>
+        <span class="post-date" th:text="${post.formattedCreatedAt}"></span>
+    </div>
+    <div class="post-content" th:text="${post.content}"></div>
+
+    <!-- 좋아요 버튼 추가 -->
+    <div class="like-section">
+        <button id="likeButton" class="like-button">
+            <i class="fa-heart fas"></i> <!-- Font Awesome 하트 아이콘 -->
+        </button>
+        <span id="likeCount">0</span>
+    </div>
+
+    <!-- 게시글 삭제 및 수정 버튼 -->
+    <div class="button-container" th:if="${#authentication.name} == ${post.username}">
+        <a th:href="@{/reviewPost/{postId}/updatePost(postId=${post.id})}" class="button edit-button">수정</a>
+        <button class="button delete-button" onclick="deletePost()">삭제</button>
+    </div>
+
+    <!-- userId를 숨겨진 입력 필드에 포함 -->
+    <input type="hidden" id="userId" th:value="${user.getId()}"/>
+    <input type="hidden" id="postUserId" th:value="${post.userId}"/>
+
+    <!-- 댓글 작성 폼 -->
+    <div class="comment-section">
+        <h2>댓글</h2>
+        <form id="commentForm" class="comment-form">
+            <div class="comment-form-row">
+                <input type="text" id="commentContent" placeholder="댓글을 작성하세요" required/>
+                <button type="submit">등록</button>
+            </div>
+            <label>
+                <input type="checkbox" id="commentSecret" name="secret"> 비밀글
+            </label>
+        </form>
+
+        <div id="commentsContainer">
+            <!-- 댓글과 대댓글이 여기에 표시 -->
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const postId = [[${post.id}]];
+    const userId = $('#userId').val();
+    const postUserId = $('#postUserId').val();
+
+    // 게시글 삭제 함수
+    function deletePost() {
+        if (confirm("게시글을 삭제하시겠습니까?")) {
+            $.ajax({
+                url: `/api/reviewPosts/${postId}`,
+                type: 'DELETE',
+                success: function () {
+                    alert("게시글이 삭제되었습니다.");
+                    window.location.href = '/reviewPost/';
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+
+    // 좋아요 상태 및 수를 로드하는 함수
+    function loadLikeInfo() {
+        $.get(`/api/reviewPosts/${postId}/likes`, function (data) {
+            const likeButton = $('#likeButton');
+            const likeCount = $('#likeCount');
+            const heartIcon = likeButton.find('.fa-heart');
+
+            if (data.liked) {
+                likeButton.addClass('liked');
+                heartIcon.removeClass('far').addClass('fas liked');
+            } else {
+                likeButton.removeClass('liked');
+                heartIcon.removeClass('fas liked').addClass('far');
+            }
+
+            likeCount.text(data.likeCount);
+        }).fail(function (error) {
+            console.error('Error:', error);
+        });
+    }
+
+    // 좋아요 상태를 토글하는 함수
+    function toggleLike() {
+        $.post(`/api/reviewPosts/${postId}/likes`, function () {
+            loadLikeInfo(); // 좋아요 상태를 새로 로드
+        }).fail(function (error) {
+            console.error('Error:', error);
+        });
+    }
+
+    // 댓글을 서버에 전송하는 함수
+    function postComment(content, secret) {
+        $.ajax({
+            url: `/api/reviewPosts/${postId}/comments`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({content: content, userId: userId, secret: secret}),
+            success: function (comment) {
+                addCommentToPage(comment);
+                $('#commentContent').val('');
+                $('#commentSecret').prop('checked', false); // 댓글 작성 후 비밀글 체크박스 해제
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    // 댓글을 페이지에 추가하는 함수
+    function addCommentToPage(comment) {
+        const commentContainer = $('#commentsContainer');
+        const commentElement = $('<div class="comment"></div>').attr('id', `comment-${comment.id}`);
+
+        const isSecret = (comment.secret && (comment.userId !== parseInt(userId) && parseInt(userId) !== parseInt(postUserId)));
+        let contentHTML;
+
+        if (isSecret) {
+            contentHTML = `<p class="comment-content">비밀 댓글입니다.</p>`;
+        } else {
+            contentHTML = `
+            <p class="comment-content">${comment.content}</p>
+            <div class="comment-meta">
+                <span class="comment-author">${comment.usernick}</span>
+                <span class="comment-date">${comment.formattedCreatedAt}</span>
+            </div>
+            <div class="comment-buttons">
+                <button class="edit-btn" onclick="toggleReplyForm(${comment.id})">답글 달기</button>`;
+            if (comment.userId === parseInt(userId)) {
+                contentHTML += `
+                <button class="edit-btn" onclick="editComment(${comment.id})">수정</button>
+                <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>
+                <form id="editCommentForm-${comment.id}" class="reply-form edit-form" style="display: none;">
+                    <textarea placeholder="댓글을 수정하세요">${comment.content}</textarea>
+                    <label>
+                        <input type="checkbox" class="editCommentSecret" ${comment.secret ? 'checked' : ''}> 비밀글
+                    </label>
+                    <button type="button" onclick="submitEditComment(${comment.id})">등록</button>
+                    <button type="button" onclick="cancelEditComment(${comment.id})">취소</button>
+                </form>`;
+            }
+            contentHTML += `
+            </div>
+            <div class="reply-section" id="replySection-${comment.id}"></div>
+            <form class="reply-form" id="replyForm-${comment.id}" style="display:none;">
+                <div class="reply-form-row">
+                    <input type="text" placeholder="답글을 작성하세요" />
+                    <button type="button" onclick="submitReply(${comment.id})">등록</button>
+                </div>
+                <label>
+                    <input type="checkbox" class="replySecret" name="secret"> 비밀글
+                </label>
+            </form>`;
+        }
+
+        commentElement.html(contentHTML);
+        commentContainer.append(commentElement);
+
+        loadReplies(comment.id);
+    }
+
+    // 대댓글을 서버에서 가져와서 페이지에 추가하는 함수
+    function loadReplies(commentId) {
+        $.get(`/api/reviewPosts/comments/${commentId}/replies`, function (replies) {
+            replies.forEach(function (reply) {
+                addReplyToPage(reply, commentId);
+            });
+        }).fail(function (error) {
+            console.error('Error:', error);
+        });
+    }
+
+    // 대댓글을 페이지에 추가하는 함수
+    function addReplyToPage(reply, commentId) {
+        const replySection = $(`#replySection-${commentId}`);
+        const replyElement = $('<div class="reply"></div>').attr('id', `reply-${reply.id}`);
+
+        const isSecret = (reply.secret && (reply.userId !== parseInt(userId) && parseInt(userId) !== parseInt(postUserId)));
+
+        let contentHTML;
+
+        if (isSecret) {
+            contentHTML = `<p class="reply-content">비밀 댓글입니다.</p>`;
+        } else {
+            contentHTML = `
+            <p class="reply-content">${reply.content}</p>
+            <div class="comment-meta">
+                <span class="comment-author">${reply.usernick}</span>
+                <span class="comment-date">${reply.formattedCreatedAt}</span>
+            </div>
+            <div class="reply-buttons">
+                <button class="edit-btn" onclick="editReply(${reply.id}, ${commentId})">수정</button>
+                <button class="edit-btn" onclick="deleteReply(${reply.id}, ${commentId})">삭제</button>
+                <form id="editReplyForm-${reply.id}" class="reply-form edit-form" style="display: none;">
+                    <textarea placeholder="답글을 수정하세요">${reply.content}</textarea>
+                    <label>
+                        <input type="checkbox" class="editReplySecret" ${reply.secret ? 'checked' : ''}> 비밀글
+                    </label>
+                    <button type="button" onclick="submitEditReply(${reply.id}, ${commentId})">등록</button>
+                    <button type="button" onclick="cancelEditReply(${reply.id})">취소</button>
+                </form>
+            </div>`;
+        }
+
+        replyElement.html(contentHTML);
+        replySection.append(replyElement);
+    }
+
+    // 댓글 작성 폼을 토글하는 함수
+    function toggleReplyForm(commentId) {
+        const replyForm = $(`#replyForm-${commentId}`);
+        if (replyForm.is(':visible')) {
+            replyForm.hide();
+        } else {
+            replyForm.show();
+        }
+    }
+
+    // 댓글을 서버에 전송하는 함수
+    function submitReply(commentId) {
+        const replyForm = $(`#replyForm-${commentId}`);
+        const input = replyForm.find('input[type="text"]');
+        const content = input.val();
+        const secret = replyForm.find('.replySecret').is(':checked');
+
+        $.ajax({
+            url: `/api/reviewPosts/comments/${commentId}/replies`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({content: content, userId: userId, secret: secret}),
+            success: function (reply) {
+                addReplyToPage(reply, commentId);
+                input.val('');
+                replyForm.find('.replySecret').prop('checked', false); // 답글 작성 후 비밀 답글 체크박스 해제
+                toggleReplyForm(commentId); // 대댓글 폼을 숨김
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    // 댓글 수정 폼을 토글하는 함수
+    function editComment(commentId) {
+        const editForm = $(`#editCommentForm-${commentId}`);
+        if (editForm.is(':visible')) {
+            editForm.hide();
+            $(`#comment-${commentId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+        } else {
+            editForm.show();
+            $(`#comment-${commentId} .edit-btn`).hide(); // 수정/삭제 버튼 숨기기
+        }
+    }
+
+    // 댓글 수정 사항을 서버에 전송하는 함수
+    function submitEditComment(commentId) {
+        const editForm = $(`#editCommentForm-${commentId}`);
+        const textarea = editForm.find('textarea');
+        const content = textarea.val();
+        const secret = editForm.find('.editCommentSecret').is(':checked');
+
+        $.ajax({
+            url: `/api/reviewPosts/${postId}/comments/${commentId}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({content: content, userId: userId, secret: secret}),
+            success: function (comment) {
+                updateCommentInPage(commentId, comment);
+                editForm.hide(); // 수정 폼 숨김
+                $(`#comment-${commentId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    // 댓글 내용을 업데이트하는 함수
+    function updateCommentInPage(commentId, comment) {
+        const commentElement = $(`#comment-${commentId}`);
+        const isSecret = (comment.secret && (comment.userId !== parseInt(userId) && parseInt(userId) !== parseInt(postUserId)));
+        let contentHTML;
+
+        if (isSecret) {
+            contentHTML = `<p class="comment-content">비밀 댓글입니다.</p>`;
+        } else {
+            contentHTML = `
+                <p class="comment-content">${comment.content}</p>
+                <div class="comment-meta">
+                    <span class="comment-author">${comment.usernick}</span>
+                    <span class="comment-date">${comment.formattedCreatedAt}</span>
+                </div>
+                <div class="comment-buttons">
+                    <button class="edit-btn" onclick="toggleReplyForm(${comment.id})">답글 달기</button>`;
+            if (comment.userId === parseInt(userId)) {
+                contentHTML += `
+                    <button class="edit-btn" onclick="editComment(${comment.id})">수정</button>
+                    <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>
+                    <form id="editCommentForm-${comment.id}" class="reply-form edit-form" style="display: none;">
+                        <textarea placeholder="댓글을 수정하세요">${comment.content}</textarea>
+                        <label>
+                            <input type="checkbox" class="editCommentSecret" ${comment.secret ? 'checked' : ''}> 비밀글
+                        </label>
+                        <button type="button" onclick="submitEditComment(${comment.id})">등록</button>
+                        <button type="button" onclick="cancelEditComment(${comment.id})">취소</button>
+                    </form>`;
+            }
+            contentHTML += `
+                </div>
+                <div class="reply-section" id="replySection-${comment.id}"></div>
+                <form class="reply-form" id="replyForm-${comment.id}" style="display:none;">
+                    <div class="reply-form-row">
+                        <input type="text" placeholder="답글을 작성하세요" />
+                        <button type="button" onclick="submitReply(${comment.id})">등록</button>
+                    </div>
+                    <label>
+                        <input type="checkbox" class="replySecret" name="secret"> 비밀글
+                    </label>
+                </form>`;
+        }
+
+        commentElement.html(contentHTML);
+        // 기존 대댓글을 다시 로드하여 추가
+        loadReplies(commentId);
+    }
+
+    // 댓글 수정 취소 함수
+    function cancelEditComment(commentId) {
+        const editForm = $(`#editCommentForm-${commentId}`);
+        editForm.hide();
+        $(`#comment-${commentId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+    }
+
+    // 댓글을 서버에서 삭제하는 함수
+    function deleteComment(commentId) {
+        if (confirm("댓글을 삭제하시겠습니까?")) {
+            $.ajax({
+                url: `/api/reviewPosts/${postId}/comments/${commentId}`,
+                type: 'DELETE',
+                success: function () {
+                    alert("댓글이 삭제되었습니다.");
+                    $(`#comment-${commentId}`).remove(); // 댓글 요소 제거
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+
+    // 대댓글 수정 폼을 토글하는 함수
+    function editReply(replyId) {
+        const editForm = $(`#editReplyForm-${replyId}`);
+        if (editForm.is(':visible')) {
+            editForm.hide();
+            $(`#reply-${replyId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+        } else {
+            editForm.show();
+            $(`#reply-${replyId} .edit-btn`).hide(); // 수정/삭제 버튼 숨기기
+        }
+    }
+
+    // 대댓글 수정 사항을 서버에 전송하는 함수
+    function submitEditReply(replyId, commentId) {
+        const editForm = $(`#editReplyForm-${replyId}`);
+        const textarea = editForm.find('textarea');
+        const content = textarea.val();
+        const secret = editForm.find('.editReplySecret').is(':checked');
+
+        $.ajax({
+            url: `/api/reviewPosts/comments/${commentId}/replies/${replyId}`,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify({content: content, userId: userId, secret: secret}),
+            success: function (reply) {
+                updateReplyInPage(replyId, reply, commentId);
+                editForm.hide(); // 수정 폼 숨김
+                $(`#reply-${replyId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    // 대댓글 내용을 업데이트하는 함수
+    function updateReplyInPage(replyId, reply, commentId) {
+        const replyElement = $(`#reply-${replyId}`);
+        const isSecret = (reply.secret && (reply.userId !== parseInt(userId) && parseInt(userId) !== parseInt(postUserId)));
+        let contentHTML;
+
+        if (isSecret) {
+            contentHTML = `<p class="reply-content">비밀 댓글입니다.</p>`;
+        } else {
+            contentHTML = `
+                <p class="reply-content">${reply.content}</p>
+                <div class="comment-meta">
+                    <span class="comment-author">${reply.usernick}</span>
+                    <span class="comment-date">${reply.formattedCreatedAt}</span>
+                </div>
+                <div class="reply-buttons">
+                    <button class="edit-btn" onclick="editReply(${reply.id}, ${commentId})">수정</button>
+                    <button class="edit-btn" onclick="deleteReply(${reply.id}, ${commentId})">삭제</button>
+                    <form id="editReplyForm-${reply.id}" class="reply-form edit-form" style="display: none;">
+                        <textarea placeholder="답글을 수정하세요">${reply.content}</textarea>
+                        <label>
+                            <input type="checkbox" class="editReplySecret" ${reply.secret ? 'checked' : ''}> 비밀글
+                        </label>
+                        <button type="button" onclick="submitEditReply(${reply.id}, ${commentId})">등록</button>
+                        <button type="button" onclick="cancelEditReply(${reply.id})">취소</button>
+                    </form>
+                </div>`;
+        }
+
+        replyElement.html(contentHTML);
+    }
+
+    // 대댓글 수정 취소 함수
+    function cancelEditReply(replyId) {
+        const editForm = $(`#editReplyForm-${replyId}`);
+        editForm.hide();
+        $(`#reply-${replyId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+    }
+
+    // 대댓글을 서버에서 삭제하는 함수
+    function deleteReply(replyId, commentId) {
+        if (confirm("댓글을 삭제하시겠습니까?")) {
+            $.ajax({
+                url: `/api/reviewPosts/comments/${commentId}/replies/${replyId}`,
+                type: 'DELETE',
+                success: function () {
+                    alert("댓글이 삭제되었습니다.");
+                    $(`#reply-${replyId}`).remove(); // 대댓글 요소 제거
+                },
+                error: function (error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    }
+
+    // 페이지 로드 시 댓글을 로드하는 함수
+    function loadComments() {
+        $.get(`/api/reviewPosts/${postId}/comments`, function (comments) {
+            comments.forEach(function (comment) {
+                addCommentToPage(comment);
+            });
+        }).fail(function (error) {
+            console.error('Error:', error);
+        });
+    }
+
+    // 페이지가 로드될 때 초기화 작업
+    $(document).ready(function () {
+        loadLikeInfo(); // 좋아요 정보 로드
+        loadComments(); // 댓글 정보 로드
+
+        // 좋아요 버튼 클릭 이벤트 추가
+        $('#likeButton').click(toggleLike);
+
+        // 댓글 작성 폼 전송 이벤트 추가
+        $('#commentForm').submit(function (event) {
+            event.preventDefault();
+            const content = $('#commentContent').val();
+            const secret = $('#commentSecret').is(':checked');
+            postComment(content, secret);
+        });
+    });
+</script>
+
+</body>
+</html>

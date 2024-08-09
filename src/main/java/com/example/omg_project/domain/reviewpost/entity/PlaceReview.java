@@ -2,15 +2,14 @@ package com.example.omg_project.domain.reviewpost.entity;
 
 import com.example.omg_project.domain.trip.entity.TripLocation;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "place_review")
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class PlaceReview {
 
     @Id
