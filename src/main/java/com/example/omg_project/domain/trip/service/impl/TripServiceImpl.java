@@ -233,6 +233,96 @@ public class TripServiceImpl implements TripService {
             return null;
         }
     }
+
+    //여행 일정 복사
+    @Override
+    @Transactional
+    public Trip copyTripToUser(Long tripId, String jwtToken) {
+        log.info("copyTripToUser 시작 - tripId: {}, jwtToken: {}", tripId, jwtToken);
+
+        try {
+            // 기존 일정 조회
+            Trip originalTrip = tripRepository.findById(tripId)
+                    .orElseThrow(() -> {
+                        log.error("Trip not found with id: {}", tripId);
+                        return new RuntimeException("Trip not found");
+                    });
+            log.info("Found original trip: {}", originalTrip);
+
+            // 여행 이름에 " -copy" 추가
+            String newTripName = originalTrip.getTripName() + " -copy";
+
+            // JWT 토큰에서 사용자 정보 추출
+            Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
+            Long leaderId = claims.get("userId", Long.class);
+            log.info("Parsed JWT Token - userId: {}", leaderId);
+
+            // 사용자 정보 조회
+            User leader = userRepository.findById(leaderId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            log.info("Found user: {}", leader);
+
+            // 도시에 대한 정보 가져오기
+            City city = cityRepository.findById(originalTrip.getCity().getId())
+                    .orElseThrow(() -> new RuntimeException("City not found"));
+            log.info("Found city: {}", city);
+
+            // 여행 일정 생성
+            Trip trip = new Trip();
+            trip.setTripName(newTripName);
+            trip.setStartDate(originalTrip.getStartDate());
+            trip.setEndDate(originalTrip.getEndDate());
+            trip.setCity(city);
+            log.info("Initialized new Trip entity: {}", trip);
+
+            Trip savedTrip = tripRepository.save(trip);
+            log.info("Saved Trip entity: {}", savedTrip);
+
+            // 날짜 정보 저장
+            for (TripDate originalTripDate : originalTrip.getTripDates()) {
+                TripDate tripDate = new TripDate();
+                tripDate.setTripDate(originalTripDate.getTripDate());
+                tripDate.setTrip(savedTrip);
+                tripDate.setDay(originalTripDate.getDay());
+
+                TripDate savedTripDate = tripDateRepository.save(tripDate);
+                log.info("Saved TripDate entity: {}", savedTripDate);
+
+                // 위치 정보 저장
+                for (TripLocation originalTripLocation : originalTripDate.getTripLocations()) {
+                    TripLocation tripLocation = new TripLocation();
+                    tripLocation.setPlaceName(originalTripLocation.getPlaceName());
+                    tripLocation.setLatitude(originalTripLocation.getLatitude());
+                    tripLocation.setLongitude(originalTripLocation.getLongitude());
+                    tripLocation.setTripDate(savedTripDate);
+
+                    tripLocationRepository.save(tripLocation);
+                    log.info("Saved TripLocation entity: {}", tripLocation);
+                }
+            }
+
+            // 채팅룸 생성
+            ChatRoom chatRoom = new ChatRoom();
+            ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+            log.info("Created and saved ChatRoom: {}", savedChatRoom);
+
+            // 팀 생성 및 설정
+            Team team = new Team();
+            team.setTrip(savedTrip);
+            team.setLeader(leader);  // 리더로 현재 사용자 설정
+            team.setInviteCode(generateInviteCode());
+            team.setChatRoom(savedChatRoom);
+
+            // 팀을 저장
+            teamRepository.save(team);
+            log.info("Created and saved Team: {}", team);
+
+            return savedTrip;
+        } catch (Exception e) {
+            log.error("Error during copyTripToUser: ", e);
+            throw e;  // 예외를 다시 던져서 상위 레이어에서 처리할 수 있도록 합니다.
+        }
+    }
 }
 
 

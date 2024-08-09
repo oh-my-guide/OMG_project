@@ -9,6 +9,9 @@
 <body>
 
 <div class="trip-detail">
+<!--    여행 후기 게시판으로 옮겨야 함!-->
+    <input type="hidden" id="tripId" th:value="${trip.id}">
+
     <h1>여행 일정 상세 조회</h1>
     <h2 th:text="${trip.tripName}">여행 이름</h2>
     <p>시작 날짜: <span th:text="${trip.startDate}">시작 날짜</span></p>
@@ -24,6 +27,7 @@
         </ul>
     </div>
     <!-- 삭제 버튼 -->
+    <button id="copyTripButton">이 여행 일정 복사하기</button>
     <button id="editButton">수정</button>
     <button id="deleteButton">삭제</button>
 </div>
@@ -56,6 +60,27 @@
     });
     document.getElementById('editButton').addEventListener('click', function() {
         window.location.href = `/trip/update/${tripId}`; // 수정 페이지로 리다이렉트
+    });
+
+    document.getElementById('copyTripButton').addEventListener('click', function() {
+        fetch(`/api/trips/${tripId}/copy`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                } else {
+                    alert('여행 일정 복사 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error copying trip:', error);
+                alert('여행 일정 복사 중 오류가 발생했습니다.');
+            });
     });
 </script>
 </body>
