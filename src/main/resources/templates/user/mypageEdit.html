@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 정보 수정</title>
+    <link rel="stylesheet" href="/css/signup.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<form th:action="@{/my/profile}" th:object="${user}" method="post">
+
+    <div th:if="${msg}" class="alert">
+        <p th:text="${msg}"></p>
+    </div>
+
+    <h1>회원 정보 수정</h1>
+
+    <!-- 아이디 변경불가 -->
+    <div>
+        <label for="username">회원 아이디</label>
+        <input type="text" id="username" name="username" th:field="*{username}" readonly/>
+    </div>
+
+    <!-- 이름 변경불가 -->
+    <div>
+        <label for="name">이름</label>
+        <input type="text" id="name" name="name" th:field="*{name}" readonly/>
+    </div>
+
+    <div>
+        <label for="usernick">닉네임</label>
+        <input type="text" id="usernick" name="usernick" placeholder="ex) 크크크크" th:field="*{usernick}"/>
+        <button type="button" id="check-usernick-button">닉네임 중복 확인</button>
+        <button type="button" id="generate-nickname-button">자동 닉네임 생성하기</button>
+        <span id="usernickCheckMessage" class="error"></span>
+    </div>
+
+    <div>
+        <label for="birthdate">생년월일</label>
+        <input type="date" id="birthdate" name="birthdate" placeholder="생년월일" th:field="*{birthdate}"/>
+    </div>
+
+    <div>
+        <label for="gender">성별</label>
+        <select id="gender" name="gender" th:field="*{gender}">
+            <option value="남성" th:selected="${user.gender == '남성'}">남성</option>
+            <option value="여성" th:selected="${user.gender == '여성'}">여성</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="phoneNumber">연락처</label>
+        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="'-'을 제외하고 입력해주세요.'" th:field="*{phoneNumber}" />
+    </div>
+
+    <div>
+        <button type="submit" id="submit-button">정보 수정</button>
+    </div>
+
+    <div class="link-buttons">
+        <!-- OAuth2 로그인 유저일 경우 -->
+        <a th:if="${user.provider != null}" href="/oauthPage" class="link-button">마이페이지로 돌아가기</a>
+
+        <!-- 일반 로그인 유저일 경우 -->
+        <a th:if="${user.provider == null}" href="/my" class="link-button">마이페이지로 돌아가기</a>
+        <a href="/" class="link-button">홈으로 가기</a>
+    </div>
+</form>
+
+<script src="/js/mypage-Edit.js"></script>
+</body>
+</html>

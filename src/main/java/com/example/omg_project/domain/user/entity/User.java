@@ -51,6 +51,10 @@ public class User {
 
     private String filepath; // 이미지 파일 경로
 
+    private String provider; // oauth2 플랫폼
+
+    private String providerId; // 플랫폼 아이디
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",

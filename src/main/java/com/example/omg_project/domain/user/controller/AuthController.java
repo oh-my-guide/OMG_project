@@ -20,16 +20,20 @@ public class AuthController {
 
     private final UserServiceImpl userServiceimpl;
 
-    // 비로그인, 메인 홈 페이지
+    /**
+     * 메인 홈 페이지
+     */
     @GetMapping("/")
     public String home() {
         return "/user/home";
     }
 
-    // 회원가입
+    /**
+     * 회원가입
+     */
     @GetMapping("/signup")
-    public String signup(Model model) {
-        return "/main/signupform"; // 회원가입 폼 이동
+    public String signup() {
+        return "/main/signupform";
     }
 
     @PostMapping("/signup")
@@ -45,7 +49,9 @@ public class AuthController {
         }
     }
 
-    // 로그인
+    /**
+     * 로그인
+     */
     @GetMapping("/signin")
     public String showLoginForm() {
         return "/main/loginform";
