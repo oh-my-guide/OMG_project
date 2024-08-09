@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>여행 일정 생성</title>
-    <link rel="stylesheet" href="/css/createtrip.css">
+    <link rel="stylesheet" href="/css/trip.css">
 </head>
 <body>
 <form id="tripForm">
@@ -18,26 +18,25 @@
     <label for="endDate">종료 날짜</label>
     <input type="date" id="endDate" name="endDate" required onchange="updateTripDates()"><br>
 
-    <label>지역 선택</label>
-    <div class="region-container">
-        <ul class="region-list">
-            <li onclick="toggleCities('특별시/광역시', this)">특별시/광역시</li>
-            <li onclick="toggleCities('강원도', this)">강원도</li>
-            <li onclick="toggleCities('경기도', this)">경기도</li>
-            <li onclick="toggleCities('경상남도', this)">경상남도</li>
-            <li onclick="toggleCities('경상북도', this)">경상북도</li>
-            <li onclick="toggleCities('충청남도', this)">충청남도</li>
-            <li onclick="toggleCities('충청북도', this)">충청북도</li>
-            <li onclick="toggleCities('전라남도', this)">전라남도</li>
-            <li onclick="toggleCities('전라북도', this)">전라북도</li>
-            <li onclick="toggleCities('제주특별자치도', this)">제주도</li>
-        </ul>
-    </div>
+    <label for="regionSelect">지역 선택</label>
+    <select id="regionSelect" onchange="updateCities()">
+        <option value="">지역을 선택하세요</option>
+        <option value="특별시/광역시">특별시/광역시</option>
+        <option value="강원도">강원도</option>
+        <option value="경기도">경기도</option>
+        <option value="경상남도">경상남도</option>
+        <option value="경상북도">경상북도</option>
+        <option value="충청남도">충청남도</option>
+        <option value="충청북도">충청북도</option>
+        <option value="전라남도">전라남도</option>
+        <option value="전라북도">전라북도</option>
+        <option value="제주특별자치도">제주도</option>
+    </select><br>
 
-    <div id="cityListContainer" class="cityListContainer">
-        <ul id="cityList" class="city-list"></ul>
-    </div>
-
+    <label for="citySelect">도시 선택</label>
+    <select id="citySelect" name="cityId" required>
+        <option value="">도시를 선택하세요</option>
+    </select><br>
     <input type="hidden" id="cityId" name="cityId" required>
 
     <h2>여행 일정</h2>
@@ -199,40 +198,25 @@
         ]
     };
 
-    function toggleCities(region, regionElement) {
-        const cityListContainer = document.getElementById('cityListContainer');
-        const cityList = document.getElementById('cityList');
+    function updateCities() {
+        const regionSelect = document.getElementById('regionSelect');
+        const citySelect = document.getElementById('citySelect');
+        const selectedRegion = regionSelect.value;
 
-        if (cityListContainer.style.display === 'block') {
-            cityListContainer.style.display = 'none';
-            cityList.innerHTML = '';
-        } else {
-            cityListContainer.style.display = 'block';
-            cityList.innerHTML = '';
+        citySelect.innerHTML = '<option value="">도시를 선택하세요</option>';
 
-            const rect = regionElement.getBoundingClientRect();
-            cityListContainer.style.top = `${rect.bottom + window.scrollY}px`;
-            cityListContainer.style.left = `${rect.left + window.scrollX}px`;
-            cityListContainer.style.width = `${rect.width}px`;
-
-            regions[region].forEach(cityName => {
-                const listItem = document.createElement('li');
-                listItem.textContent = cityName;
-                listItem.setAttribute('onclick', `selectCity('${cityName}')`);
-                cityList.appendChild(listItem);
+        if (selectedRegion && regions[selectedRegion]) {
+            regions[selectedRegion].forEach(cityName => {
+                const option = document.createElement('option');
+                option.value = cityName;
+                option.textContent = cityName;
+                citySelect.appendChild(option);
             });
         }
     }
 
-    function selectCity(cityName) {
-        const cityListItems = document.querySelectorAll('.city-list li');
-        cityListItems.forEach(item => item.classList.remove('selected'));
-
-        const selectedCity = document.querySelector(`.city-list li[onclick="selectCity('${cityName}')"]`);
-        if (selectedCity) {
-            selectedCity.classList.add('selected');
-        }
-
+    document.getElementById('citySelect').addEventListener('change', function () {
+        const cityName = this.value;
         const encodedCityName = encodeURIComponent(cityName);
 
         fetch(`/api/cities/name/${encodedCityName}`)
@@ -247,7 +231,7 @@
                 }
             })
             .catch(error => console.error('Error fetching city by name:', error));
-    }
+    });
 
     document.getElementById('tripForm').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -301,6 +285,7 @@
             .then(data => {
                 alert(data.message);
                 console.log('Success:', data);
+                window.location.href = '/';
             })
             .catch(error => {
                 alert(error.message);
@@ -327,7 +312,7 @@
                         <div class="dayContent">
                             <label for="tripDate">날짜:</label>
                             <input type="date" name="tripDate" value="${date.toISOString().split('T')[0]}" required readonly><br>
-                            <h4>장소</h4>
+
                             <div class="locations">
                                 <label for="placeName">장소 이름:</label>
                                 <input type="text" name="placeName" required><br>
@@ -368,4 +353,5 @@
 </script>
 </body>
 </html>
+
 

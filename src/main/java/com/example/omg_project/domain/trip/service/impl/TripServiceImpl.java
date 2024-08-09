@@ -150,6 +150,7 @@ public class TripServiceImpl implements TripService {
 
     //각각의 여행 일정 조회
     @Override
+    @Transactional
     public ReadTripDTO getTripById(Long id) {
         Trip trip = tripRepository.findById(id).orElseThrow(() -> new RuntimeException("Trip not found"));
         return ReadTripDTO.fromEntity(trip);

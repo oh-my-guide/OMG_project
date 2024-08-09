@@ -1,28 +1,26 @@
 package com.example.omg_project.domain.trip.controller;
 
-import com.example.omg_project.domain.trip.dto.CreateTripDTO;
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
-import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.service.TripService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/trip")
 public class TripController {
 
     private final TripService tripService;
 
     // 여행 일정 생성 페이지
-    @GetMapping("/createtrip")
+    @GetMapping("/create")
     public String createTripPage() {
         return "trip/createtrip";
     }

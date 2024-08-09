@@ -4,33 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>여행 일정 상세 조회</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        .trip-detail {
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 5px;
-        }
-        .trip-detail h2, .trip-detail h3 {
-            margin: 0 0 10px 0;
-        }
-        .trip-detail p {
-            margin: 5px 0;
-        }
-        .trip-detail div {
-            margin-bottom: 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/trip.css">
 </head>
 <body>
-<h1>여행 일정 상세 조회</h1>
+
 <div class="trip-detail">
+    <h1>여행 일정 상세 조회</h1>
     <h2 th:text="${trip.tripName}">여행 이름</h2>
     <p>시작 날짜: <span th:text="${trip.startDate}">시작 날짜</span></p>
     <p>종료 날짜: <span th:text="${trip.endDate}">종료 날짜</span></p>
@@ -45,6 +24,7 @@
         </ul>
     </div>
     <!-- 삭제 버튼 -->
+    <button id="editButton">수정</button>
     <button id="deleteButton">삭제</button>
 </div>
 
@@ -63,7 +43,7 @@
                 .then(response => {
                     if (response.ok) {
                         alert('삭제되었습니다.');
-                        window.location.href = '/trips/user/1'; // 삭제 후 목록 페이지로 리다이렉트
+                        window.location.href = '/'; // 삭제 후 목록 페이지로 리다이렉트
                     } else {
                         alert('삭제 중 오류가 발생했습니다.');
                     }
@@ -73,6 +53,9 @@
                     alert('삭제 중 오류가 발생했습니다.');
                 });
         }
+    });
+    document.getElementById('editButton').addEventListener('click', function() {
+        window.location.href = `/trip/update/${tripId}`; // 수정 페이지로 리다이렉트
     });
 </script>
 </body>

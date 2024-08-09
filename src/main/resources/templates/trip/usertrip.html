@@ -4,38 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>사용자의 여행 일정 조회</title>
-<!--    <link rel="stylesheet" href="/css/usertrips.css">-->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        h1 {
-            color: #333;
-        }
-        .trip-list {
-            margin: 20px 0;
-        }
-        .trip-item {
-            border: 1px solid #ccc;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .trip-item h2 {
-            margin: 0 0 10px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/trip.css">
+
 </head>
 <body>
-<h1>사용자의 여행 일정 조회</h1>
 <div class="trip-list" th:if="${trips.size() > 0}">
     <div th:each="trip : ${trips}" class="trip-item">
         <h2 th:text="${trip.tripName}">여행 이름</h2>
         <p>시작 날짜: <span th:text="${trip.startDate}">시작 날짜</span></p>
         <p>종료 날짜: <span th:text="${trip.endDate}">종료 날짜</span></p>
         <p>도시: <span th:text="${trip.city.name}">도시 이름</span></p>
-        <a th:href="@{/trips/{id}(id=${trip.id})}">자세히 보기</a>
+        <a th:href="@{/trip/{id}(id=${trip.id})}">자세히 보기</a>
+
     </div>
 </div>
 <div th:if="${trips.size() == 0}">
