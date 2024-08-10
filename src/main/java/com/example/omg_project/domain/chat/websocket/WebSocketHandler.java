@@ -5,8 +5,6 @@ import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;

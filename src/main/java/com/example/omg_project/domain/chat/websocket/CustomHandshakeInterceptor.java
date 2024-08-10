@@ -10,7 +10,6 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class CustomHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
