@@ -32,8 +32,8 @@
     <!-- 삭제 버튼 -->
     <button id="copyTripButton">내 일정으로 가져오기</button>
     <div th:if="${currentUserId == leaderId}">
-        <button th:onclick="'location.href=\'/team/' + ${team.id} + '/edit\''">수정</button>
-        <button th:onclick="|deleteTeam(${team.id})|">삭제</button>
+        <button id="editButton">수정</button>
+        <button id="deleteButton">삭제</button>
     </div>
 </div>
 
