@@ -11,6 +11,9 @@
 <div class="trip-detail">
 <!--    여행 후기 게시판으로 옮겨야 함!-->
     <input type="hidden" id="tripId" th:value="${trip.id}">
+    <input type="hidden" id="currentUserId" th:value="${currentUserId}">
+    <input type="hidden" id="leaderId" th:value="${leaderId}">
+
 
     <h1>여행 일정 상세 조회</h1>
     <h2 th:text="${trip.tripName}">여행 이름</h2>
@@ -28,8 +31,10 @@
     </div>
     <!-- 삭제 버튼 -->
     <button id="copyTripButton">내 일정으로 가져오기</button>
-    <button id="editButton">수정</button>
-    <button id="deleteButton">삭제</button>
+    <div th:if="${currentUserId == leaderId}">
+        <button th:onclick="'location.href=\'/team/' + ${team.id} + '/edit\''">수정</button>
+        <button th:onclick="|deleteTeam(${team.id})|">삭제</button>
+    </div>
 </div>
 
 <script>

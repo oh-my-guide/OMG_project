@@ -119,7 +119,7 @@ public class TripServiceImpl implements TripService {
         log.info("Deleting trip with ID: {}", tripId);
 
         // 관련된 Team 삭제
-        List<Team> teams = teamRepository.findByTripId(tripId);
+        List<Team> teams = teamRepository.findAllByTripId(tripId);
         log.info("Found {} teams associated with trip ID: {}", teams.size(), tripId);
         for (Team team : teams) {
             // ManyToMany 관계 정리
