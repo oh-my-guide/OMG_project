@@ -51,9 +51,8 @@ public class JoinPost {
     // 엔티티가 영속화되기 전에 실행되는 메서드
     @PrePersist
     public void prePersist() {
-        LocalDateTime now = LocalDateTime.now();
-        createdAt = now;
-        updatedAt = now;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     // JPA의 영속성 컨텍스트 덕분에 entity 객체의 값만 변경하면 자동으로 변경사항 반영함 -> repository.update 를 쓰지 않아도 됨!
