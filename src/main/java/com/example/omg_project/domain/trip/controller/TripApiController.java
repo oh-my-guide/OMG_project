@@ -92,7 +92,7 @@ public class TripApiController {
             Trip copiedTrip = tripService.copyTripToUser(tripId, jwtToken);
 
             Map<String, String> successResponse = new HashMap<>();
-            successResponse.put("message", "여행 일정이 복사되었습니다.");
+            successResponse.put("message", "이 여행 일정을 나의 일정에 저장하였습니다.");
             successResponse.put("tripId", String.valueOf(copiedTrip.getId()));
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
