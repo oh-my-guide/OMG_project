@@ -1,6 +1,7 @@
 package com.example.omg_project.domain.reviewpost.dto;
 
 import com.example.omg_project.domain.reviewpost.entity.ReviewPost;
+import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,8 @@ public class ReviewPostDto {
     public static class Request {
         private String title;
         private String content;
+        private Long userId;
+        private Long tripId;
 
         // DTO -> 엔티티
         public ReviewPost toEntity(User user, Trip trip) {
@@ -44,6 +47,7 @@ public class ReviewPostDto {
         private Long userId;
         private String username;
         private String usernick;
+        private ReadTripDTO trip;
 
         // 엔티티 -> DTO
         public static Response fromEntity(ReviewPost reviewPost) {
@@ -55,6 +59,7 @@ public class ReviewPostDto {
                     .userId(reviewPost.getUser().getId())
                     .usernick(reviewPost.getUser().getUsernick())
                     .username(reviewPost.getUser().getUsername())
+                    .trip(ReadTripDTO.fromEntity(reviewPost.getTrip()))
                     .build();
         }
 

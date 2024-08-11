@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>후기 게시글 보기</title>
+    <title>여행 모집 게시글 보기</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,13 +19,44 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .trip-info {
+            margin-bottom: 30px; /* 여행 일정과 게시글 내용 사이의 간격 */
+            padding: 15px;
+            background-color: #fdfdfd; /* 배경색 추가로 여행 일정과 게시글 내용 시각적으로 구분 */
+            border-radius: 8px; /* 모서리를 둥글게 처리 */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 살짝의 그림자 효과 추가 */
+        }
+
+        /* 추가적인 세부 스타일링 */
+        .trip-info h3 {
+            margin-top: 0; /* 제목 상단 간격 제거 */
+            font-size: 1.2em;
+        }
+
+        .trip-info p {
+            margin-bottom: 10px; /* 각 정보 간의 간격 추가 */
+            font-size: 1em;
+            color: #333;
+        }
+
+        .trip-info ul {
+            padding-left: 20px; /* 목록의 왼쪽 들여쓰기 */
+        }
+
+        .trip-info li {
+            margin-bottom: 5px; /* 목록 항목 간 간격 */
+            font-size: 1em;
+            color: #555;
         }
 
         .post-title {
+            margin-bottom: 20px; /* 제목과 여행 일정 간의 간격 */
             font-size: 24px;
             font-weight: bold;
             color: #333;
-            margin-bottom: 10px;
         }
 
         .post-meta {
@@ -44,10 +75,11 @@
         }
 
         .post-content {
-            font-size: 1em;
-            line-height: 1.6;
-            color: #333;
-            margin-bottom: 20px;
+            margin-top: 20px; /* 여행 일정과의 간격 */
+            padding: 15px;
+            background-color: #f1f8ff; /* 게시글 내용을 위한 배경색 */
+            border-radius: 8px; /* 모서리를 둥글게 처리 */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 살짝의 그림자 효과 추가 */
         }
 
         .like-section {
@@ -202,7 +234,25 @@
         <span class="post-author" th:text="${post.usernick}"></span>
         <span class="post-date" th:text="${post.formattedCreatedAt}"></span>
     </div>
+    <!-- 여행 일정 정보 추가 -->
+    <div class="trip-info">
+        <h3>여행 일정</h3>
+        <p><strong>여행 이름:</strong> <span th:text="${post.trip.tripName}"></span></p>
+        <p><strong>여행 시작일:</strong> <span th:text="${post.trip.startDate}"></span></p>
+        <p><strong>여행 종료일:</strong> <span th:text="${post.trip.endDate}"></span></p>
+        <p><strong>도시 이름:</strong> <span th:text="${post.trip.city.name}"></span></p>
+        <p><strong>여행 일:</strong>
+        <div th:each="date : ${post.trip.tripDates}">
+            <h4 th:text="${date.tripDate}">여행 날짜</h4>
+            <ul>
+                <li th:each="location : ${date.tripLocations}">
+                    <span th:text="${location.placeName}">장소 이름</span> (위도: <span th:text="${location.latitude}">위도</span>, 경도: <span th:text="${location.longitude}">경도</span>)
+                </li>
+            </ul>
+        </div>
+    </div>
     <div class="post-content" th:text="${post.content}"></div>
+
 
     <!-- 좋아요 버튼 추가 -->
     <div class="like-section">

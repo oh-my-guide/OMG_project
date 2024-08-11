@@ -22,7 +22,10 @@ public class ReviewPostController {
     private final UserService userService;
 
     @GetMapping("/createPost")
-    public String createPost() {
+    public String createPost(Authentication authentication, Model model) {
+        // 로그인한 사용자의 userId 가져오기
+        Optional<User> byUsername = userService.findByUsername(authentication.getName());
+        byUsername.ifPresent(user -> model.addAttribute("userId", user.getId()));
         return "review/createpost";
     }
 

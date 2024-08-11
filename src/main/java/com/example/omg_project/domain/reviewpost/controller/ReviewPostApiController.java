@@ -18,8 +18,8 @@ public class ReviewPostApiController {
      * 후기 게시글 작성
      */
     @PostMapping
-    public ResponseEntity<ReviewPostDto.Response> createReviewPost(@RequestBody ReviewPostDto.Request reviewPostRequest, @RequestParam Long userId, @RequestParam Long tripId) {
-        ReviewPostDto.Response reviewPost = reviewPostService.createReviewPost(reviewPostRequest, userId, tripId);
+    public ResponseEntity<ReviewPostDto.Response> createReviewPost(@RequestBody ReviewPostDto.Request reviewPostRequest) {
+        ReviewPostDto.Response reviewPost = reviewPostService.createReviewPost(reviewPostRequest);
         return ResponseEntity.ok(reviewPost);
     }
 

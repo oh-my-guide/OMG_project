@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ReviewPostService {
     // 후기 게시글 작성
-    ReviewPostDto.Response createReviewPost(ReviewPostDto.Request reviewPostRequest, Long userId, Long trip_id);
+    ReviewPostDto.Response createReviewPost(ReviewPostDto.Request reviewPostRequest);
     // 후기 게시글 전체 조회
     List<ReviewPostDto.Response> findAllReviewPost();
     // 후기 게시글 상세 조회
