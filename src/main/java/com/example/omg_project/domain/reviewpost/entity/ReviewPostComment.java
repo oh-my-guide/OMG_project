@@ -33,10 +33,16 @@ public class ReviewPostComment {
     private boolean secret = false;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "reviewPostComment", cascade = CascadeType.ALL)
     private List<ReviewPostReply> reviewPostReplies;
+
+    // 엔티티가 영속화되기 전에 실행되는 메서드
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
 
     // JPA의 영속성 컨텍스트 덕분에 entity 객체의 값만 변경하면 자동으로 변경사항 반영함 -> repository.update 를 쓰지 않아도 됨!
     public void updateContent(String content) {
