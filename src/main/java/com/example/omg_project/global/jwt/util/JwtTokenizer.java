@@ -80,9 +80,9 @@ public class JwtTokenizer {
     }
 
     /**
-     * JWT 토큰에서 사용자 이름 추출
+     * JWT 토큰에서 사용자 아이디 추출
      * @param token JWT 토큰
-     * @return 사용자 이름
+     * @return 사용자 아이디(이메일)
      */
     public String getUsernameFromToken(String token) {
         Claims claims = parseToken(token, accessSecret);
