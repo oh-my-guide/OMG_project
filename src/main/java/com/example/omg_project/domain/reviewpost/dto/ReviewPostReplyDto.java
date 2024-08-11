@@ -22,7 +22,6 @@ public class ReviewPostReplyDto {
         private Long userId;
         private String content;
         private boolean secret;
-        private LocalDateTime createdAt;    // 엔티티에 now()가 되어있지만 null로 들어가는 이슈가 발생하여 추가함.
 
         // DTO -> Entity 변환 메서드
         public ReviewPostReply toEntity(User user, ReviewPostComment reviewPostComment) {
@@ -31,7 +30,6 @@ public class ReviewPostReplyDto {
                     .user(user)
                     .reviewPostComment(reviewPostComment)
                     .secret(this.secret)
-                    .createdAt(LocalDateTime.now())
                     .build();
         }
     }
