@@ -119,7 +119,7 @@ public class TripServiceImpl implements TripService {
         log.info("Deleting trip with ID: {}", tripId);
 
         // 관련된 Team 삭제
-        List<Team> teams = teamRepository.findByTripId(tripId);
+        List<Team> teams = teamRepository.findAllByTripId(tripId);
         log.info("Found {} teams associated with trip ID: {}", teams.size(), tripId);
         for (Team team : teams) {
             // ManyToMany 관계 정리
@@ -233,6 +233,93 @@ public class TripServiceImpl implements TripService {
             return null;
         }
     }
-}
+
+    //여행 일정 복사
+    @Override
+    @Transactional
+    public Trip copyTripToUser(Long tripId, String jwtToken) {
+        log.info("copyTripToUser 시작 - tripId: {}, jwtToken: {}", tripId, jwtToken);
+            // 기존 일정 조회
+            Trip originalTrip = tripRepository.findById(tripId)
+                    .orElseThrow(() -> {
+                        log.error("Trip not found with id: {}", tripId);
+                        return new RuntimeException("Trip not found");
+                    });
+            log.info("Found original trip: {}", originalTrip);
+
+            // 여행 이름에 " -copy" 추가
+            String newTripName = originalTrip.getTripName() + " -copy";
+
+            // JWT 토큰에서 사용자 정보 추출
+            Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
+            Long leaderId = claims.get("userId", Long.class);
+            log.info("Parsed JWT Token - userId: {}", leaderId);
+
+            // 사용자 정보 조회
+            User leader = userRepository.findById(leaderId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            log.info("Found user: {}", leader);
+
+            // 도시에 대한 정보 가져오기
+            City city = cityRepository.findById(originalTrip.getCity().getId())
+                    .orElseThrow(() -> new RuntimeException("City not found"));
+            log.info("Found city: {}", city);
+
+            // 여행 일정 생성
+            Trip trip = new Trip();
+            trip.setTripName(newTripName);
+            trip.setStartDate(originalTrip.getStartDate());
+            trip.setEndDate(originalTrip.getEndDate());
+            trip.setCity(city);
+            log.info("Initialized new Trip entity: {}", trip);
+
+            Trip savedTrip = tripRepository.save(trip);
+            log.info("Saved Trip entity: {}", savedTrip);
+
+            // 날짜 정보 저장
+            for (TripDate originalTripDate : originalTrip.getTripDates()) {
+                TripDate tripDate = new TripDate();
+                tripDate.setTripDate(originalTripDate.getTripDate());
+                tripDate.setTrip(savedTrip);
+                tripDate.setDay(originalTripDate.getDay());
+
+                TripDate savedTripDate = tripDateRepository.save(tripDate);
+                log.info("Saved TripDate entity: {}", savedTripDate);
+
+                // 위치 정보 저장
+                for (TripLocation originalTripLocation : originalTripDate.getTripLocations()) {
+                    TripLocation tripLocation = new TripLocation();
+                    tripLocation.setPlaceName(originalTripLocation.getPlaceName());
+                    tripLocation.setLatitude(originalTripLocation.getLatitude());
+                    tripLocation.setLongitude(originalTripLocation.getLongitude());
+                    tripLocation.setTripDate(savedTripDate);
+
+                    tripLocationRepository.save(tripLocation);
+                    log.info("Saved TripLocation entity: {}", tripLocation);
+                }
+            }
+
+            ChatRoom chatRoom = new ChatRoom();
+            ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+
+            Team team = new Team();
+            team.setTrip(savedTrip);
+            team.setLeader(leader);
+            team.setInviteCode(generateInviteCode());
+            team.setChatRoom(savedChatRoom);
+
+            // 팀과 리더를 사용자 목록에 추가
+            team.getUsers().add(leader);
+
+            Team savedTeam = teamRepository.save(team);
+
+            // 사용자의 팀 목록에 새 팀 추가
+            leader.getTeams().add(savedTeam);
+            userRepository.save(leader); // 변경된 사용자 정보 저장
+
+            return savedTrip;
+        }
+    }
+
 
 

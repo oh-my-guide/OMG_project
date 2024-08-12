@@ -1,5 +1,7 @@
 package com.example.omg_project.global.oauth2.handle;
 
+import com.example.omg_project.domain.user.entity.User;
+import com.example.omg_project.domain.user.repository.UserRepository;
 import com.example.omg_project.global.jwt.entity.RefreshToken;
 import com.example.omg_project.global.jwt.service.RefreshTokenService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
@@ -11,12 +13,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -25,14 +29,22 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
+    private final UserRepository userRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         try {
             CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
-            Long userId = customUserDetails.getUserIdAsLong();
             String username = customUserDetails.getUsername();
+            Optional<User> user = userRepository.findByUsername(username);
+
+            if (user.isEmpty()) {
+                System.out.println("유저기ㅏ 없어요");
+                throw new UsernameNotFoundException("User not found with username: " + username);
+            }
+            Long userId = user.get().getId();
+            System.out.println("userId :: " + userId);
             String name = customUserDetails.getName();
             List<String> roles = customUserDetails.getRoles();
 
