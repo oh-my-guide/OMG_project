@@ -4,20 +4,26 @@
     <meta charset="UTF-8">
     <title>로그인</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/css/loginform.css">
 </head>
 <body>
-<h1>로그인 페이지</h1>
-<hr/>
-<form id="loginForm" action="/api/users/login" method="post">
-    <input type="text" id="username" name="username" placeholder="이메일" required />
-    <input type="password" id="password" name="password" placeholder="비밀번호" required />
-    <button type="button" onclick="loginUser()">로그인</button>
-</form>
-<a href="/oauth2/authorization/kakao">카카오 로그인</a>
-<a href="/oauth2/authorization/naver">네이버 로그인</a>
-<a href="/oauth2/authorization/google">구글 로그인</a>
-<a href="/signup">회원가입을 아직 하지 않으셨나요?</a>
-<a href="/my/change-password">아이디/비밀번호 찾기</a>
+<div class="login-container">
+    <h1>OMG</h1>
+    <form id="loginForm" action="/api/users/login" method="post">
+        <input type="text" id="username" name="username" placeholder="아이디" required />
+        <input type="password" id="password" name="password" placeholder="비밀번호" required />
+        <button type="button" onclick="loginUser()">로그인</button>
+    </form>
+    <a href="/my/change-password">아이디/비밀번호 찾기</a>
+    <div class="social-login">
+        <a href="/oauth2/authorization/kakao" class="kakao"><img src="/files/kakao.png" alt="카카오"></a>
+        <a href="/oauth2/authorization/naver" class="naver"><img src="/files/naver.png" alt="네이버"></a>
+        <a href="/oauth2/authorization/google" class="google"><img src="/files/google.png" alt="구글"></a>
+    </div>
+    <div class="footer-links">
+        계정이 없으신가요? <a href="/signup">회원가입</a>
+    </div>
+</div>
 
 <script>
     function loginUser() {
@@ -31,7 +37,6 @@
 
         axios.post('/api/users/login', data)
             .then(response => {
-                // 로그인 성공 시 토큰을 쿠키에 저장
                 var accessToken = response.data.accessToken;
                 var refreshToken = response.data.refreshToken;
 
@@ -41,7 +46,6 @@
             })
             .catch(error => {
                 console.error('로그인 에러:', error);
-
                 alert('로그인 실패. 다시 시도해주세요.');
             });
     }
