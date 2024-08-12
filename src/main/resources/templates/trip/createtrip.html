@@ -388,6 +388,39 @@
         // 장소 추가 버튼을 누를 시 menu_wrap이 보이도록 설정
         document.getElementById('menu_wrap').style.display = 'block';
     }
+
+    function handleSelectCompleteBtnClick() {
+        if (selectedPlaces.length === 0) {
+            alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
+            return;
+        }
+
+        if (!selectedDateDiv) {
+            alert('장소를 추가할 날짜를 선택해 주세요.');
+            return;
+        }
+
+        const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
+        selectedPlaces.forEach(place => {
+            const locations = document.createElement('div');
+            locations.className = 'locations';
+
+            locations.innerHTML = `
+            <input type="text" name="placeName" value="${place.place_name}" readonly />
+            <input type="hidden" name="longitude" value="${place.x}" />
+            <input type="hidden" name="latitude" value="${place.y}" />
+        `;
+            locationsContainer.appendChild(locations);
+        });
+
+        selectedPlaces = [];
+        selectedDateDiv = null;
+        // 선택 완료 버튼 누를 시 검색창 숨기기
+        $('#menu_wrap').hide();
+    }
+
+    // 선택 완료 버튼 클릭 이벤트
+    document.getElementById('completeBtn').addEventListener('click', handleSelectCompleteBtnClick);
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>

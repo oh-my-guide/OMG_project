@@ -175,35 +175,35 @@ function handleRemoveBtnClick(event, place, placePosition) {
 //     $('#menu_wrap').hide();
 // }
 
-function handleSelectCompleteBtnClick() {
-    if (selectedPlaces.length === 0) {
-        alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
-        return;
-    }
-
-    if (!selectedDateDiv) {
-        alert('장소를 추가할 날짜를 선택해 주세요.');
-        return;
-    }
-
-    const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
-    selectedPlaces.forEach(place => {
-        const locations = document.createElement('div');
-        locations.className = 'locations';
-
-        locations.innerHTML = `
-            <input type="text" name="placeName" value="${place.place_name}" readonly />
-            <input type="hidden" name="longitude" value="${place.x}" />
-            <input type="hidden" name="latitude" value="${place.y}" />
-        `;
-        locationsContainer.appendChild(locations);
-    });
-
-    selectedPlaces = [];
-    selectedDateDiv = null;
-    // 선택 완료 버튼 누를 시 검색창 숨기기
-    $('#menu_wrap').hide();
-}
+// function handleSelectCompleteBtnClick() {
+//     if (selectedPlaces.length === 0) {
+//         alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
+//         return;
+//     }
+//
+//     if (!selectedDateDiv) {
+//         alert('장소를 추가할 날짜를 선택해 주세요.');
+//         return;
+//     }
+//
+//     const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
+//     selectedPlaces.forEach(place => {
+//         const locations = document.createElement('div');
+//         locations.className = 'locations';
+//
+//         locations.innerHTML = `
+//             <input type="text" name="placeName" value="${place.place_name}" readonly />
+//             <input type="hidden" name="longitude" value="${place.x}" />
+//             <input type="hidden" name="latitude" value="${place.y}" />
+//         `;
+//         locationsContainer.appendChild(locations);
+//     });
+//
+//     selectedPlaces = [];
+//     selectedDateDiv = null;
+//     // 선택 완료 버튼 누를 시 검색창 숨기기
+//     $('#menu_wrap').hide();
+// }
 
 /**
  * 검색 결과 목록과 마커를 표출하는 함수입니다
@@ -389,4 +389,4 @@ function removeAllChildNods(el) {
 }
 
 // 선택 완료 버튼에 클릭 이벤트 리스너 추가
-document.querySelector('button[type="button"]').addEventListener('click', handleSelectCompleteBtnClick);
+// document.querySelector('button[type="button"]').addEventListener('click', handleSelectCompleteBtnClick);
