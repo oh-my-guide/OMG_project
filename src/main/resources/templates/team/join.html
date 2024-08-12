@@ -7,11 +7,45 @@
 </head>
 <body>
 <h1>초대 코드를 입력하여 팀에 가입하세요</h1>
-<form action="/teams/join" method="post">
+<form id="joinTeamForm">
     <label for="inviteCode">초대 코드:</label>
     <input type="text" id="inviteCode" name="inviteCode" required>
     <br><br>
     <button type="submit">가입하기</button>
 </form>
+
+<div id="responseMessage"></div> <!-- 서버 응답 메시지를 표시할 영역 -->
+
+<script>
+    document.getElementById('joinTeamForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
+
+        const inviteCode = document.getElementById('inviteCode').value;
+
+        try {
+            const response = await fetch('/teams/join', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inviteCode: inviteCode })
+            });
+
+            const result = await response.text(); // 서버 응답을 텍스트로 받습니다.
+
+            // 응답에 따라 메시지를 표시합니다.
+            const messageElement = document.getElementById('responseMessage');
+            if (response.ok) {
+                messageElement.innerHTML = `<p style="color: green;">${result}</p>`;
+            } else {
+                messageElement.innerHTML = `<p style="color: red;">${result}</p>`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('responseMessage').innerHTML = '<p style="color: red;">서버와의 통신 중 오류가 발생했습니다.</p>';
+        }
+    });
+</script>
 </body>
 </html>
+
