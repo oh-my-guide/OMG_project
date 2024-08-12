@@ -29,18 +29,18 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({ mail: email }),
             success: function(response) {
-                if (response === "아이디가 이미 존재합니다.") {
-                    $('#emailCheckMessage').text(response).removeClass('success').addClass('error');
-                    $('#send-code-button').hide();
+                if (response) {
+                    $('#emailCheckMessage').text("아이디가 이미 존재합니다.").removeClass('success').addClass('error');
+                    $('#send-code-button').hide();  // 오류가 있으면 인증 코드 발송 버튼 숨김
                 } else {
-                    $('#emailCheckMessage').text(response).removeClass('error').addClass('success');
-                    $('#send-code-button').show();
+                    $('#emailCheckMessage').text("사용 가능한 아이디입니다.").removeClass('error').addClass('success');
+                    $('#send-code-button').show();  // 이메일 체크 통과 시 버튼 표시
                 }
                 validateForm();
             },
             error: function(error) {
                 $('#emailCheckMessage').text('이메일 확인 중 오류가 발생했습니다. 다시 시도해주세요.').removeClass('success').addClass('error');
-                $('#send-code-button').hide();  // 오류가 있으면 버튼 숨김
+                $('#send-code-button').hide();  // 오류가 있으면 인증 코드 발송 버튼 숨김
                 validateForm();
             }
         });

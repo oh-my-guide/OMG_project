@@ -1,11 +1,12 @@
 package com.example.omg_project.domain.user.controller;
 
 import com.example.omg_project.domain.role.entity.Role;
-import com.example.omg_project.domain.user.dto.UserLoginDto;
-import com.example.omg_project.domain.user.dto.UserLoginResponseDto;
-import com.example.omg_project.domain.user.dto.UserSignUpDto;
+import com.example.omg_project.domain.user.dto.request.UserLoginDto;
+import com.example.omg_project.domain.user.dto.response.UserLoginResponseDto;
+import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
 import com.example.omg_project.domain.user.entity.RandomNickname;
 import com.example.omg_project.domain.user.entity.User;
+import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
 import com.example.omg_project.global.jwt.entity.JwtBlacklist;
 import com.example.omg_project.global.jwt.entity.RefreshToken;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
@@ -40,7 +42,7 @@ import static com.example.omg_project.global.jwt.util.JwtTokenizer.REFRESH_TOKEN
 public class UserApiController {
 
     private final JwtTokenizer jwtTokenizer;
-    private final UserServiceImpl userServiceimpl;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
     private final JwtBlacklistService jwtBlackListService;
@@ -60,7 +62,7 @@ public class UserApiController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
-        Optional<User> user = userServiceimpl.findByUsername(userLoginDto.getUsername());
+        Optional<User> user = userService.findByUsername(userLoginDto.getUsername());
 
         // 비밀번호 일치여부 체크
         if(!passwordEncoder.matches(userLoginDto.getPassword(), user.get().getPassword())) {
@@ -169,7 +171,7 @@ public class UserApiController {
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody UserSignUpDto userSignUpDto) {
         try {
-            userServiceimpl.signUp(userSignUpDto);
+            userService.signUp(userSignUpDto);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
         } catch (RuntimeException e) {
             log.error("회원가입 실패 :: {}", e.getMessage());
@@ -183,5 +185,61 @@ public class UserApiController {
     @GetMapping("/randomNickname")
     public String getRandomNickname() {
         return RandomNickname.generateRandomNickname();
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable("userId") Long userId,
+                                             @CookieValue(name = "accessToken", required = false) String accessToken,
+                                             @CookieValue(name = "refreshToken", required = false) String refreshToken,
+                                             HttpServletResponse response,
+                                             Authentication authentication) {
+        String username = authentication.getName();
+        try {
+            userService.deleteUser(username);
+
+            // 로그아웃 로직
+            if (accessToken != null) {
+                // JWT 토큰 추출
+                String jwt = accessToken;
+
+                // 토큰의 만료 시간 추출
+                Date expirationTime = Jwts.parser()
+                        .setSigningKey(jwtTokenizer.getAccessSecret())
+                        .parseClaimsJws(jwt)
+                        .getBody()
+                        .getExpiration();
+
+                // 블랙리스트에 토큰 저장
+                JwtBlacklist blacklist = new JwtBlacklist(jwt, expirationTime);
+                jwtBlackListService.save(blacklist);
+            }
+
+            // SecurityContext를 클리어하여 현재 세션을 무효화
+            SecurityContextHolder.clearContext();
+
+            // accessToken 쿠키 삭제
+            Cookie accessCookie = new Cookie("accessToken", null);
+            accessCookie.setPath("/");
+            accessCookie.setMaxAge(0);
+            response.addCookie(accessCookie);
+
+            // refreshToken 쿠키 삭제
+            Cookie refreshCookie = new Cookie("refreshToken", null);
+            refreshCookie.setPath("/");
+            refreshCookie.setMaxAge(0);
+            response.addCookie(refreshCookie);
+
+            // 로그아웃 전 db에 저장되어있는 refreshToken 삭제
+            if (refreshToken != null) {
+                refreshTokenService.deleteRefreshToken(refreshToken);
+            }
+            return ResponseEntity.ok("회원 탈퇴 성공 !!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 탈퇴 실패 !!");
+        }
     }
 }

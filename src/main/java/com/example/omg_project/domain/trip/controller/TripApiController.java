@@ -3,6 +3,7 @@ package com.example.omg_project.domain.trip.controller;
 import com.example.omg_project.domain.trip.dto.CreateTripDTO;
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.dto.UpdateTripDTO;
+import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.service.TripService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import io.jsonwebtoken.Claims;
@@ -63,7 +64,45 @@ public class TripApiController {
         }
     }
 
-    //tripId로 일정 조회
+    // 다른 사용자의 여행 일정 복사
+    @PostMapping("/{tripId}/copy")
+    public ResponseEntity<?> copyTripToCurrentUser(@PathVariable Long tripId, HttpServletRequest request) {
+        try {
+            // 쿠키에서 JWT 토큰 가져오기2
+            String jwtToken = null;
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("accessToken".equals(cookie.getName())) {
+                        jwtToken = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+            if (jwtToken == null) {
+                throw new RuntimeException("JWT 토큰이 없습니다.");
+            }
+
+            System.out.println("Received JWT Token: " + jwtToken);
+            // JWT 토큰 파싱하여 사용자 정보 추출
+            Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
+            claims.getSubject();
+
+            // 일정 복사
+            Trip copiedTrip = tripService.copyTripToUser(tripId, jwtToken);
+
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("message", "이 여행 일정을 나의 일정에 저장하였습니다.");
+            successResponse.put("tripId", String.valueOf(copiedTrip.getId()));
+            return ResponseEntity.ok(successResponse);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "여행 일정 복사 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+    }
+
+    //tripId로 일정 조회t
     @GetMapping("/{id}")
     public ResponseEntity<ReadTripDTO> getTripById(@PathVariable Long id) {
         ReadTripDTO trip = tripService.getTripById(id);

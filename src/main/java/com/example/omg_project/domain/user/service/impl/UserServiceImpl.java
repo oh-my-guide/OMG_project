@@ -2,13 +2,16 @@ package com.example.omg_project.domain.user.service.impl;
 
 import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.role.repository.RoleRepository;
-import com.example.omg_project.domain.user.dto.UserEditDto;
-import com.example.omg_project.domain.user.dto.UserSignUpDto;
+import com.example.omg_project.domain.user.dto.request.UserEditDto;
+import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import com.example.omg_project.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +95,14 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 이메일 중복 확인
+     */
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    /**
      * 사용자 페이지 수정
      */
     @Override
@@ -112,5 +123,27 @@ public class UserServiceImpl implements UserService {
 
         User updatedUser = userRepository.save(user);
         return Optional.of(updatedUser);
+    }
+
+    /**
+     * 인증 정보 가져오기
+     */
+    @Override
+    public Optional<User> getAuthenticatedUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Object principal = authentication.getPrincipal();
+            String username = null;
+
+            if (principal instanceof UserDetails) {
+                username = ((UserDetails) principal).getUsername();
+            } else if (principal instanceof String) {
+                username = (String) principal;
+            }
+            return userRepository.findByUsername(username);
+        }catch (Exception e) {
+            log.info("로그인 사용자를 찾지 못했습니다.", e);
+            return Optional.empty();
+        }
     }
 }

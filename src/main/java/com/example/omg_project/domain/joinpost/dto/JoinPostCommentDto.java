@@ -22,7 +22,6 @@ public class JoinPostCommentDto {
         private Long userId;
         private String content;
         private boolean secret;
-        private LocalDateTime createdAt;    // 엔티티에 now()가 되어있지만 null로 들어가는 이슈가 발생하여 추가함.
 
         // DTO -> Entity 변환 메서드
         public JoinPostComment toEntity(User user, JoinPost joinPost) {
@@ -31,7 +30,6 @@ public class JoinPostCommentDto {
                     .user(user)
                     .joinPost(joinPost)
                     .secret(this.secret)
-                    .createdAt(LocalDateTime.now())
                     .build();
         }
     }

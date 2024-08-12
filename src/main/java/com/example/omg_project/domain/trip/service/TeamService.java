@@ -2,6 +2,7 @@ package com.example.omg_project.domain.trip.service;
 
 import com.example.omg_project.domain.trip.entity.Team;
 
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,4 +16,6 @@ public interface TeamService {
     Team findByInviteCode(String inviteCode);
 
     void addUserToTeam(String inviteCode, Long userId);
+
+    Team findByChatRoomId(Long chatRoomId);
 }

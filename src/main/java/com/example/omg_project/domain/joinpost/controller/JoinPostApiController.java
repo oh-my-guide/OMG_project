@@ -18,8 +18,8 @@ public class JoinPostApiController {
      * 일행 게시글 작성
      */
     @PostMapping
-    public ResponseEntity<JoinPostDto.Response> createJoinPost(@RequestBody JoinPostDto.Request joinPostRequest, @RequestParam Long userId, @RequestParam Long tripId) {
-        JoinPostDto.Response joinPost = joinPostService.createJoinPost(joinPostRequest, userId, tripId);
+    public ResponseEntity<JoinPostDto.Response> createJoinPost(@RequestBody JoinPostDto.Request joinPostRequest) {
+        JoinPostDto.Response joinPost = joinPostService.createJoinPost(joinPostRequest);
         return ResponseEntity.ok(joinPost);
     }
 
@@ -42,6 +42,15 @@ public class JoinPostApiController {
     }
 
     /**
+     * 특정 사용자의 일행 게시글 전체 조회
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<JoinPostDto.Response>> getJoinPostsByUserId(@PathVariable Long userId) {
+        List<JoinPostDto.Response> joinPosts = joinPostService.findJoinPostsByUserId(userId);
+        return ResponseEntity.ok(joinPosts);
+    }
+
+    /**
      * 일행 게시글 수정
      */
     @PutMapping("/{postId}")
@@ -57,6 +66,15 @@ public class JoinPostApiController {
     public ResponseEntity<Void> deleteJoinPostById(@PathVariable(name = "postId") Long id) {
         joinPostService.deleteJoinPost(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 일행 게시글 중복 확인
+     */
+    @GetMapping("/checkDuplicate/{tripId}")
+    public ResponseEntity<Boolean> checkDuplicatePost(@PathVariable Long tripId) {
+        boolean exists = joinPostService.existsJoinPostByTripId(tripId);
+        return ResponseEntity.ok(exists);
     }
 
 }

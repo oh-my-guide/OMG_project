@@ -12,13 +12,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.NoSuchElementException;
+
 
 @Service
 @RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
-
     private final UserRepository userRepository;
 
     @Override
@@ -83,4 +87,14 @@ public class TeamServiceImpl implements TeamService {
     }
 }
 
+
+
+    // 팀의 채팅방 ID와 사용자 ID를 기반으로 사용자 포함 여부 확인
+    @Override
+    public Team findByChatRoomId(Long chatRoomId) {
+        Optional<Team> teamOptional = teamRepository.findByChatRoomId(chatRoomId);
+
+        return teamOptional.orElseThrow(() -> new NoSuchElementException("채팅방 ID에 해당하는 팀을 찾을 수 없습니다. ID: " + chatRoomId));
+    }
+}
 
