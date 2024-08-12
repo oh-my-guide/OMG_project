@@ -13,15 +13,16 @@
     <div class="form_wrap">
         <form id="tripForm">
             <h1>여행 일정 수정</h1>
-            <label for="tripName">여행 이름:</label>
+            <label for="tripName">여행 이름</label>
             <input type="text" id="tripName" name="tripName">
 
-            <label for="startDate">시작 날짜:</label>
+            <label for="startDate">여행 시작일</label>
             <input type="date" id="startDate" name="startDate" disabled>
 
-            <label for="endDate">종료 날짜:</label>
+            <label for="endDate">여행 종료일</label>
             <input type="date" id="endDate" name="endDate" disabled>
 
+            <h2>세부 일정</h2>
             <div id="tripDatesContainer">
                 <!-- 여행 날짜 및 장소들이 동적으로 추가될 부분 -->
             </div>
@@ -111,7 +112,9 @@
 
         tripDateElement.innerHTML = `
         <div class="trip-date-title">
-          <input type="date" class="tripDateInput" value="${tripDateData.tripDate || ''}" disabled>
+          <span class="dayCountLabel">Day ${tripDateId + 1}</span>
+          <span> ${tripDateData.tripDate || ''}</span>
+          <input type="hidden" class="tripDateInput" value="${tripDateData.tripDate || ''}" disabled>
         </div>
         <div class="trip-locations">
           ${tripDateData.tripLocations ? tripDateData.tripLocations.map(loc => createTripLocationHtml(loc)).join('') : ''}
@@ -170,10 +173,12 @@
 
             // locations.innerHTML = `
             tripLocationElement.innerHTML = `
-            <input type="text" class="placeNameInput" value="${place.place_name}" readonly />
-            <input type="text" class="longitudeInput" value="${formattedLongitude}" />
-            <input type="text" class="latitudeInput" value="${formattedLatitude}" />
-            <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+            <div class="placeNameContainer">
+                <input type="text" class="placeNameInput" value="${place.place_name}" readonly />
+                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+            </div>
+            <input type="hidden" class="longitudeInput" value="${formattedLongitude}" />
+            <input type="hidden" class="latitudeInput" value="${formattedLatitude}" />
         `;
 
             locationsContainer.appendChild(tripLocationElement);
@@ -199,10 +204,12 @@
     function createTripLocationHtml(tripLocationData) {
         return `
         <div class="trip-location" data-id="${tripLocationData.id || ''}">
-          <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
-          <input type="text" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
-          <input type="text" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
-          <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+          <div class="placeNameContainer">
+            <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
+            <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+          </div>
+          <input type="hidden" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
+          <input type="hidden" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
         </div>
       `;
     }
@@ -222,14 +229,14 @@
     function updateDayCount() {
         const tripDateInputs = document.querySelectorAll('.tripDateInput');
         tripDateInputs.forEach((input, index) => {
-            const dayLabel = input.parentNode.querySelector('.dayLabel');
-            if (dayLabel) {
-                dayLabel.remove();
+            const dayCountLabel = input.parentNode.querySelector('.dayCountLabel');
+            if (dayCountLabel) {
+                dayCountLabel.remove();
             }
-            const newDayLabel = document.createElement('span');
-            newDayLabel.className = 'dayLabel';
-            newDayLabel.textContent = `${index + 1}일째`;
-            input.parentNode.insertBefore(newDayLabel, input.nextSibling);
+            const newDayCountLabel = document.createElement('span');
+            newDayCountLabel.className = 'dayCountLabel';
+            newDayCountLabel.textContent = `${index + 1}일째`;
+            input.parentNode.insertBefore(newDayCountLabel, input.nextSibling);
         });
     }
 

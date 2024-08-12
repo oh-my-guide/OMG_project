@@ -95,11 +95,38 @@ button:hover {
     background-color: #89BDF5;
 }
 
-#tripDates .tripDate .dayHeader span {
+/*#tripDates .tripDate .dayHeader span {*/
+/*    color: #555;*/
+/*}*/
+
+span {
     color: #555;
 }
 
-#tripDates .tripDate .dayHeader .dayCountLabel {
+/*#tripDates .tripDate .dayHeader .dayCountLabel {*/
+/*    color: #8fc6ff;*/
+/*    font-weight: bold;*/
+/*}*/
+
+.dayCountLabel {
     color: #8fc6ff;
     font-weight: bold;
+}
+
+.trip-date .trip-date-title {
+    margin-bottom: 18px;
+}
+
+.placeNameContainer {
+    display: flex;           /* flexbox 사용 */
+    align-items: center;    /* 세로 중앙 정렬 */
+    gap: 10px;
+}
+
+.placeNameInput {
+    flex: 1;                /* 입력 필드가 가능한 공간을 차지하도록 설정 */
+}
+
+.placeNameContainer button {
+    width: 22%;
 }
