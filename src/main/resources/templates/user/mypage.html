@@ -1,36 +1,154 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>마이페이지</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/css/mypage.css">
 </head>
 <body>
-<h2>로그인에 성공하셨습니다. 축하합니다!</h2>
-<p>이름 :: <span th:text="${user.usernick}"></span>님</p>
-<p>이메일 :: <span th:text="${user.username}"></span></p>
-<p>생일 :: <span th:text="${user.birthdate}"></span></p>
 
-<a href="/api/users/logout">로그아웃</a>
-<a href="/my">마이페이지로 돌아가기</a>
-<a href="/my/profile">마이페이지 수정</a>
+<div class="container">
+    <header class="header">
+        <h1>OMG</h1>
+    </header>
 
-<input type="hidden" id="userId" th:value="${user.id}"/>
-<button id="delete-account">회원 탈퇴</button>
+    <div class="main-content">
+        <div class="user-info">
+            <img src="/files/user.png" alt="Profile Picture">
+            <p><span th:text="${user.usernick}"></span>님</p>
+            <a href="/my/profile" class="link-button">프로필 편집</a>
+        </div>
 
+        <div class="navigation">
+            <a href="#">나의 일정</a>
+            <a href="#">일행 모집</a>
+            <a href="#">내 여행 후기</a>
+            <a href="#">찜</a>
+        </div>
+
+        <div class="my-trip">
+            <h3>나의 일정</h3>
+            <!-- AJAX로 동적으로 추가될 내용 -->
+        </div>
+
+        <div class="trip-info">
+            <h3>일정 모집</h3>
+            <!-- AJAX로 동적으로 추가될 내용 -->
+        </div>
+
+        <div class="review-section">
+            <h3>내 여행 후기</h3>
+            <!-- AJAX로 동적으로 추가될 내용 -->
+        </div>
+
+        <div class="my-wishlist">
+            <h3>찜</h3>
+            <!-- AJAX로 동적으로 추가될 내용 -->
+        </div>
+    </div>
+</div>
+<!-- 추후.. -->
 <script>
     $(document).ready(function() {
-        $('#delete-account').on('click', function() {
-            if (confirm("정말로 탈퇴 하시겠습니까?")) {
+        $('.navigation a').click(function() {
+            $('.trip-info, .review-section, .my-wishlist, .my-trip').hide();
+            const target = $(this).text();
+
+            if (target === "나의 일정") {
                 $.ajax({
-                    type: 'DELETE',
-                    url: '/api/users/' + $('#userId').val(),
-                    success: function(response) {
-                        alert('성공적으로 회원 탈퇴 되었습니다.');
-                        window.location.href = '/';
+                    url: '/reviewPost/',
+                    method: 'GET',
+                    success: function(data) {
+                        $('.my-trip').empty();
+                        $('.my-trip').append('<h3>나의 일정</h3>');
+
+                        data.forEach(function(item) {
+                            const tripItem = `
+                                <div class="trip-item">
+                                    <p>${item.title} - ${item.daysLeft}</p>
+                                    <button class="chat-button">채팅하기</button>
+                                </div>
+                            `;
+                            $('.my-trip').append(tripItem);
+                        });
+
+                        $('.my-trip').show();
                     },
-                    error: function(error) {
-                        alert('회원 탈퇴에 실패했습니다.');
+                    error: function(xhr, status, error) {
+                        console.error("Failed to retrieve schedule:", error);
+                    }
+                });
+            } else if (target === "일정 모집") {
+                $.ajax({
+                    url: '/joinPost/',
+                    method: 'GET',
+                    success: function(data) {
+                        $('.trip-info').empty();
+                        $('.trip-info').append('<h3>일정 모집</h3>');
+
+                        data.forEach(function(item) {
+                            const tripItem = `
+                                <div class="trip-item">
+                                    <p>${item.title} - ${item.daysLeft}</p>
+                                    <button class="chat-button">채팅하기</button>
+                                </div>
+                            `;
+                            $('.trip-info').append(tripItem);
+                        });
+
+                        $('.trip-info').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Failed to retrieve recruitment info:", error);
+                    }
+                });
+            } else if (target === "내 여행 후기") {
+                $.ajax({
+                    url: '/joinPost/',
+                    method: 'GET',
+                    success: function(data) {
+                        $('.review-section').empty();
+                        $('.review-section').append('<h3>내 여행 후기</h3>');
+
+                        data.forEach(function(item) {
+                            const reviewItem = `
+                                <div class="trip-item">
+                                    <p>${item.reviewText}</p>
+                                    <p>작성자: ${item.author}</p>
+                                </div>
+                            `;
+                            $('.review-section').append(reviewItem);
+                        });
+
+                        $('.review-section').show(); // Show "내 여행 후기" section
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Failed to retrieve reviews:", error);
+                    }
+                });
+            } else if (target === "찜") {
+                $.ajax({
+                    url: '/', // 추가할 것
+                    method: 'GET',
+                    success: function(data) {
+                        $('.my-wishlist').empty();
+                        $('.my-wishlist').append('<h3>찜 목록</h3>');
+
+                        data.forEach(function(item) {
+                            const wishlistItem = `
+                                <div class="trip-item">
+                                    <p>${item.title}</p>
+                                    <button class="remove-button">제거하기</button>
+                                </div>
+                            `;
+                            $('.my-wishlist').append(wishlistItem);
+                        });
+
+                        $('.my-wishlist').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Failed to retrieve wishlist:", error);
                     }
                 });
             }
