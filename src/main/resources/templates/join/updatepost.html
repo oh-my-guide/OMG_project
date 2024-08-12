@@ -9,7 +9,7 @@
             margin: 20px;
         }
 
-        input, textarea {
+        input, textarea, select {
             display: block;
             margin-bottom: 10px;
             width: 100%;
@@ -34,6 +34,13 @@
             margin-bottom: 5px;
             display: block;
         }
+
+        /* 비활성화된 콤보박스의 스타일을 기본 상태와 동일하게 유지 */
+        select[disabled] {
+            pointer-events: none;
+            background-color: white;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -42,41 +49,66 @@
 <!-- 게시글 수정 폼 -->
 <form id="updatePostForm">
     <input type="hidden" id="updatePostId" name="postId" th:value="${post.id}">
+    <input type="hidden" id="updateTripId" name="tripId" th:value="${post.trip.getId()}">
+
+    <label for="tripSelect">나의 여행</label>
+    <select id="tripSelect" name="tripId" disabled>
+        <!-- 선택된 여행이 여기에 추가됩니다 -->
+    </select>
+
     <label for="updateTitle">제목</label>
     <input type="text" id="updateTitle" name="title" th:value="${post.title}" placeholder="제목" required>
+
     <label for="updateContent">내용</label>
     <textarea id="updateContent" name="content" placeholder="내용" required th:text="${post.content}"></textarea>
     <button type="submit">수정하기</button>
 </form>
 
 <script>
-    document.getElementById('updatePostForm').addEventListener('submit', function (event) {
-        event.preventDefault();
-
+    document.addEventListener('DOMContentLoaded', function() {
         const postId = document.getElementById('updatePostId').value;
-        const title = document.getElementById('updateTitle').value;
-        const content = document.getElementById('updateContent').value;
+        const tripId = document.getElementById('updateTripId').value;
+        const tripSelect = document.getElementById('tripSelect');
 
-        if (!title || !content) {
-            alert('제목과 내용은 필수 입력 항목입니다.');
-            return;
-        }
-
-        fetch(`/api/joinPosts/${postId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({title, content})
-        })
-            .then(response => {
-                if (response.ok) {
-                    window.location.href = `/joinPost/${postId}`; // 수정 완료 후 viewPost로 리다이렉션
-                } else {
-                    alert('수정에 실패했습니다.');
-                }
+        // API 호출로 여행 정보를 가져옴
+        fetch(`/api/trips/${tripId}`)
+            .then(response => response.json())
+            .then(trip => {
+                const option = document.createElement('option');
+                option.value = trip.id;
+                option.textContent = trip.tripName;
+                option.selected = true;
+                tripSelect.appendChild(option);
             })
             .catch(error => console.error('Error:', error));
+
+        document.getElementById('updatePostForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('updateTitle').value;
+            const content = document.getElementById('updateContent').value;
+
+            if (!title || !content) {
+                alert('제목과 내용은 필수 입력 항목입니다.');
+                return;
+            }
+
+            fetch(`/api/joinPosts/${postId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, content })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = `/joinPost/${postId}`; // 수정 완료 후 viewPost로 리다이렉션
+                    } else {
+                        alert('수정에 실패했습니다.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
     });
 </script>
 
