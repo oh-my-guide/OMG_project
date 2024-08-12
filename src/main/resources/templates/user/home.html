@@ -7,6 +7,12 @@
 <body>
 <h1> 안녕하세요. OMG에 오신걸 환영합니다.! </h1>
 <h2>로그인 후 이용해주세요.</h2>
+
+<!-- 에러 메시지 출력 -->
+<div th:if="${errorMessage}" style="color: red;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
 <nav>
     <a href="/signup">회원가입</a>
     <a href="/signin">로그인</a>
