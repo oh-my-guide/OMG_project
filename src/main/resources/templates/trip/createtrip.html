@@ -5,47 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>여행 일정 생성</title>
     <link rel="stylesheet" href="/css/trip.css">
+    <link rel="stylesheet" href="/css/map.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<form id="tripForm">
-    <h1>여행 일정 생성</h1>
-    <label for="tripName">여행 이름</label>
-    <input type="text" id="tripName" name="tripName" placeholder="여행 이름을 입력해주세요" required><br>
+<div class="container">
+    <div class="form_wrap">
+        <form id="tripForm">
+            <h1>여행 일정 생성</h1>
+            <label for="tripName">여행 이름</label>
+            <input type="text" id="tripName" name="tripName" placeholder="여행 이름을 입력해주세요" required><br>
 
-    <label for="startDate">시작 날짜</label>
-    <input type="date" id="startDate" name="startDate" required onchange="updateTripDates()"><br>
+            <label for="startDate">시작 날짜</label>
+            <input type="date" id="startDate" name="startDate" required onchange="updateTripDates()"><br>
 
-    <label for="endDate">종료 날짜</label>
-    <input type="date" id="endDate" name="endDate" required onchange="updateTripDates()"><br>
+            <label for="endDate">종료 날짜</label>
+            <input type="date" id="endDate" name="endDate" required onchange="updateTripDates()"><br>
 
-    <label for="regionSelect">지역 선택</label>
-    <select id="regionSelect" onchange="updateCities()">
-        <option value="">지역을 선택하세요</option>
-        <option value="특별시/광역시">특별시/광역시</option>
-        <option value="강원도">강원도</option>
-        <option value="경기도">경기도</option>
-        <option value="경상남도">경상남도</option>
-        <option value="경상북도">경상북도</option>
-        <option value="충청남도">충청남도</option>
-        <option value="충청북도">충청북도</option>
-        <option value="전라남도">전라남도</option>
-        <option value="전라북도">전라북도</option>
-        <option value="제주특별자치도">제주도</option>
-    </select><br>
+            <label for="regionSelect">지역 선택</label>
+            <select id="regionSelect" onchange="updateCities()">
+                <option value="">지역을 선택하세요</option>
+                <option value="특별시/광역시">특별시/광역시</option>
+                <option value="강원도">강원도</option>
+                <option value="경기도">경기도</option>
+                <option value="경상남도">경상남도</option>
+                <option value="경상북도">경상북도</option>
+                <option value="충청남도">충청남도</option>
+                <option value="충청북도">충청북도</option>
+                <option value="전라남도">전라남도</option>
+                <option value="전라북도">전라북도</option>
+                <option value="제주특별자치도">제주도</option>
+            </select><br>
 
-    <label for="citySelect">도시 선택</label>
-    <select id="citySelect" name="cityId" required>
-        <option value="">도시를 선택하세요</option>
-    </select><br>
-    <input type="hidden" id="cityId" name="cityId" required>
+            <label for="citySelect">도시 선택</label>
+            <select id="citySelect" name="cityId" required>
+                <option value="">도시를 선택하세요</option>
+            </select><br>
+            <input type="hidden" id="cityId" name="cityId" required>
 
-    <h2>여행 일정</h2>
-    <div id="tripDates"></div>
+            <h2>여행 일정</h2>
+            <div id="tripDates"></div>
 
-    <button type="submit">일정 생성</button>
-</form>
+            <button type="submit">일정 생성</button>
+        </form>
+    </div>
 
-<div id="map">지도 부분</div>
+    <div class="map_wrap">
+<!--        <div id="map" style="width:70%;height:100%;position:relative;overflow:hidden;"></div>-->
+        <div id="map"></div>
+
+        <!-- 검색 메뉴 컨테이너 -->
+        <div id="menu_wrap" class="bg_white">
+            <div class="option">
+                <div>
+                    <!-- 검색 폼 제출 시 searchPlaces() 호출 -->
+                    <form onsubmit="searchPlaces(); return false;">
+                        키워드 : <input type="text" value="부산 맛집" id="keyword" size="15">
+                        <button type="submit">검색하기</button>
+                    </form>
+                </div>
+            </div>
+            <div>
+                <button type="button">선택 완료</button>
+            </div>
+            <hr>
+            <!-- 장소 목록을 표시할 리스트 -->
+            <ul id="placesList"></ul>
+            <!-- 페이지네이션을 표시 -->
+            <div id="pagination"></div>
+        </div>
+    </div>
+</div>
 
 <script>
     const regions = {
@@ -297,6 +327,7 @@
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
 
+        // 시작 날짜와 종료 날짜가 모두 존재하는지 확인
         if (startDate && endDate) {
             const start = new Date(startDate);
             const end = new Date(endDate);
@@ -312,15 +343,16 @@
                         <div class="dayContent">
                             <label for="tripDate">날짜:</label>
                             <input type="date" name="tripDate" value="${date.toISOString().split('T')[0]}" required readonly><br>
-
-                            <div class="locations">
-                                <label for="placeName">장소 이름:</label>
-                                <input type="text" name="placeName" required><br>
-                                <label for="latitude">위도:</label>
-                                <input type="number" step="0.000001" name="latitude"><br>
-                                <label for="longitude">경도:</label>
-                                <input type="number" step="0.000001" name="longitude"><br>
-                            </div>
+                        </div>
+                        <div class="dayLocation">
+<!--                            <div class="locations">-->
+<!--                                <label for="placeName">장소 이름:</label>-->
+<!--                                <input type="text" name="placeName" required><br>-->
+<!--                                <label for="latitude">위도:</label>-->
+<!--                                <input type="number" step="0.000001" name="latitude"><br>-->
+<!--                                <label for="longitude">경도:</label>-->
+<!--                                <input type="number" step="0.000001" name="longitude"><br>-->
+<!--                            </div>-->
                             <button type="button" onclick="addLocation(this)">장소 추가</button>
                         </div>
                     </div>
@@ -351,6 +383,9 @@
         console.log('Location added.');
     }
 </script>
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
+<script src="/js/map.js"></script>
 </body>
 </html>
 

@@ -1,171 +1,59 @@
-/* 전체 레이아웃 설정 */
-body {
-    display: flex;
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+/**,*/
+/**::before,*/
+/**::after {*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+html, body {
     margin: 0;
+    padding: 0;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;   /* 스크롤바 제거 */
+}
+
+body {
+    font-family: Arial, sans-serif;
     padding: 20px;
-    height: 100vh;
     box-sizing: border-box;
 }
 
-/* 폼 스타일 */
-form {
-    width: 33%;
-    max-height: 100%;
-    overflow-y: auto;
-    padding: 20px;
-    background-color: #fff;
+.container {
+    display: flex;
+    height: 100%;
+}
+
+.form_wrap {
+    width: 40%;
+    /*max-height: 100%;*/
+    overflow-y: auto;   /* 세로 내용 길이가 길어지면 세로 스크롤바 표시 */
+    padding: 10px;
     border-right: 1px solid #ddd;
     box-sizing: border-box;
 }
 
-h1 {
-    font-size: 36px;
-    color: #333;
-    text-align: center;
-    margin-bottom: 40px;
+/*.map_wrap {*/
+/*    width: 60%;*/
+/*    position: relative;*/
+/*    !*!*overflow: hidden;*!*!*/
+/*    box-sizing: border-box;*/
+/*}*/
+
+.map_wrap, .map_wrap * {
+    margin: 0;
+    padding: 0;
+    font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;
+    font-size: 12px;
 }
 
-/* 공통 버튼 스타일 */
-button {
-    display: block;
-    padding: 15px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 15px;
-    box-sizing: border-box;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#deleteButton {
-    background-color: #dc3545;
-}
-
-#deleteButton:hover {
-    background-color: #c82333;
-}
-
-/* 지도 스타일 */
-#map {
-    width: 67%;
-    height: 100vh;
-    overflow: hidden;
-    background-color: #e9e9e9;
-}
-
-/* 여행 일정 상세 조회 스타일 */
-.trip-detail {
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #fff;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.trip-detail h2 {
-    font-size: 28px;
-    color: #007bff;
-    margin-bottom: 20px;
-}
-
-.trip-detail h3 {
-    font-size: 24px;
-    color: #444;
-    margin-bottom: 15px;
-}
-
-.trip-detail p {
-    font-size: 18px;
-    color: #555;
-    margin: 10px 0;
-    line-height: 1.6;
-}
-
-.trip-detail div {
-    margin-bottom: 20px;
-}
-
-.trip-detail ul {
-    margin-left: 20px;
-    list-style-type: disc;
-    font-size: 18px;
-    color: #555;
-}
-
-/* 여행 일정 카드 스타일 */
-.trip-item {
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.trip-item h2 {
-    font-size: 24px;
-    color: #007bff;
-    margin-bottom: 15px;
-}
-
-.trip-item p {
-    font-size: 16px;
-    color: #555;
-    margin: 5px 0;
-}
-
-.trip-item a {
-    display: block;
-    margin-top: 15px;
-    font-size: 16px;
-    color: #007bff;
+.map_wrap a, .map_wrap a:hover, .map_wrap a:active {
+    color: #000;
     text-decoration: none;
 }
 
-.trip-item a:hover {
-    text-decoration: underline;
+.map_wrap {
+    position: relative;
+    width: 100%;
+    /*height: 100vh;*/
 }
-
-/* 여행 일정 리스트 스타일 */
-.trip-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* 수정 및 삭제 버튼 배치 */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-}
-
-.button-group button {
-    width: calc(50% - 10px);
-}
-
-@media (max-width: 768px) {
-    .button-group {
-        flex-direction: column;
-    }
-
-    .button-group button {
-        width: 100%;
-        margin-top: 10px;
-    }
-}
-
-
 
