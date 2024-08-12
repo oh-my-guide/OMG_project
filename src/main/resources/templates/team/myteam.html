@@ -45,8 +45,23 @@
             align-items: center;
         }
 
-        ul#teamList li:last-child {
-            margin-bottom: 0;
+        .team-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+        }
+
+        .right-aligned {
+            display: flex;
+            align-items: center;
+            margin-left: auto; /* 오른쪽 정렬 */
+        }
+
+        .invite-code {
+            font-size: 14px;
+            color: #555;
+            margin-left: 10px;
         }
 
         button {
@@ -77,7 +92,7 @@
 </head>
 <body>
 <br>
-<h1>나의 팀 목록</h1> <!-- 제목 변경 -->
+<h1>나의 팀 목록</h1>
 <ul id="teamList">
     <!-- 팀 목록 렌더링 -->
 </ul>
@@ -97,21 +112,35 @@
 
             teams.forEach(team => {
                 const listItem = document.createElement('li');
-                listItem.textContent = `팀 ID ${team.id} :  ${team.tripName}`;
 
-                // 리더가 아닌 경우에만 탈퇴 버튼을 표시
+                const teamInfo = document.createElement('div');
+                teamInfo.textContent = `팀 ID ${team.id} : ${team.tripName}`;
+
+                const rightAligned = document.createElement('div');
+                rightAligned.className = 'right-aligned';
+
                 if (!team.isLeader) {
                     const leaveButton = document.createElement('button');
                     leaveButton.textContent = '탈퇴하기';
                     leaveButton.onclick = () => leaveTeam(team.id);
-                    listItem.appendChild(leaveButton);
+                    rightAligned.appendChild(leaveButton);
                 } else {
                     const leaderBadge = document.createElement('span');
                     leaderBadge.textContent = '리더';
                     leaderBadge.className = 'leader-badge';
-                    listItem.appendChild(leaderBadge);
+                    rightAligned.appendChild(leaderBadge);
+
+                    // 리더에게 초대 코드를 표시
+                    if (team.inviteCode) {
+                        const inviteCodeElement = document.createElement('div');
+                        inviteCodeElement.className = 'invite-code';
+                        inviteCodeElement.textContent = `초대 코드: ${team.inviteCode}`;
+                        rightAligned.appendChild(inviteCodeElement);
+                    }
                 }
 
+                listItem.appendChild(teamInfo);
+                listItem.appendChild(rightAligned);
                 teamListElement.appendChild(listItem);
             });
 

@@ -77,6 +77,10 @@ public class TeamServiceImpl implements TeamService {
                     boolean isLeader = team.getLeader().getId().equals(userId);
                     teamData.put("isLeader", isLeader);
 
+                    if (isLeader) {
+                        teamData.put("inviteCode", team.getInviteCode());
+                    }
+
                     return teamData;
                 })
                 .collect(Collectors.toList());
