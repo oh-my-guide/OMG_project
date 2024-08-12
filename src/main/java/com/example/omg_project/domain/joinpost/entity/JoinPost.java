@@ -2,9 +2,10 @@ package com.example.omg_project.domain.joinpost.entity;
 
 import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.user.entity.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,9 +13,8 @@ import java.util.List;
 @Entity
 @Table(name = "join_posts")
 @Getter
-@Builder
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class JoinPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,11 +45,4 @@ public class JoinPost {
 
     @OneToMany(mappedBy = "joinPost", cascade = CascadeType.ALL)
     private List<JoinPostLike> likes;
-
-    // JPA의 영속성 컨텍스트 덕분에 entity 객체의 값만 변경하면 자동으로 변경사항 반영함 -> repository.update 를 쓰지 않아도 됨!
-    public void updateContent(String title, String content) {
-        this.title = title;
-        this.content = content;
-        this.updatedAt = LocalDateTime.now();
-    }
 }

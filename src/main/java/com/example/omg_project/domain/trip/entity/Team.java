@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "teams")
+@Table (name = "teams")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "chat_room_id", nullable = false)
     private ChatRoom chatRoom;
 
@@ -32,9 +32,9 @@ public class Team {
     private String inviteCode;
 
     @ManyToOne
-    @JoinColumn(name = "leader_id", nullable = false)
-    private User leader;
+    @JoinColumn(nullable = false)
+    private User leaderId;
 
-    @ManyToMany(mappedBy = "teams", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "teams", fetch = FetchType.EAGER)
     private Set<User> users = new HashSet<>();
 }

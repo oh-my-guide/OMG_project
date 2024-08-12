@@ -2,14 +2,15 @@ package com.example.omg_project.domain.joinpost.entity;
 
 import com.example.omg_project.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "join_post_likes")
 @Getter
-@Builder
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class JoinPostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
