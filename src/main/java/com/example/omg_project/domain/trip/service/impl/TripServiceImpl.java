@@ -219,12 +219,14 @@ public class TripServiceImpl implements TripService {
                 // 제거된 TripLocations 삭제
                 for (TripLocation tripLocation : existingTripLocations.values()) {
                     tripDate.getTripLocations().remove(tripLocation);
+                    tripLocationRepository.delete(tripLocation);
                 }
             }
 
             // 제거된 TripDates 삭제
             for (TripDate tripDate : existingTripDates.values()) {
                 trip.getTripDates().remove(tripDate);
+                tripDateRepository.delete(tripDate);
             }
 
             tripRepository.save(trip);
