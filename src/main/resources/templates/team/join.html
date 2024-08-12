@@ -14,35 +14,31 @@
     <button type="submit">가입하기</button>
 </form>
 
-<div id="responseMessage"></div> <!-- 서버 응답 메시지를 표시할 영역 -->
-
 <script>
-    document.getElementById('joinTeamForm').addEventListener('submit', async function(event) {
+    document.getElementById('joinTeamForm').addEventListener('submit', async function (event) {
         event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
 
         const inviteCode = document.getElementById('inviteCode').value;
 
         try {
-            const response = await fetch('/teams/join', {
+            const response = await fetch('/api/team/join', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify({ inviteCode: inviteCode })
+                body: new URLSearchParams({inviteCode: inviteCode})
             });
 
-            const result = await response.text(); // 서버 응답을 텍스트로 받습니다.
+            const result = await response.text();
 
-            // 응답에 따라 메시지를 표시합니다.
-            const messageElement = document.getElementById('responseMessage');
             if (response.ok) {
-                messageElement.innerHTML = `<p style="color: green;">${result}</p>`;
+                alert(`${result}`);
             } else {
-                messageElement.innerHTML = `<p style="color: red;">${result}</p>`;
+                alert(`${result}`);
             }
         } catch (error) {
             console.error('Error:', error);
-            document.getElementById('responseMessage').innerHTML = '<p style="color: red;">서버와의 통신 중 오류가 발생했습니다.</p>';
+            alert('서버와의 통신 중 오류가 발생했습니다.');
         }
     });
 </script>

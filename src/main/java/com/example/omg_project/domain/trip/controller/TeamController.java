@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class TeamController {
     // 팀에 가입하는 폼
     @GetMapping("/join")
-    public String showJoinTeamForm(Model model) {
+    public String showJoinTeamForm() {
         return "team/join";
+    }
+
+    @GetMapping("/myteam")
+    public String showTeamsPage() {
+        return "team/myteam";
     }
 }
 

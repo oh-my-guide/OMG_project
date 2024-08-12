@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가입된 팀 목록</title>
+</head>
+<body>
+<h1>가입된 팀 목록</h1>
+<ul id="teamList">
+    <!-- 팀 목록 렌더링 -->
+</ul>
+
+<script>
+    async function fetchTeams() {
+        try {
+            const response = await fetch('/api/team/myteam');
+            if (!response.ok) {
+                throw new Error('네트워크 응답이 정상적이지 않습니다.');
+            }
+
+            const teams = await response.json();
+
+            const teamListElement = document.getElementById('teamList');
+            teamListElement.innerHTML = '';  // 기존 목록을 지우고 새로 작성
+
+            // 팀 목록을
+            teams.forEach(team => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `팀 ID: ${team.id} -  ${team.tripName}`;
+
+                // 리더가 아닌 경우에만 탈퇴 버튼을 표시
+                if (!team.isLeader) {
+                    const leaveButton = document.createElement('button');
+                    leaveButton.textContent = '탈퇴하기';
+                    leaveButton.onclick = () => leaveTeam(team.id);
+                    listItem.appendChild(leaveButton);
+                } else {
+                    listItem.textContent += ' (리더)';
+                }
+
+                teamListElement.appendChild(listItem);
+            });
+
+        } catch (error) {
+            console.error('팀 목록을 가져오는 중 오류 발생:', error);
+            alert('팀 목록을 가져오는 데 문제가 발생했습니다.');
+        }
+    }
+
+    async function leaveTeam(teamId) {
+        try {
+            const response = await fetch('/api/team/leave', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({teamId: teamId})
+            });
+
+            const result = await response.text();
+
+            if (response.ok) {
+                alert('팀에서 성공적으로 탈퇴하였습니다.');
+                fetchTeams(); // 최신 팀 목록을 다시 가져옴
+            } else {
+                alert(`탈퇴 실패: ${result}`);
+            }
+        } catch (error) {
+            console.error('팀에서 탈퇴하는 중 오류 발생:', error);
+            alert('팀에서 탈퇴하는 데 문제가 발생했습니다.');
+        }
+    }
+
+    fetchTeams();
+</script>
+</body>
+</html>
