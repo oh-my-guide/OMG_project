@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지</title>
+</head>
+<body>
+<h2>로그인에 성공하셨습니다. 축하합니다!</h2>
+<p>이름 :: <span th:text="${user.usernick}"></span>님</p>
+<p>이메일 :: <span th:text="${user.username}"></span></p>
+<p>생일 :: <span th:text="${user.birthdate}"></span></p>
+
+<a href="/api/users/logout">로그아웃</a>
+<a href="/my">마이페이지로 돌아가기</a>
+<a href="/my/profile">마이페이지 수정</a>
+</body>
+</html>

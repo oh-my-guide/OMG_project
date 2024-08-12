@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 수정</title>
+    <style>
+        body {
+            margin: 20px;
+        }
+
+        input, textarea {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .trip-info {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<h1>후기 게시글 수정</h1>
+
+<!-- 게시글 수정 폼 -->
+<form id="updatePostForm">
+    <input type="hidden" id="updatePostId" name="postId" th:value="${post.id}">
+    <input type="hidden" id="updateTripId" name="tripId" th:value="${post.trip.getId()}">
+
+    <label for="updateTitle">제목</label>
+    <input type="text" id="updateTitle" name="title" th:value="${post.title}" placeholder="제목" required>
+
+    <!-- 여행 정보 표시 -->
+    <div id="tripInfo" class="trip-info">
+        <h3>여행 일정</h3>
+        <p><strong>여행 이름:</strong> <span id="tripName"></span></p>
+        <p><strong>여행 시작일:</strong> <span id="tripStartDate"></span></p>
+        <p><strong>여행 종료일:</strong> <span id="tripEndDate"></span></p>
+        <p><strong>도시 이름:</strong> <span id="cityName"></span></p>
+        <div id="tripDates"></div>
+    </div>
+
+    <label for="updateContent">내용</label>
+    <textarea id="updateContent" name="content" placeholder="내용" required th:text="${post.content}"></textarea>
+    <button type="submit">수정하기</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const postId = document.getElementById('updatePostId').value;
+        const tripId = document.getElementById('updateTripId').value;
+        const tripInfo = document.getElementById('tripInfo');
+        const tripName = document.getElementById('tripName');
+        const tripStartDate = document.getElementById('tripStartDate');
+        const tripEndDate = document.getElementById('tripEndDate');
+        const cityName = document.getElementById('cityName');
+        const tripDates = document.getElementById('tripDates');
+
+        // 기존 여행 계획 정보를 가져와서 표시
+        fetch(`/api/trips/${tripId}`)
+            .then(response => response.json())
+            .then(trip => {
+                tripName.textContent = trip.tripName;
+                tripStartDate.textContent = trip.startDate;
+                tripEndDate.textContent = trip.endDate;
+                cityName.textContent = trip.city.name;
+
+                // 여행 일정을 표시
+                trip.tripDates.forEach(date => {
+                    const dateItem = document.createElement('div');
+                    dateItem.innerHTML = `<h4>${date.tripDate}</h4>`;
+                    const locationList = document.createElement('ul');
+                    date.tripLocations.forEach(location => {
+                        const locationItem = document.createElement('li');
+                        locationItem.textContent = `${location.placeName} (위도: ${location.latitude}, 경도: ${location.longitude})`;
+                        locationList.appendChild(locationItem);
+                    });
+                    dateItem.appendChild(locationList);
+                    tripDates.appendChild(dateItem);
+                });
+
+                tripInfo.style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+
+        document.getElementById('updatePostForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const title = document.getElementById('updateTitle').value;
+            const content = document.getElementById('updateContent').value;
+
+            if (!title || !content) {
+                alert('제목과 내용은 필수 입력 항목입니다.');
+                return;
+            }
+
+            fetch(`/api/reviewPosts/${postId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, content })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = `/reviewPost/${postId}`; // 수정 완료 후 viewPost로 리다이렉션
+                    } else {
+                        alert('수정에 실패했습니다.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+</body>
+</html>

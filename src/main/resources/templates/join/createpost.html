@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 작성</title>
+    <style>
+        body {
+            margin: 20px;
+        }
+
+        input, textarea {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<h1>일행 모집 게시글 작성</h1>
+
+<!-- 게시글 작성 폼 -->
+<form id="createPostForm">
+    <input type="hidden" id="userId" name="userId" th:value="${userId}">
+    <input type="hidden" id="tripId" name="tripId" th:value="${tripId}">
+
+    <label for="title">제목</label>
+    <input type="text" id="title" placeholder="제목" required>
+
+    <label for="content">내용</label>
+    <textarea id="content" placeholder="내용" required></textarea>
+
+    <button type="submit">작성하기</button>
+</form>
+
+<script>
+    document.getElementById('createPostForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const userId = document.getElementById('userId').value;
+        const tripId = document.getElementById('tripId').value;
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+
+        // JSON 데이터로 요청 본문에 포함하여 전송
+        fetch(`/api/joinPosts`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId, tripId, title, content })
+        })
+            .then(response => response.json())
+            .then(data => alert('게시글이 작성되었습니다: ' + data.id))
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+</body>
+</html>

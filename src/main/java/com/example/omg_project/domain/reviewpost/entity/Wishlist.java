@@ -2,15 +2,14 @@ package com.example.omg_project.domain.reviewpost.entity;
 
 import com.example.omg_project.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "wishlists")
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Wishlist {
 
     @Id

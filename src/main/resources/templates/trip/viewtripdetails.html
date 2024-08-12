@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 일정 상세 조회</title>
+    <link rel="stylesheet" href="/css/trip.css">
+</head>
+<body>
+
+<div class="trip-detail">
+    <h1>여행 일정 상세 조회</h1>
+    <h2 th:text="${trip.tripName}">여행 이름</h2>
+    <p>시작 날짜: <span th:text="${trip.startDate}">시작 날짜</span></p>
+    <p>종료 날짜: <span th:text="${trip.endDate}">종료 날짜</span></p>
+    <p>도시 이름: <span th:text="${trip.city.name}">도시 이름</span></p>
+    <h3>여행 일정</h3>
+    <div th:each="date : ${trip.tripDates}">
+        <h4 th:text="${date.tripDate}">여행 날짜</h4>
+        <ul>
+            <li th:each="location : ${date.tripLocations}">
+                <span th:text="${location.placeName}">장소 이름</span> (위도: <span th:text="${location.latitude}">위도</span>, 경도: <span th:text="${location.longitude}">경도</span>)
+            </li>
+        </ul>
+    </div>
+    <!-- 삭제 버튼 -->
+    <button id="editButton">수정</button>
+    <button id="deleteButton">삭제</button>
+</div>
+
+<script>
+    var tripId = [[${trip.id}]]; // 서버에서 tripId 값을 삽입합니다.
+    console.log('Trip ID:', tripId); // 디버깅을 위한 콘솔 출력
+
+    document.getElementById('deleteButton').addEventListener('click', function() {
+        if (confirm('정말로 이 여행 일정을 삭제하시겠습니까?')) {
+            fetch(`/api/trips/${tripId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('삭제되었습니다.');
+                        window.location.href = '/'; // 삭제 후 목록 페이지로 리다이렉트
+                    } else {
+                        alert('삭제 중 오류가 발생했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('삭제 중 오류가 발생했습니다.');
+                });
+        }
+    });
+    document.getElementById('editButton').addEventListener('click', function() {
+        window.location.href = `/trip/update/${tripId}`; // 수정 페이지로 리다이렉트
+    });
+</script>
+</body>
+</html>

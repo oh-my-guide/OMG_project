@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사용자의 여행 일정 조회</title>
+    <link rel="stylesheet" href="/css/trip.css">
+
+</head>
+<body>
+<div class="trip-list" th:if="${trips.size() > 0}">
+    <div th:each="trip : ${trips}" class="trip-item">
+        <h2 th:text="${trip.tripName}">여행 이름</h2>
+        <p>시작 날짜: <span th:text="${trip.startDate}">시작 날짜</span></p>
+        <p>종료 날짜: <span th:text="${trip.endDate}">종료 날짜</span></p>
+        <p>도시: <span th:text="${trip.city.name}">도시 이름</span></p>
+        <a th:href="@{/trip/{id}(id=${trip.id})}">자세히 보기</a>
+
+    </div>
+</div>
+<div th:if="${trips.size() == 0}">
+    <p>해당 사용자의 여행 일정이 없습니다.</p>
+</div>
+</body>
+</html>
