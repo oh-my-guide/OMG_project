@@ -9,6 +9,8 @@ public interface JoinPostService {
     JoinPostDto.Response createJoinPost(JoinPostDto.Request joinPostRequest);
     // 일행 게시글 전체 조회
     List<JoinPostDto.Response> findAllJoinPost();
+    // 특정 사용자의 게시글 전체 조회
+    List<JoinPostDto.Response> findJoinPostsByUserId(Long userId);
     // 일행 게시글 상세 조회
     JoinPostDto.Response findJoinPostById(Long id);
     // 일행 게시글 수정
@@ -17,4 +19,5 @@ public interface JoinPostService {
     void deleteJoinPost(Long id);
     // 일행 게시글 중복 확인
     boolean existsJoinPostByTripId(Long tripId);
+
 }

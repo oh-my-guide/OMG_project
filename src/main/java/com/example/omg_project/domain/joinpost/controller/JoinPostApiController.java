@@ -42,6 +42,15 @@ public class JoinPostApiController {
     }
 
     /**
+     * 특정 사용자의 일행 게시글 전체 조회
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<JoinPostDto.Response>> getJoinPostsByUserId(@PathVariable Long userId) {
+        List<JoinPostDto.Response> joinPosts = joinPostService.findJoinPostsByUserId(userId);
+        return ResponseEntity.ok(joinPosts);
+    }
+
+    /**
      * 일행 게시글 수정
      */
     @PutMapping("/{postId}")

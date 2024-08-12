@@ -49,6 +49,13 @@ public class JoinPostServiceImpl implements JoinPostService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<JoinPostDto.Response> findJoinPostsByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        return joinPostRepository.findJoinPostByUserId(user.getId()).stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public JoinPostDto.Response findJoinPostById(Long id) {
         JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
         return JoinPostDto.Response.fromEntity(joinPost);
