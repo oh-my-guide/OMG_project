@@ -1,4 +1,4 @@
-package com.example.omg_project.domain.certification.entity;
+package com.example.omg_project.domain.user.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

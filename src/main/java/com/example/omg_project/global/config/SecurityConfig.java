@@ -46,7 +46,14 @@ public class SecurityConfig {
             "/api/users/signup", // 회원가입 페이지
             "/api/users/mail","/api/users/verify-code", "/api/users/check-email","/api/users/check-usernick", // 인증 메일 페이지
             "/oauth2/**", "/login/oauth2/**", // OAuth2 로그인 허용
-            "/api/users/randomNickname" // 랜덤 닉네임 생성
+            "/api/users/randomNickname", // 랜덤 닉네임 생성
+            "/api/users/reset-password", "/api/users/verify-temporary-password", "/my/change-password" // 임시 비밀번호 발급
+    };
+
+    // 관리자 페이지
+    String[] adminAllowPage = new String[] {
+            "/admin",
+            "/admin/**"
     };
 
     @Bean
@@ -54,6 +61,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests(authorize -> authorize
                         .requestMatchers(allAllowPage).permitAll()
+                        .requestMatchers(adminAllowPage).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JWTFilter(jwtTokenizer, jwtBlacklistService, refreshTokenService), UsernamePasswordAuthenticationFilter.class) // JWT 필터 사용
