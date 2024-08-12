@@ -8,14 +8,10 @@ import com.example.omg_project.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
 
 
 @Service
@@ -85,9 +81,6 @@ public class TeamServiceImpl implements TeamService {
                 })
                 .collect(Collectors.toList());
     }
-}
-
-
 
     // 팀의 채팅방 ID와 사용자 ID를 기반으로 사용자 포함 여부 확인
     @Override
