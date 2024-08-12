@@ -15,12 +15,13 @@
     bottom: 0;
     width: 250px;
     margin: 10px 0 30px 10px;
-    padding: 5px;
+    padding: 20px 14px 10px 10px;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.9);
     z-index: 1;
     font-size: 12px;
     border-radius: 10px;
+    border: 1px solid #8fc6ff;
 }
 
 .bg_white {
@@ -44,7 +45,7 @@
 }
 
 #menu_wrap .option button {
-    margin-left: 5px;
+    margin-left: 0;
 }
 
 #placesList li {
@@ -71,7 +72,7 @@
 }
 
 #placesList .item .info {
-    padding: 10px 0 10px 55px;
+    padding: 10px;
 }
 
 #placesList .info .gray {
@@ -170,4 +171,14 @@
     font-weight: bold;
     cursor: default;
     color: #777;
+}
+
+#searchBtn, #completeBtn {
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+#selectBtn, #removeBtn {
+    padding: 5px;
+    margin-bottom: 5px;
 }
