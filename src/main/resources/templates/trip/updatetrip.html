@@ -30,7 +30,6 @@
         </form>
     </div>
     <div class="map_wrap">
-        <!--        <div id="map" style="width:70%;height:100%;position:relative;overflow:hidden;"></div>-->
         <div id="map"></div>
 
         <!-- 검색 메뉴 컨테이너 -->
@@ -231,12 +230,17 @@
         tripDateInputs.forEach((input, index) => {
             const dayCountLabel = input.parentNode.querySelector('.dayCountLabel');
             if (dayCountLabel) {
-                dayCountLabel.remove();
+                // dayCountLabel이 존재하면 내용을 업데이트
+                // dayCountLabel.remove();
+                dayCountLabel.textContent = `Day ${index + 1}`;
+            } else {
+                // 존재하지않으면 새로 생성
+                const newDayCountLabel = document.createElement('span');
+                newDayCountLabel.className = 'dayCountLabel';
+                newDayCountLabel.textContent = `Day ${index + 1}`;
+                // input.parentNode.insertBefore(newDayCountLabel, input.nextSibling);
+                input.parentNode.insertBefore(newDayCountLabel, input);
             }
-            const newDayCountLabel = document.createElement('span');
-            newDayCountLabel.className = 'dayCountLabel';
-            newDayCountLabel.textContent = `${index + 1}일째`;
-            input.parentNode.insertBefore(newDayCountLabel, input.nextSibling);
         });
     }
 
