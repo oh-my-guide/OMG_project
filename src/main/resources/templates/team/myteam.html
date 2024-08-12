@@ -3,10 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>가입된 팀 목록</title>
+    <title>팀 목록 관리</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f1f1f1;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 25px; /* 제목 크기 확대 */
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 30px; /* 제목과 목록 사이의 간격 증가 */
+            align-self: flex-start; /* 제목을 왼쪽 정렬 */
+            margin-left: calc(50% - 300px); /* 리스트와 일치하도록 왼쪽 정렬 */
+        }
+
+        ul#teamList {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        ul#teamList li {
+            background-color: #ffffff;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        ul#teamList li:last-child {
+            margin-bottom: 0;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 15px;
+            background-color: #ff6b6b;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e85858;
+        }
+
+        .leader-badge {
+            font-size: 12px;
+            color: #666;
+            font-weight: bold;
+            padding: 3px 6px;
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
-<h1>가입된 팀 목록</h1>
+<br>
+<h1>나의 팀 목록</h1> <!-- 제목 변경 -->
 <ul id="teamList">
     <!-- 팀 목록 렌더링 -->
 </ul>
@@ -24,10 +95,9 @@
             const teamListElement = document.getElementById('teamList');
             teamListElement.innerHTML = '';  // 기존 목록을 지우고 새로 작성
 
-            // 팀 목록을
             teams.forEach(team => {
                 const listItem = document.createElement('li');
-                listItem.textContent = `팀 ID: ${team.id} -  ${team.tripName}`;
+                listItem.textContent = `팀 ID ${team.id} :  ${team.tripName}`;
 
                 // 리더가 아닌 경우에만 탈퇴 버튼을 표시
                 if (!team.isLeader) {
@@ -36,7 +106,10 @@
                     leaveButton.onclick = () => leaveTeam(team.id);
                     listItem.appendChild(leaveButton);
                 } else {
-                    listItem.textContent += ' (리더)';
+                    const leaderBadge = document.createElement('span');
+                    leaderBadge.textContent = '리더';
+                    leaderBadge.className = 'leader-badge';
+                    listItem.appendChild(leaderBadge);
                 }
 
                 teamListElement.appendChild(listItem);

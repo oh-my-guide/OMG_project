@@ -4,12 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>팀에 가입하기</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1981ff;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background-color: #8fc6ff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0a74e5;
+        }
+    </style>
 </head>
 <body>
-<h1>초대 코드를 입력하여 팀에 가입하세요</h1>
+
 <form id="joinTeamForm">
-    <label for="inviteCode">초대 코드:</label>
-    <input type="text" id="inviteCode" name="inviteCode" required>
+    <h1>초대 코드를 입력하여 여행 일정에 참여해보세요 😀</h1>
+    <input type="text" id="inviteCode" name="inviteCode" placeholder="초대코드를 입력해주세요" required>
     <br><br>
     <button type="submit">가입하기</button>
 </form>

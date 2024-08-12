@@ -173,6 +173,7 @@
         </div>
     </div>
 
+    <br>
     <div class="trip-detail">
         <div th:each="date, iterStat : ${trip.tripDates}" class="day-column" th:classappend="'day' + ${iterStat.index + 1}">
             <div class="day-title">Day<span th:text="${iterStat.index + 1}"></span> <span th:text="${date.tripDate}">여행 날짜</span></div>
