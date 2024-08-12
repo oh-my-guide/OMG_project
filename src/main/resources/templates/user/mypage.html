@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>마이페이지</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <h2>로그인에 성공하셨습니다. 축하합니다!</h2>
@@ -13,5 +14,28 @@
 <a href="/api/users/logout">로그아웃</a>
 <a href="/my">마이페이지로 돌아가기</a>
 <a href="/my/profile">마이페이지 수정</a>
+
+<input type="hidden" id="userId" th:value="${user.id}"/>
+<button id="delete-account">회원 탈퇴</button>
+
+<script>
+    $(document).ready(function() {
+        $('#delete-account').on('click', function() {
+            if (confirm("정말로 탈퇴 하시겠습니까?")) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/api/users/' + $('#userId').val(),
+                    success: function(response) {
+                        alert('성공적으로 회원 탈퇴 되었습니다.');
+                        window.location.href = '/';
+                    },
+                    error: function(error) {
+                        alert('회원 탈퇴에 실패했습니다.');
+                    }
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

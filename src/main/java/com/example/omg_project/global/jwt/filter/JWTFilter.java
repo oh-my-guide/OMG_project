@@ -51,7 +51,8 @@ public class JWTFilter extends OncePerRequestFilter {
             "/signup", "/signin", "/", "/api/users/login", "/api/users/signup",
             "/api/users/mail","/api/users/verify-code", "/api/users/check-email","/api/users/check-usernick",
             "/oauth2/.*", "/login/oauth2/.*", "/api/users/randomNickname",
-            "/css/.*", "/js/.*", "/files/.*"
+            "/css/.*", "/js/.*", "/files/.*",
+            "/api/users/reset-password", "/api/users/verify-temporary-password", "/my/change-password"
     );
 
     /**
@@ -170,10 +171,11 @@ public class JWTFilter extends OncePerRequestFilter {
      */
     private String getToken(HttpServletRequest request) {
 
-//        String authorization = request.getHeader("Authorization");
-//        if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {
-//            return authorization.substring(7);
-//        }
+        // api 요청 시
+        String authorization = request.getHeader("Authorization");
+        if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {
+            return authorization.substring(7);
+        }
 
         Cookie[] cookies = request.getCookies(); // 쿠키에서 토큰을 찾음
         if (cookies != null) {
