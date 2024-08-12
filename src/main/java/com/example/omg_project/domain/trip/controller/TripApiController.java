@@ -102,7 +102,7 @@ public class TripApiController {
         }
     }
 
-    //tripId로 일정 조회t
+    //tripId로 일정 조회
     @GetMapping("/{id}")
     public ResponseEntity<ReadTripDTO> getTripById(@PathVariable Long id) {
         ReadTripDTO trip = tripService.getTripById(id);

@@ -18,4 +18,5 @@ public interface TeamService {
     void addUserToTeam(String inviteCode, Long userId);
 
     Team findByChatRoomId(Long chatRoomId);
+
 }

@@ -5,47 +5,213 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>여행 일정 상세 조회</title>
     <link rel="stylesheet" href="/css/trip.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+            box-sizing: border-box;
+            max-width: 1200px; /* 바디의 최대 너비 설정 */
+            margin: auto; /* 바디를 중앙으로 정렬 */
+        }
+
+        .sidebar {
+            width: 200px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .sidebar button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #8fc6ff;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .sidebar button:hover {
+            background-color: #519ace;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .header {
+            margin-bottom: 20px;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin-right: 20px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 15px;
+            background-color: #8fc6ff;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+        }
+
+        button:hover {
+            background-color: #519ace;
+        }
+
+        #deleteButton {
+            background-color: #8fc6ff;
+        }
+
+        #deleteButton:hover {
+            background-color: #519ace;
+        }
+
+        p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .trip-detail {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: transparent;
+            box-sizing: border-box;
+        }
+
+        .day-column {
+            flex: 1;
+            margin-right: 20px;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 0;
+            box-shadow: none;
+            border: none;
+            display: none; /* 기본적으로 모든 일정은 숨겨둠 */
+        }
+
+        .day-column.active {
+            display: block; /* 선택된 일정만 보이도록 설정 */
+        }
+
+        .day-column:last-child {
+            margin-right: 0;
+        }
+
+        .day-title {
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            margin-bottom: 20px;
+        }
+
+        ul li {
+            font-size: 17px;
+            color: #333;
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 3px solid #4b4b4b;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
 
-<div class="trip-detail">
-    <input type="hidden" id="tripId" th:value="${trip.id}">
-    <input type="hidden" id="currentUserId" th:value="${currentUserId}">
-    <input type="hidden" id="leaderId" th:value="${leaderId}">
+<div class="sidebar">
+    <button onclick="showDay('all')">전체 일정</button>
+    <div th:each="date, iterStat : ${trip.tripDates}">
+        <button th:text="'Day ' + (${iterStat.index + 1})"
+                th:onclick="'showDay(\'day' + (${iterStat.index + 1}) + '\')'">
+            1일차
+        </button>
+    </div>
+</div>
 
-    <h1>여행 일정 상세 조회</h1>
-    <h2 th:text="${trip.tripName}">여행 이름</h2>
-    <p>시작 날짜: <span th:text="${trip.startDate}">시작 날짜</span></p>
-    <p>종료 날짜: <span th:text="${trip.endDate}">종료 날짜</span></p>
-    <p>도시 이름: <span th:text="${trip.city.name}">도시 이름</span></p>
-    <h3>여행 일정</h3>
-    <div th:each="date : ${trip.tripDates}">
-        <h4 th:text="${date.tripDate}">여행 날짜</h4>
-        <ul>
-            <li th:each="location : ${date.tripLocations}">
-                <span th:text="${location.placeName}">장소 이름</span> (위도: <span th:text="${location.latitude}">위도</span>, 경도: <span th:text="${location.longitude}">경도</span>)
-            </li>
-        </ul>
+<div class="content">
+    <div class="header">
+        <div>
+            <h1 th:text="${trip.tripName}">여행 이름</h1>
+            <input type="hidden" id="tripId" th:value="${trip.id}">
+            <span th:text="${trip.city.name}">도시 이름</span>
+            <span th:text="${trip.startDate} + ' - ' + ${trip.endDate}">시작 날짜 - 종료 날짜</span>
+        </div>
+        <div class="button-group" th:if="${currentUserId == leaderId}">
+            <button id="editButton">수정</button>
+            <button id="deleteButton">삭제</button>
+        </div>
     </div>
 
-    <div th:if="${currentUserId != leaderId}">
-        <button id="copyTripButton">내 일정으로 가져오기</button>
-    </div>
-
-    <div th:if="${currentUserId == leaderId}">
-        <button id="editButton">수정</button>
-        <button id="deleteButton">삭제</button>
+    <div class="trip-detail">
+        <div th:each="date, iterStat : ${trip.tripDates}" class="day-column" th:classappend="'day' + ${iterStat.index + 1}">
+            <div class="day-title">Day<span th:text="${iterStat.index + 1}"></span> <span th:text="${date.tripDate}">여행 날짜</span></div>
+            <ul>
+                <li th:each="location : ${date.tripLocations}">
+                    <span th:text="${location.placeName}">장소 이름</span>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 
 <script>
+    function showDay(day) {
+        var dayColumns = document.querySelectorAll('.day-column');
+
+        dayColumns.forEach(function(column) {
+            if (day === 'all') {
+                column.classList.add('active');
+            } else {
+                column.classList.remove('active');
+                if (column.classList.contains(day)) {
+                    column.classList.add('active');
+                }
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
-        var tripId = document.getElementById('tripId').value;
-        var copyTripButton = document.getElementById('copyTripButton');
+        var tripIdElement = document.getElementById('tripId');
+        var tripId = tripIdElement ? tripIdElement.value : null;
+
+        if (!tripId) {
+            console.error('Trip ID is missing');
+            return;
+        }
+
         var editButton = document.getElementById('editButton');
         var deleteButton = document.getElementById('deleteButton');
-
-        console.log('Trip ID:', tripId); // 디버깅을 위한 콘솔 출력
 
         if (deleteButton) {
             deleteButton.addEventListener('click', function() {
@@ -59,7 +225,7 @@
                         .then(response => {
                             if (response.ok) {
                                 alert('삭제되었습니다.');
-                                window.location.href = '/'; // 삭제 후 목록 페이지로 리다이렉트
+                                window.location.href = '/';
                             } else {
                                 alert('삭제 중 오류가 발생했습니다.');
                             }
@@ -74,32 +240,11 @@
 
         if (editButton) {
             editButton.addEventListener('click', function() {
-                window.location.href = `/trip/update/${tripId}`; // 수정 페이지로 리다이렉트
+                window.location.href = `/trip/update/${tripId}`;
             });
         }
 
-        if (copyTripButton) {
-            copyTripButton.addEventListener('click', function() {
-                fetch(`/api/trips/${tripId}/copy`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            alert(data.message);
-                        } else {
-                            alert('여행 일정 저장 중 오류가 발생했습니다.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error copying trip:', error);
-                        alert('여행 일정 저장 중 오류가 발생했습니다.');
-                    });
-            });
-        }
+        showDay('all'); // 페이지 로드 시 전체 일정을 표시
     });
 </script>
 </body>
