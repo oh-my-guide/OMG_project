@@ -7,9 +7,10 @@
     <title>여행 모집 게시글 보기</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 20px;
-            background-color: #f4f4f4;
+            background-color: #f8f9fa;
+            color: #333;
         }
 
         .container {
@@ -17,69 +18,59 @@
             margin: 0 auto;
             padding: 20px;
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .trip-info {
-            margin-bottom: 30px; /* 여행 일정과 게시글 내용 사이의 간격 */
+            margin-bottom: 30px;
             padding: 15px;
-            background-color: #fdfdfd; /* 배경색 추가로 여행 일정과 게시글 내용 시각적으로 구분 */
-            border-radius: 8px; /* 모서리를 둥글게 처리 */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 살짝의 그림자 효과 추가 */
-        }
-
-        /* 추가적인 세부 스타일링 */
-        .trip-info h3 {
-            margin-top: 0; /* 제목 상단 간격 제거 */
-            font-size: 1.2em;
-        }
-
-        .trip-info p {
-            margin-bottom: 10px; /* 각 정보 간의 간격 추가 */
-            font-size: 1em;
-            color: #333;
-        }
-
-        .trip-info ul {
-            padding-left: 20px; /* 목록의 왼쪽 들여쓰기 */
-        }
-
-        .trip-info li {
-            margin-bottom: 5px; /* 목록 항목 간 간격 */
-            font-size: 1em;
-            color: #555;
+            background-color: #f9fbfd;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
         .post-title {
-            margin-bottom: 20px; /* 제목과 여행 일정 간의 간격 */
-            font-size: 24px;
-            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 700;
             color: #333;
         }
 
         .post-meta {
             font-size: 0.9em;
-            color: #666;
+            color: #777;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-meta-left {
+            display: flex;
+            align-items: center;
         }
 
         .post-author {
             font-weight: bold;
             margin-right: 10px;
+            color: #555;
         }
 
         .post-date {
-            color: #aaa;
+            margin-left: 10px;
+            color: #999;
         }
 
         .post-content {
-            margin-top: 20px; /* 여행 일정과의 간격 */
-            padding: 15px;
-            background-color: #f1f8ff; /* 게시글 내용을 위한 배경색 */
-            border-radius: 8px; /* 모서리를 둥글게 처리 */
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* 살짝의 그림자 효과 추가 */
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f9fafc;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            line-height: 1.6;
+            color: #555;
+            border-left: 4px solid #8fc6ff;
         }
 
         .like-section {
@@ -95,6 +86,7 @@
             font-size: 24px;
             color: #888;
             margin-right: 10px;
+            transition: color 0.3s ease;
         }
 
         .like-button.liked .fa-heart {
@@ -102,39 +94,28 @@
         }
 
         .like-button:hover .fa-heart {
-            color: #c0392b;
+            color: #d9534f;
         }
 
         .button-container {
-            margin-top: 10px;
+            display: flex;
+            gap: 10px;
         }
 
-        .button {
-            padding: 10px 15px;
+        .button-container a, .button-container button {
+            background-color: transparent;
+            color: #555;
             border: none;
             cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px;
-            border-radius: 5px;
-        }
-
-        .delete-button {
-            background-color: #f44336;
-            color: white;
-        }
-
-        .delete-button:hover {
-            background-color: #d32f2f;
-        }
-
-        .edit-button {
-            background-color: #007BFF;
-            color: white;
+            padding: 0;
+            font-size: 0.9em;
             text-decoration: none;
+            transition: color 0.3s ease;
         }
 
-        .edit-button:hover {
-            background-color: #0056b3;
+        .button-container a:hover, .button-container button:hover {
+            color: #333;
+            text-decoration: underline;
         }
 
         .comment-section {
@@ -142,98 +123,137 @@
         }
 
         .comment, .reply {
-            border: 1px solid #ddd;
-            padding: 10px;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
             margin-top: 10px;
-            margin-bottom: 10px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
+            background-color: #fafafa;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
         .reply {
-            margin-left: 20px;
-            border-left: 2px solid #ddd;
-            padding-left: 10px;
+            margin-left: 40px;
             background-color: #f1f1f1;
         }
 
-        .comment-form, .reply-form {
-            margin-top: 10px;
+        .comment-meta, .reply-meta {
             display: flex;
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .comment-form input[type="text"], .reply-form input[type="text"] {
-            width: calc(100% - 110px); /* 버튼 너비 고려 */
-            padding: 8px;
-            box-sizing: border-box;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .comment-form label, .reply-form label {
-            margin-bottom: 10px; /* 체크박스와 텍스트에어리어 간의 간격 */
-        }
-
-        .comment-form-row, .reply-form-row {
-            display: flex;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px; /* 텍스트에어리어와 체크박스 간의 간격 */
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .comment-author, .reply-author {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #555;
+        }
+
+        .comment-date, .reply-date {
+            color: #999;
         }
 
         .comment-buttons, .reply-buttons {
             display: flex;
-            gap: 5px;
-            margin-top: 10px; /* 작성자/작성일과 버튼 간의 간격을 넓힘 */
+            gap: 10px;
         }
 
-        .comment-form button, .reply-form button {
-            padding: 10px 15px;
-            background-color: #4CAF50;
-            color: white;
+        .comment-buttons button, .reply-buttons button {
+            background-color: transparent;
+            color: #555;
             border: none;
             cursor: pointer;
-            margin-left: 10px; /* 버튼과 텍스트에어리어 사이의 간격 */
-            border-radius: 5px;
-            align-self: flex-start; /* 버튼을 텍스트에어리어의 오른쪽에 배치 */
-        }
-
-        .comment-form button:hover, .reply-form button:hover {
-            background-color: #45a049;
-        }
-
-        .comment-meta {
+            padding: 0;
             font-size: 0.9em;
-            color: #666;
-            margin-top: 3px; /* 간격 줄이기 */
+            transition: color 0.3s ease;
         }
 
-        .comment-author {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .comment-date {
-            color: #aaa;
-        }
-
-        .edit-form {
-            display: none;
+        .comment-buttons button:hover, .reply-buttons button:hover {
+            color: #333;
+            text-decoration: underline;
         }
 
         .comment-content, .reply-content {
-            margin: 3px 0; /* 텍스트 위아래 간격을 줄임 */
+            margin-top: 8px;
+            font-size: 1em;
+            color: #555;
+            line-height: 1.6;
         }
+
+        .comment-form, .reply-form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .comment-form-row, .reply-form-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .comment-form input[type="text"], .reply-form input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-size: 1em;
+            margin-bottom: 10px;
+            height: 40px;
+            transition: border-color 0.3s ease;
+        }
+
+        .comment-form input[type="text"]:focus, .reply-form input[type="text"]:focus {
+            border-color: #8fc6ff;
+            outline: none;
+        }
+
+        .comment-form button, .reply-form button {
+            padding: 0 20px;
+            background-color: #8fc6ff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+            margin-left: 10px;
+            flex-shrink: 0;
+            height: 40px;
+        }
+
+        .comment-form button:hover, .reply-form button:hover {
+            background-color: #6ba0d6;
+        }
+
+        .comment-form label, .reply-form label {
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 0;
+            padding-top: 10px;
+        }
+
     </style>
 </head>
 <body>
 <div class="container">
     <h1 class="post-title" th:text="${post.title}"></h1>
     <div class="post-meta">
-        <span class="post-author" th:text="${post.usernick}"></span>
-        <span class="post-date" th:text="${post.formattedCreatedAt}"></span>
+        <div class="post-meta-left">
+            <span class="post-author" th:text="${post.usernick}"></span>
+            <span class="post-date" th:text="${post.formattedCreatedAt}"></span>
+        </div>
+        <div class="button-container" th:if="${#authentication.name} == ${post.username}">
+            <a th:href="@{/joinPost/{postId}/updatePost(postId=${post.id})}" class="button edit-button">수정</a>
+            <button class="button delete-button" onclick="deletePost()">삭제</button>
+        </div>
     </div>
+
     <!-- 여행 일정 정보 추가 -->
     <div class="trip-info">
         <h3>여행 일정</h3>
@@ -241,7 +261,6 @@
         <p><strong>여행 시작일:</strong> <span th:text="${post.trip.startDate}"></span></p>
         <p><strong>여행 종료일:</strong> <span th:text="${post.trip.endDate}"></span></p>
         <p><strong>도시 이름:</strong> <span th:text="${post.trip.city.name}"></span></p>
-        <p><strong>여행 일:</strong>
         <div th:each="date : ${post.trip.tripDates}">
             <h4 th:text="${date.tripDate}">여행 날짜</h4>
             <ul>
@@ -251,8 +270,8 @@
             </ul>
         </div>
     </div>
-    <div class="post-content" th:text="${post.content}"></div>
 
+    <div class="post-content" th:text="${post.content}"></div>
 
     <!-- 좋아요 버튼 추가 -->
     <div class="like-section">
@@ -262,27 +281,25 @@
         <span id="likeCount">0</span>
     </div>
 
-    <!-- 게시글 삭제 및 수정 버튼 -->
-    <div class="button-container" th:if="${#authentication.name} == ${post.username}">
-        <a th:href="@{/joinPost/{postId}/updatePost(postId=${post.id})}" class="button edit-button">수정</a>
-        <button class="button delete-button" onclick="deletePost()">삭제</button>
-    </div>
 
     <!-- userId를 숨겨진 입력 필드에 포함 -->
     <input type="hidden" id="userId" th:value="${user.getId()}"/>
     <input type="hidden" id="postUserId" th:value="${post.userId}"/>
+    <input type="hidden" id="postTripId" th:value="${post.trip.getId()}"/>
 
     <!-- 댓글 작성 폼 -->
     <div class="comment-section">
         <h2>댓글</h2>
         <form id="commentForm" class="comment-form">
             <div class="comment-form-row">
-                <input type="text" id="commentContent" placeholder="댓글을 작성하세요" required/>
+                <input type="text" id="commentContent" placeholder="댓글을 작성하세요" required />
                 <button type="submit">등록</button>
             </div>
-            <label>
-                <input type="checkbox" id="commentSecret" name="secret"> 비밀글
-            </label>
+            <div class="checkbox-row">
+                <label>
+                    <input type="checkbox" id="commentSecret" name="secret"> 비밀글
+                </label>
+            </div>
         </form>
 
         <div id="commentsContainer">
@@ -296,6 +313,7 @@
     const postId = [[${post.id}]];
     const userId = $('#userId').val();
     const postUserId = $('#postUserId').val();
+    const postTripId = $('#postTripId').val();
 
     // 게시글 삭제 함수
     function deletePost() {
@@ -369,44 +387,38 @@
 
         const isSecret = (comment.secret && (comment.userId !== parseInt(userId) && parseInt(userId) !== parseInt(postUserId)));
         let contentHTML;
-
         if (isSecret) {
             contentHTML = `<p class="comment-content">비밀 댓글입니다.</p>`;
         } else {
             contentHTML = `
-            <p class="comment-content">${comment.content}</p>
-            <div class="comment-meta">
-                <span class="comment-author">${comment.usernick}</span>
-                <span class="comment-date">${comment.formattedCreatedAt}</span>
-            </div>
-            <div class="comment-buttons">
-                <button class="edit-btn" onclick="toggleReplyForm(${comment.id})">답글 달기</button>`;
+    <div class="comment-meta">
+        <div class="meta-left">
+            <span class="comment-author">${comment.usernick}</span>
+            <span class="comment-date">${comment.formattedCreatedAt}</span>
+        </div>
+        <div class="comment-buttons">`;
             if (comment.userId === parseInt(userId)) {
                 contentHTML += `
-                <button class="edit-btn" onclick="editComment(${comment.id})">수정</button>
-                <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>
-                <form id="editCommentForm-${comment.id}" class="reply-form edit-form" style="display: none;">
-                    <textarea placeholder="댓글을 수정하세요">${comment.content}</textarea>
-                    <label>
-                        <input type="checkbox" class="editCommentSecret" ${comment.secret ? 'checked' : ''}> 비밀글
-                    </label>
-                    <button type="button" onclick="submitEditComment(${comment.id})">등록</button>
-                    <button type="button" onclick="cancelEditComment(${comment.id})">취소</button>
-                </form>`;
+            <button class="edit-btn" onclick="editComment(${comment.id})">수정</button>
+            <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>`;
             }
             contentHTML += `
-            </div>
-            <div class="reply-section" id="replySection-${comment.id}"></div>
-            <form class="reply-form" id="replyForm-${comment.id}" style="display:none;">
-                <div class="reply-form-row">
-                    <input type="text" placeholder="답글을 작성하세요" />
-                    <button type="button" onclick="submitReply(${comment.id})">등록</button>
-                </div>
-                <label>
-                    <input type="checkbox" class="replySecret" name="secret"> 비밀글
-                </label>
-            </form>`;
+            <button class="edit-btn" onclick="toggleReplyForm(${comment.id})">답글 달기</button>
+        </div>
+    </div>
+    <p class="comment-content">${comment.content}</p>
+    <div class="reply-section" id="replySection-${comment.id}"></div>
+    <form class="reply-form" id="replyForm-${comment.id}" style="display:none;">
+    <div class="reply-form-row">
+        <input type="text" placeholder="답글을 작성하세요" />
+        <button type="button" onclick="submitReply(${comment.id})">등록</button>
+    </div>
+    <label>
+        <input type="checkbox" class="replySecret" name="secret"> 비밀글
+    </label>
+</form>`;
         }
+
 
         commentElement.html(contentHTML);
         commentContainer.append(commentElement);
@@ -438,23 +450,21 @@
             contentHTML = `<p class="reply-content">비밀 댓글입니다.</p>`;
         } else {
             contentHTML = `
-            <p class="reply-content">${reply.content}</p>
-            <div class="comment-meta">
-                <span class="comment-author">${reply.usernick}</span>
-                <span class="comment-date">${reply.formattedCreatedAt}</span>
+            <div class="reply-meta">
+                <div class="meta-left">
+                    <span class="reply-author">${reply.usernick}</span>
+                    <span class="reply-date">${reply.formattedCreatedAt}</span>
+                </div>
+                <div class="reply-buttons">`;
+            if (reply.userId === parseInt(userId)) {
+                contentHTML += `
+                    <button class="edit-btn" onclick="editReply(${reply.id}, ${commentId})">수정</button>
+                    <button class="edit-btn" onclick="deleteReply(${reply.id}, ${commentId})">삭제</button>`;
+            }
+            contentHTML += `
+                </div>
             </div>
-            <div class="reply-buttons">
-                <button class="edit-btn" onclick="editReply(${reply.id}, ${commentId})">수정</button>
-                <button class="edit-btn" onclick="deleteReply(${reply.id}, ${commentId})">삭제</button>
-                <form id="editReplyForm-${reply.id}" class="reply-form edit-form" style="display: none;">
-                    <textarea placeholder="답글을 수정하세요">${reply.content}</textarea>
-                    <label>
-                        <input type="checkbox" class="editReplySecret" ${reply.secret ? 'checked' : ''}> 비밀글
-                    </label>
-                    <button type="button" onclick="submitEditReply(${reply.id}, ${commentId})">등록</button>
-                    <button type="button" onclick="cancelEditReply(${reply.id})">취소</button>
-                </form>
-            </div>`;
+            <p class="reply-content">${reply.content}</p>`;
         }
 
         replyElement.html(contentHTML);
@@ -497,20 +507,38 @@
 
     // 댓글 수정 폼을 토글하는 함수
     function editComment(commentId) {
+        const commentElement = $(`#comment-${commentId}`);
         const editForm = $(`#editCommentForm-${commentId}`);
-        if (editForm.is(':visible')) {
-            editForm.hide();
-            $(`#comment-${commentId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+
+        if (editForm.length === 0) {
+            // 수정 폼이 존재하지 않으면 생성
+            const currentContent = commentElement.find('.comment-content').text();
+            const formHTML = `
+        <form id="editCommentForm-${commentId}" class="reply-form edit-form" style="margin-top: 10px;">
+            <div class="reply-form-row">
+                <input type="text" value="${currentContent}" placeholder="댓글을 수정하세요" />
+                <button type="button" onclick="submitEditComment(${commentId})">등록</button>
+            </div>
+            <label style="margin-top: 10px;">
+                <input type="checkbox" class="editCommentSecret"> 비밀글
+            </label>
+        </form>`;
+
+            commentElement.find('.comment-content').after(formHTML); // 수정 폼을 댓글 내용 아래에 추가
+            commentElement.find('.comment-content').hide();
+            commentElement.find('.comment-buttons').hide();
         } else {
-            editForm.show();
-            $(`#comment-${commentId} .edit-btn`).hide(); // 수정/삭제 버튼 숨기기
+            // 수정 폼이 존재하면 토글
+            editForm.toggle();
+            commentElement.find('.comment-content').toggle();
+            commentElement.find('.comment-buttons').toggle();
         }
     }
 
     // 댓글 수정 사항을 서버에 전송하는 함수
     function submitEditComment(commentId) {
         const editForm = $(`#editCommentForm-${commentId}`);
-        const textarea = editForm.find('textarea');
+        const textarea = editForm.find('input[type="text"]');
         const content = textarea.val();
         const secret = editForm.find('.editCommentSecret').is(':checked');
 
@@ -521,8 +549,9 @@
             data: JSON.stringify({content: content, userId: userId, secret: secret}),
             success: function (comment) {
                 updateCommentInPage(commentId, comment);
-                editForm.hide(); // 수정 폼 숨김
-                $(`#comment-${commentId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+                editForm.remove(); // 수정 폼 제거
+                $(`#comment-${commentId} .comment-content`).show(); // 수정된 내용 보이기
+                $(`#comment-${commentId} .comment-buttons`).show(); // 버튼 보이기
             },
             error: function (error) {
                 console.error('Error:', error);
@@ -540,8 +569,8 @@
             contentHTML = `<p class="comment-content">비밀 댓글입니다.</p>`;
         } else {
             contentHTML = `
-                <p class="comment-content">${comment.content}</p>
-                <div class="comment-meta">
+            <div class="comment-meta">
+                <div class="meta-left">
                     <span class="comment-author">${comment.usernick}</span>
                     <span class="comment-date">${comment.formattedCreatedAt}</span>
                 </div>
@@ -550,33 +579,26 @@
             if (comment.userId === parseInt(userId)) {
                 contentHTML += `
                     <button class="edit-btn" onclick="editComment(${comment.id})">수정</button>
-                    <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>
-                    <form id="editCommentForm-${comment.id}" class="reply-form edit-form" style="display: none;">
-                        <textarea placeholder="댓글을 수정하세요">${comment.content}</textarea>
-                        <label>
-                            <input type="checkbox" class="editCommentSecret" ${comment.secret ? 'checked' : ''}> 비밀글
-                        </label>
-                        <button type="button" onclick="submitEditComment(${comment.id})">등록</button>
-                        <button type="button" onclick="cancelEditComment(${comment.id})">취소</button>
-                    </form>`;
+                    <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>`;
             }
             contentHTML += `
                 </div>
-                <div class="reply-section" id="replySection-${comment.id}"></div>
-                <form class="reply-form" id="replyForm-${comment.id}" style="display:none;">
-                    <div class="reply-form-row">
-                        <input type="text" placeholder="답글을 작성하세요" />
-                        <button type="button" onclick="submitReply(${comment.id})">등록</button>
-                    </div>
-                    <label>
-                        <input type="checkbox" class="replySecret" name="secret"> 비밀글
-                    </label>
-                </form>`;
+            </div>
+            <p class="comment-content">${comment.content}</p>
+            <div class="reply-section" id="replySection-${comment.id}"></div>
+            <form class="reply-form" id="replyForm-${comment.id}" style="display:none;">
+                <div class="reply-form-row">
+                    <input type="text" placeholder="답글을 작성하세요" />
+                    <button type="button" onclick="submitReply(${comment.id})">등록</button>
+                </div>
+                <label>
+                    <input type="checkbox" class="replySecret" name="secret"> 비밀글
+                </label>
+            </form>`;
         }
 
         commentElement.html(contentHTML);
-        // 기존 대댓글을 다시 로드하여 추가
-        loadReplies(commentId);
+        loadReplies(commentId); // 기존 대댓글을 다시 로드하여 추가
     }
 
     // 댓글 수정 취소 함수
@@ -604,21 +626,39 @@
     }
 
     // 대댓글 수정 폼을 토글하는 함수
-    function editReply(replyId) {
+    function editReply(replyId, commentId) {
+        const replyElement = $(`#reply-${replyId}`);
         const editForm = $(`#editReplyForm-${replyId}`);
-        if (editForm.is(':visible')) {
-            editForm.hide();
-            $(`#reply-${replyId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+
+        if (editForm.length === 0) {
+            // 수정 폼이 존재하지 않으면 생성
+            const currentContent = replyElement.find('.reply-content').text();
+            const formHTML = `
+            <form id="editReplyForm-${replyId}" class="reply-form edit-form" style="margin-top: 10px;">
+                <div class="reply-form-row">
+                    <input type="text" value="${currentContent}" placeholder="답글을 수정하세요" />
+                    <button type="button" onclick="submitEditReply(${replyId}, ${commentId})">등록</button>
+                </div>
+                <label style="margin-top: 10px;">
+                    <input type="checkbox" class="editReplySecret"> 비밀글
+                </label>
+            </form>`;
+
+            replyElement.append(formHTML);
+            replyElement.find('.reply-content').hide();
+            replyElement.find('.reply-buttons').hide();
         } else {
-            editForm.show();
-            $(`#reply-${replyId} .edit-btn`).hide(); // 수정/삭제 버튼 숨기기
+            // 수정 폼이 존재하면 토글
+            editForm.toggle();
+            replyElement.find('.reply-content').toggle();
+            replyElement.find('.reply-buttons').toggle();
         }
     }
 
     // 대댓글 수정 사항을 서버에 전송하는 함수
     function submitEditReply(replyId, commentId) {
         const editForm = $(`#editReplyForm-${replyId}`);
-        const textarea = editForm.find('textarea');
+        const textarea = editForm.find('input[type="text"]');
         const content = textarea.val();
         const secret = editForm.find('.editReplySecret').is(':checked');
 
@@ -629,8 +669,9 @@
             data: JSON.stringify({content: content, userId: userId, secret: secret}),
             success: function (reply) {
                 updateReplyInPage(replyId, reply, commentId);
-                editForm.hide(); // 수정 폼 숨김
-                $(`#reply-${replyId} .edit-btn`).show(); // 수정/삭제 버튼 보이기
+                editForm.remove(); // 수정 폼 제거
+                $(`#reply-${replyId} .reply-content`).show(); // 수정된 내용 보이기
+                $(`#reply-${replyId} .reply-buttons`).show(); // 버튼 보이기
             },
             error: function (error) {
                 console.error('Error:', error);
@@ -648,23 +689,21 @@
             contentHTML = `<p class="reply-content">비밀 댓글입니다.</p>`;
         } else {
             contentHTML = `
-                <p class="reply-content">${reply.content}</p>
-                <div class="comment-meta">
-                    <span class="comment-author">${reply.usernick}</span>
-                    <span class="comment-date">${reply.formattedCreatedAt}</span>
+            <div class="reply-meta">
+                <div class="meta-left">
+                    <span class="reply-author">${reply.usernick}</span>
+                    <span class="reply-date">${reply.formattedCreatedAt}</span>
                 </div>
-                <div class="reply-buttons">
+                <div class="reply-buttons">`;
+            if (reply.userId === parseInt(userId)) {
+                contentHTML += `
                     <button class="edit-btn" onclick="editReply(${reply.id}, ${commentId})">수정</button>
-                    <button class="edit-btn" onclick="deleteReply(${reply.id}, ${commentId})">삭제</button>
-                    <form id="editReplyForm-${reply.id}" class="reply-form edit-form" style="display: none;">
-                        <textarea placeholder="답글을 수정하세요">${reply.content}</textarea>
-                        <label>
-                            <input type="checkbox" class="editReplySecret" ${reply.secret ? 'checked' : ''}> 비밀글
-                        </label>
-                        <button type="button" onclick="submitEditReply(${reply.id}, ${commentId})">등록</button>
-                        <button type="button" onclick="cancelEditReply(${reply.id})">취소</button>
-                    </form>
-                </div>`;
+                    <button class="edit-btn" onclick="deleteReply(${reply.id}, ${commentId})">삭제</button>`;
+            }
+            contentHTML += `
+                </div>
+            </div>
+            <p class="reply-content">${reply.content}</p>`;
         }
 
         replyElement.html(contentHTML);
@@ -722,6 +761,5 @@
         });
     });
 </script>
-
 </body>
 </html>
