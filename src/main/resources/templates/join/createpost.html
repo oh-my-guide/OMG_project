@@ -9,7 +9,7 @@
             margin: 20px;
         }
 
-        input, textarea {
+        input, textarea, select {
             display: block;
             margin-bottom: 10px;
             width: 100%;
@@ -42,37 +42,85 @@
 <!-- 게시글 작성 폼 -->
 <form id="createPostForm">
     <input type="hidden" id="userId" name="userId" th:value="${userId}">
-    <input type="hidden" id="tripId" name="tripId" th:value="${tripId}">
+
+    <label for="tripSelect">나의 여행</label>
+    <select id="tripSelect" name="tripId" required>
+        <option value="" disabled selected>여행을 선택하세요</option>
+        <!-- 여행 목록이 여기에 추가됩니다 -->
+    </select>
 
     <label for="title">제목</label>
-    <input type="text" id="title" placeholder="제목" required>
+    <input type="text" id="title" name="title" placeholder="제목" required>
 
     <label for="content">내용</label>
-    <textarea id="content" placeholder="내용" required></textarea>
+    <textarea id="content" name="content" placeholder="내용" required></textarea>
 
     <button type="submit">작성하기</button>
 </form>
 
 <script>
-    document.getElementById('createPostForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
+    document.addEventListener('DOMContentLoaded', function() {
         const userId = document.getElementById('userId').value;
-        const tripId = document.getElementById('tripId').value;
-        const title = document.getElementById('title').value;
-        const content = document.getElementById('content').value;
+        const tripSelect = document.getElementById('tripSelect');
 
-        // JSON 데이터로 요청 본문에 포함하여 전송
-        fetch(`/api/joinPosts`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userId, tripId, title, content })
-        })
+        // API 호출로 유저의 여행 목록을 가져옴
+        fetch(`/api/trips/user/${userId}`)
             .then(response => response.json())
-            .then(data => alert('게시글이 작성되었습니다: ' + data.id))
+            .then(trips => {
+                if (trips && trips.length > 0) {
+                    trips.forEach(trip => {
+                        const option = document.createElement('option');
+                        option.value = trip.id;
+                        option.textContent = trip.tripName;
+                        tripSelect.appendChild(option);
+                    });
+                } else {
+                    alert('계획된 여행이 없습니다. 여행을 계획해주세요!');
+                }
+            })
             .catch(error => console.error('Error:', error));
+
+        document.getElementById('createPostForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const tripId = tripSelect.value;
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+
+            // 여행이 선택되지 않은 경우 경고 메시지 표시
+            if (!tripId) {
+                alert('여행을 선택해주세요.');
+                return;
+            }
+
+            // 중복 검사를 위해 API 호출
+            fetch(`/api/joinPosts/checkDuplicate/${tripId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        alert('해당 여행에 대한 모집 게시글이 이미 존재합니다.');
+                    } else {
+                        // 중복이 없을 때 게시글 작성
+                        fetch('/api/joinPosts', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ userId: userId, tripId: tripId, title: title, content: content })
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    window.location.href = "/joinPost/";
+                                } else {
+                                    return response.json().then(err => Promise.reject(err));
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
     });
 </script>
 </body>

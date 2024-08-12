@@ -1,6 +1,7 @@
 package com.example.omg_project.domain.joinpost.dto;
 
 import com.example.omg_project.domain.joinpost.entity.JoinPost;
+import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,8 @@ public class JoinPostDto {
     public static class Request {
         private String title;
         private String content;
+        private Long userId;
+        private Long tripId;
 
         // DTO -> 엔티티
         public JoinPost toEntity(User user, Trip trip) {
@@ -44,6 +47,7 @@ public class JoinPostDto {
         private Long userId;
         private String username;
         private String usernick;
+        private ReadTripDTO trip;
 
         // 엔티티 -> DTO
         public static Response fromEntity(JoinPost joinPost) {
@@ -55,6 +59,7 @@ public class JoinPostDto {
                     .userId(joinPost.getUser().getId())
                     .usernick(joinPost.getUser().getUsernick())
                     .username(joinPost.getUser().getUsername())
+                    .trip(ReadTripDTO.fromEntity(joinPost.getTrip()))
                     .build();
         }
 
