@@ -1,7 +1,9 @@
 package com.example.omg_project.domain.user.controller;
 
+import com.example.omg_project.domain.user.dto.request.Oauth2LoginDto;
 import com.example.omg_project.domain.user.dto.request.UserEditDto;
 import com.example.omg_project.domain.user.entity.User;
+import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +22,7 @@ import java.util.Optional;
 @Slf4j
 public class UserController {
 
-    private final UserServiceImpl userServiceimpl;
+    private final UserService userService;
 
     /**
      * 일반 로그인 회원의 정보
@@ -29,7 +31,7 @@ public class UserController {
     public String index(Model model, Authentication authentication) {
 
         String username = authentication.getName();
-        Optional<User> userOptional = userServiceimpl.findByUsername(username);
+        Optional<User> userOptional = userService.findByUsername(username);
 
         if (userOptional.isPresent()) {
             model.addAttribute("user", userOptional.get());
@@ -39,19 +41,44 @@ public class UserController {
     }
 
     /**
-     * OAuth2 로그인 회원의 정보
+     * OAuth2 로그인 회원 추가 정보 기입
      */
     @GetMapping("/oauthPage")
-    public String info(Model model, Authentication authentication) {
+    public String addOauth2(Model model, Authentication authentication) {
 
         String username = authentication.getName();
-        Optional<User> userOptional = userServiceimpl.findByUsername(username);
+        Optional<User> userOptional = userService.findByUsername(username);
 
         if (userOptional.isPresent()) {
-            model.addAttribute("user", userOptional.get());
-            return "user/oauthPage";
+            User user = userOptional.get();
+
+            // 이미 추가 정보가 존재하는지 확인
+            if (user.getPhoneNumber().equals("01000000000")) {
+                model.addAttribute("user", user);
+                return "user/oauth2page"; // 이미 정보가 있다면 마이 페이지로 리다이렉트
+            }
+            return "redirect:/my";
         }
         return "redirect:/signin";
+    }
+
+    @PostMapping("/oauthPage")
+    public String addOauth2(Authentication authentication, @ModelAttribute Oauth2LoginDto oauth2LoginDto, RedirectAttributes redirectAttributes) {
+
+        log.info("Received User: {}", oauth2LoginDto);
+        String username = authentication.getName();
+        try {
+            Optional<User> updatedUser = userService.updateOauth2(username, oauth2LoginDto);
+            if (updatedUser.isPresent()) {
+                redirectAttributes.addFlashAttribute("msg", "추가정보가 저장되었습니다.");
+            } else {
+                redirectAttributes.addFlashAttribute("msg", "추가정보 저장에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("msg", "추가정보 저장 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return "redirect:/oauthPage";
     }
 
     /**
@@ -62,18 +89,15 @@ public class UserController {
 
         String username = authentication.getName();
 
-        Optional<User> userOptional = userServiceimpl.findByUsername(username);
+        Optional<User> userOptional = userService.findByUsername(username);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             model.addAttribute("user", user);
             model.addAttribute("username", username);
 
-            model.addAttribute("isSocialUser", user.getProvider() != null && !user.getProvider().isEmpty());
-            model.addAttribute("isRegularUser", user.getProvider() == null || user.getProvider().isEmpty());
-
             return "/user/mypageEdit";
         }
-        return "redirect:/loginform";
+        return "redirect:/signin";
     }
 
     /**
@@ -85,7 +109,7 @@ public class UserController {
         String username = authentication.getName();
 
         try {
-            Optional<User> updatedUser = userServiceimpl.updateUser(username, userEditDto);
+            Optional<User> updatedUser = userService.updateUser(username, userEditDto);
             if (updatedUser.isPresent()) {
                 redirectAttributes.addFlashAttribute("msg", "회원정보가 수정되었습니다.");
             } else {

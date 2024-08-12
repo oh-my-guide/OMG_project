@@ -1,6 +1,7 @@
 package com.example.omg_project.domain.user.controller;
 
 import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
+import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Slf4j
 public class AuthController {
 
-    private final UserServiceImpl userServiceimpl;
+    private final UserService userService;
 
     /**
      * 메인 홈 페이지
@@ -40,7 +41,7 @@ public class AuthController {
     public String signup(@ModelAttribute("user") UserSignUpDto userSignUpDto,
                          Model model) {
         try {
-            userServiceimpl.signUp(userSignUpDto);
+            userService.signUp(userSignUpDto);
             model.addAttribute("success", "성공적으로 회원가입 되었습니다.");
             return "redirect:/signin";
         } catch (Exception e) {

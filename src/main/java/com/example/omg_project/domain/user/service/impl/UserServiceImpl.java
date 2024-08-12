@@ -2,6 +2,7 @@ package com.example.omg_project.domain.user.service.impl;
 
 import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.role.repository.RoleRepository;
+import com.example.omg_project.domain.user.dto.request.Oauth2LoginDto;
 import com.example.omg_project.domain.user.dto.request.UserEditDto;
 import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
 import com.example.omg_project.domain.user.entity.User;
@@ -48,16 +49,17 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("User 역할이 없습니다."));
 
-        User user = new User();
-        user.setRoles(Collections.singleton(role));     // 단일 역할 지정 --> 모든 사용자는 ROLE_USER
-        user.setUsername(userSignUpDto.getUsername());  // 이메일
-        user.setPassword(passwordEncoder.encode(userSignUpDto.getPassword())); // 비밀번호 암호화
-        user.setUsernick(userSignUpDto.getUsernick());  // 닉네임
-        user.setName(userSignUpDto.getName());          // 본명
-        user.setRegistrationDate(LocalDateTime.now());  // 가입일
-        user.setBirthdate(userSignUpDto.getBirthdate()); // 생일
-        user.setGender(userSignUpDto.getGender());       // 성별
-        user.setPhoneNumber(userSignUpDto.getPhoneNumber()); // 연락처
+        User user = User.builder()
+                .username(userSignUpDto.getUsername())
+                .roles(Collections.singleton(role))
+                .password(passwordEncoder.encode(userSignUpDto.getPassword()))
+                .usernick(userSignUpDto.getUsernick())
+                .name(userSignUpDto.getName())
+                .birthdate(userSignUpDto.getBirthdate())
+                .phoneNumber(userSignUpDto.getPhoneNumber())
+                .gender(userSignUpDto.getGender())
+                .registrationDate(LocalDateTime.now())
+                .build();
 
         userRepository.save(user);
     }
@@ -117,12 +119,30 @@ public class UserServiceImpl implements UserService {
         User user = userOptional.get();
 
         user.setUsernick(userEditDto.getUsernick());
-        user.setBirthdate(userEditDto.getBirthdate());
-        user.setGender(userEditDto.getGender());
         user.setPhoneNumber(userEditDto.getPhoneNumber());
 
         User updatedUser = userRepository.save(user);
         return Optional.of(updatedUser);
+    }
+
+    /**
+     * Oauth2 로그인 시 추가 정보 입력
+     */
+    @Override
+    public Optional<User> updateOauth2(String username, Oauth2LoginDto oauth2LoginDto) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            log.error("사용자 없습니다. :: {}", username);
+            return Optional.empty();
+        }
+
+        User user = userOptional.get();
+        user.setPhoneNumber(oauth2LoginDto.getPhoneNumber());
+        user.setGender(oauth2LoginDto.getGender());
+        user.setBirthdate(oauth2LoginDto.getBirthdate());
+
+        userRepository.save(user);
+        return Optional.of(user);
     }
 
     /**

@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println("OAuth2User attributes: " + oAuth2User.getAttributes());
+        log.info("OAuth2User attributes: {}", oAuth2User.getAttributes());
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
 
@@ -54,10 +55,17 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
         String provider = oAuth2Response.getProvider();
         String providerId = oAuth2Response.getProviderId();
-        String name = provider + " " + providerId; // 이렇게 해서 해당 유저가 이미 디비에 있는지 없는지 확인
-        Optional<User> userOptional = userRepository.findByUsername(name);
+        String username = provider + " " + providerId; // 유저명 생성 (OAuth2 공급자명 + 공급자ID)
 
-        // "USER" 라는 역할을 OAuth2 로그인 사람에게 다 부여
+        Optional<User> userOptional = userRepository.findByUsername(username);
+
+        if (userOptional.isPresent()) {
+            // 기존 유저가 이미 존재하는 경우, 추가 작업 없이 바로 반환
+            log.info("기존 유저 로그인: {}", username);
+            return new CustomOAuth2User(oAuth2Response, userOptional.get().getRoles().stream().map(Role::getName).collect(Collectors.joining(",")));
+        }
+
+        // 새로운 유저에 대한 처리
         String roleName = "ROLE_USER";
         Optional<Role> roleOptional = roleRepository.findByName(roleName);
         Role role;
@@ -68,45 +76,23 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
             role = roleOptional.get();
         }
 
-        User user;
-        // OAuth2 로그인을 한 적 없는 사람
-        if (userOptional.isEmpty()) {
-            user = User.builder()
-                    .name(oAuth2Response.getName())
-                    .username(name)
-                    .roles(Set.of(role))
-                    .providerId(oAuth2Response.getProviderId())
-                    .provider(oAuth2Response.getProvider())
-                    .password("")
-                    // 마이페이지에서 직접 설정할 필드들
-                    .phoneNumber("")
-                    .birthdate(LocalDate.from(LocalDateTime.now()))
-                    .gender("")
-                    .registrationDate(LocalDateTime.now())
-                    .usernick(oAuth2Response.getEmail())
-                    .build();
-            userRepository.save(user);
-        } else { // 이미 OAuth2 로그인을 한 적이 있는 사람
-            user = userOptional.get();
-            boolean updated = false;
+        User newUser = User.builder()
+                .name(oAuth2Response.getName())
+                .username(username)
+                .roles(Set.of(role))
+                .providerId(oAuth2Response.getProviderId())
+                .provider(oAuth2Response.getProvider())
+                .password("")
+                // 마이페이지에서 직접 설정할 필드들
+                .phoneNumber("01000000000")
+                .birthdate(LocalDate.from(LocalDateTime.now()))
+                .gender("여자")
+                .registrationDate(LocalDateTime.now())
+                .usernick(oAuth2Response.getEmail())
+                .build();
+        userRepository.save(newUser);
 
-            if (!user.getRoles().contains(role)) {
-                user.getRoles().add(role);
-                updated = true;
-            }
-
-            // 닉네임은 첫 로그인 이후 마이페이지에서만 변경 가능
-            if (!user.getUsernick().equals(oAuth2Response.getName()) && user.getUsernick() == null) {
-                user.setUsernick(oAuth2Response.getName());
-                updated = true;
-            }
-
-            if (updated) {
-                userRepository.save(user);
-            }
-        }
-
-        System.out.println("User saved: " + user);
+        log.info("새로운 유저 생성: {}", username);
 
         return new CustomOAuth2User(oAuth2Response, roleName);
     }
