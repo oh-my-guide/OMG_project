@@ -49,6 +49,13 @@ public class ReviewPostServiceImpl implements ReviewPostService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ReviewPostDto.Response> findReviewPostsByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        return reviewPostRepository.findReviewPostByUserId(user.getId()).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ReviewPostDto.Response findReviewPostById(Long id) {
         ReviewPost reviewPost = reviewPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
         return ReviewPostDto.Response.fromEntity(reviewPost);

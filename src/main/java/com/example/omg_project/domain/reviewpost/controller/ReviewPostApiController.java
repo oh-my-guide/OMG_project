@@ -42,6 +42,15 @@ public class ReviewPostApiController {
     }
 
     /**
+     * 특정 사용자의 일행 게시글 전체 조회
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ReviewPostDto.Response>> getReviewPostsByUserId(@PathVariable Long userId) {
+        List<ReviewPostDto.Response> reviewPosts = reviewPostService.findReviewPostsByUserId(userId);
+        return ResponseEntity.ok(reviewPosts);
+    }
+
+    /**
      * 후기 게시글 수정
      */
     @PutMapping("/{postId}")
