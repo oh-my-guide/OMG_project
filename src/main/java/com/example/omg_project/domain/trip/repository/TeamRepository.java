@@ -10,6 +10,10 @@ import java.util.Optional;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
+//    List<Team> findByTrip(Trip trip);
+//    void deleteByTripId(Long tripId);
+    List<Team> findByTripId(Long tripId);
+    Team findByInviteCode(String inviteCode);
     List<Team> findByTrip(Trip trip);
     void deleteByTripId(Long tripId);
     List<Team> findAllByTripId(Long tripId);
@@ -20,5 +24,4 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     Optional<Team> findByLeaderId(Long leaderId);
     List<Team> findByTripId(Long tripId);
     Optional<Team> findByChatRoomId(Long chatRoomId);
-
 }
