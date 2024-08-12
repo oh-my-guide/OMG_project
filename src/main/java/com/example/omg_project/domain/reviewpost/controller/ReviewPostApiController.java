@@ -18,8 +18,8 @@ public class ReviewPostApiController {
      * 후기 게시글 작성
      */
     @PostMapping
-    public ResponseEntity<ReviewPostDto.Response> createReviewPost(@RequestBody ReviewPostDto.Request reviewPostRequest, @RequestParam Long userId, @RequestParam Long tripId) {
-        ReviewPostDto.Response reviewPost = reviewPostService.createReviewPost(reviewPostRequest, userId, tripId);
+    public ResponseEntity<ReviewPostDto.Response> createReviewPost(@RequestBody ReviewPostDto.Request reviewPostRequest) {
+        ReviewPostDto.Response reviewPost = reviewPostService.createReviewPost(reviewPostRequest);
         return ResponseEntity.ok(reviewPost);
     }
 
@@ -38,6 +38,15 @@ public class ReviewPostApiController {
     @GetMapping
     public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts() {
         List<ReviewPostDto.Response> reviewPosts = reviewPostService.findAllReviewPost();
+        return ResponseEntity.ok(reviewPosts);
+    }
+
+    /**
+     * 특정 사용자의 일행 게시글 전체 조회
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ReviewPostDto.Response>> getReviewPostsByUserId(@PathVariable Long userId) {
+        List<ReviewPostDto.Response> reviewPosts = reviewPostService.findReviewPostsByUserId(userId);
         return ResponseEntity.ok(reviewPosts);
     }
 

@@ -53,10 +53,33 @@
     .post-user, .post-date {
       margin: 0;
     }
+    #postListHeader {
+      max-width: 800px;
+      margin: 0 auto 20px auto; /* 좌우 공백 맞추고 아래쪽 여백 추가 */
+      text-align: right; /* 버튼을 오른쪽에 정렬 */
+    }
+
+    #createPostButton {
+      padding: 10px 15px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #createPostButton:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
 <h1>후기 게시글 목록</h1>
+
+<div id="postListHeader">
+  <button id="createPostButton" onclick="location.href='/reviewPost/createPost'">글 작성</button>
+</div>
 
 <div id="postList"></div>
 
