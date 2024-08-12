@@ -1,4 +1,4 @@
-package com.example.omg_project.domain.user.dto;
+package com.example.omg_project.domain.user.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

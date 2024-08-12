@@ -1,6 +1,6 @@
 package com.example.omg_project.domain.user.controller;
 
-import com.example.omg_project.domain.user.dto.UserEditDto;
+import com.example.omg_project.domain.user.dto.request.UserEditDto;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -96,5 +96,13 @@ public class UserController {
             e.printStackTrace();
         }
         return "redirect:/my/profile";
+    }
+
+    /**
+     * 비밀번호 재발급 페이지 이동
+     */
+    @GetMapping("/my/change-password")
+    public String showChangePasswordForm() {
+        return "/user/findPassword";
     }
 }
