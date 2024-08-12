@@ -51,7 +51,7 @@
     </div>
 
     <div class="map_wrap">
-<!--        <div id="map" style="width:70%;height:100%;position:relative;overflow:hidden;"></div>-->
+        <!--        <div id="map" style="width:70%;height:100%;position:relative;overflow:hidden;"></div>-->
         <div id="map"></div>
 
         <!-- 검색 메뉴 컨테이너 -->
@@ -61,12 +61,12 @@
                     <!-- 검색 폼 제출 시 searchPlaces() 호출 -->
                     <form onsubmit="searchPlaces(); return false;">
                         키워드 : <input type="text" value="부산 맛집" id="keyword" size="15">
-                        <button type="submit">검색하기</button>
+                        <button type="submit" id="searchBtn">검색하기</button>
                     </form>
                 </div>
             </div>
             <div>
-                <button type="button">선택 완료</button>
+                <button type="button" id="completeBtn">선택 완료</button>
             </div>
             <hr>
             <!-- 장소 목록을 표시할 리스트 -->
@@ -346,12 +346,12 @@
                         </div>
                         <div class="dayLocation">
 <!--                            <div class="locations">-->
-<!--                                <label for="placeName">장소 이름:</label>-->
-<!--                                <input type="text" name="placeName" required><br>-->
-<!--                                <label for="latitude">위도:</label>-->
-<!--                                <input type="number" step="0.000001" name="latitude"><br>-->
-<!--                                <label for="longitude">경도:</label>-->
-<!--                                <input type="number" step="0.000001" name="longitude"><br>-->
+<!--&lt;!&ndash;                                <label for="placeName">장소 이름:</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="text" name="placeName" required><br>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label for="latitude">위도:</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="number" step="0.000001" name="latitude"><br>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label for="longitude">경도:</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="number" step="0.000001" name="longitude"><br>&ndash;&gt;-->
 <!--                            </div>-->
                             <button type="button" onclick="addLocation(this)">장소 추가</button>
                         </div>
@@ -369,18 +369,24 @@
     }
 
     function addLocation(button) {
-        const locationHtml = `
-            <div class="locations">
-                <label for="placeName">장소 이름:</label>
-                <input type="text" name="placeName" required><br>
-                <label for="latitude">위도:</label>
-                <input type="number" step="0.000001" name="latitude"><br>
-                <label for="longitude">경도:</label>
-                <input type="number" step="0.000001" name="longitude"><br>
-            </div>
-        `;
-        button.insertAdjacentHTML('beforebegin', locationHtml);
-        console.log('Location added.');
+
+        selectedDateDiv = button.closest('.tripDate');
+
+        // const locationHtml = `
+        //     <div class="locations">
+        //         <label for="placeName">장소 이름:</label>
+        //         <input type="text" name="placeName" required><br>
+        //         <label for="latitude">위도:</label>
+        //         <input type="number" step="0.000001" name="latitude"><br>
+        //         <label for="longitude">경도:</label>
+        //         <input type="number" step="0.000001" name="longitude"><br>
+        //     </div>
+        // `;
+        // button.insertAdjacentHTML('beforebegin', locationHtml);
+        // console.log('Location added.');
+
+        // 장소 추가 버튼을 누를 시 menu_wrap이 보이도록 설정
+        document.getElementById('menu_wrap').style.display = 'block';
     }
 </script>
 <script type="text/javascript"

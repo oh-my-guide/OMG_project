@@ -161,12 +161,48 @@ function handleRemoveBtnClick(event, place, placePosition) {
 /**
  * 선택 완료 버튼 클릭 이벤트 핸들러
  */
+// function handleSelectCompleteBtnClick() {
+//     if (selectedPlaces.length === 0) {
+//         alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
+//         return;
+//     }
+//     sendPlaceData(selectedPlaces);
+//
+//     // 선택된 장소를 createtrip.html에 전달하는 로직을 추가
+//     window.selectedPlaces = [...selectedPlaces];
+//
+//     // 선택 완료 버튼 누를 시 검색창 숨기기
+//     $('#menu_wrap').hide();
+// }
+
 function handleSelectCompleteBtnClick() {
     if (selectedPlaces.length === 0) {
         alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
         return;
     }
-    sendPlaceData(selectedPlaces);
+
+    if (!selectedDateDiv) {
+        alert('장소를 추가할 날짜를 선택해 주세요.');
+        return;
+    }
+
+    const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
+    selectedPlaces.forEach(place => {
+        const locations = document.createElement('div');
+        locations.className = 'locations';
+
+        locations.innerHTML = `
+            <input type="text" name="placeName" value="${place.place_name}" readonly />
+            <input type="hidden" name="longitude" value="${place.x}" />
+            <input type="hidden" name="latitude" value="${place.y}" />
+        `;
+        locationsContainer.appendChild(locations);
+    });
+
+    selectedPlaces = [];
+    selectedDateDiv = null;
+    // 선택 완료 버튼 누를 시 검색창 숨기기
+    $('#menu_wrap').hide();
 }
 
 /**
