@@ -4,7 +4,6 @@ import com.example.omg_project.domain.user.dto.request.Oauth2LoginDto;
 import com.example.omg_project.domain.user.dto.request.UserEditDto;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
-import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -25,10 +24,10 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * 일반 로그인 회원의 정보
+     * 모든 로그인 회원의 마이페이지
      */
     @GetMapping("/my")
-    public String index(Model model, Authentication authentication) {
+    public String myPage(Model model, Authentication authentication) {
 
         String username = authentication.getName();
         Optional<User> userOptional = userService.findByUsername(username);
@@ -44,7 +43,7 @@ public class UserController {
      * OAuth2 로그인 회원 추가 정보 기입
      */
     @GetMapping("/oauthPage")
-    public String addOauth2(Model model, Authentication authentication) {
+    public String addOauth2Form(Model model, Authentication authentication) {
 
         String username = authentication.getName();
         Optional<User> userOptional = userService.findByUsername(username);
@@ -52,10 +51,10 @@ public class UserController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-            // 이미 추가 정보가 존재하는지 확인
+            // 처음 로그인 한 회원일 경우
             if (user.getPhoneNumber().equals("01000000000")) {
                 model.addAttribute("user", user);
-                return "user/oauth2page"; // 이미 정보가 있다면 마이 페이지로 리다이렉트
+                return "user/oauth2page";
             }
             return "redirect:/my";
         }
@@ -104,7 +103,7 @@ public class UserController {
      * 회원 정보 수정 처리
      */
     @PostMapping("/my/profile")
-    public String editUser(Authentication authentication, @ModelAttribute UserEditDto userEditDto, RedirectAttributes redirectAttributes) {
+    public String userEdit(Authentication authentication, @ModelAttribute UserEditDto userEditDto, RedirectAttributes redirectAttributes) {
 
         String username = authentication.getName();
 

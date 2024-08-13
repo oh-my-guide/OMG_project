@@ -7,7 +7,6 @@ import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
 import com.example.omg_project.domain.user.entity.RandomNickname;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
-import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
 import com.example.omg_project.global.jwt.entity.JwtBlacklist;
 import com.example.omg_project.global.jwt.entity.RefreshToken;
 import com.example.omg_project.global.jwt.service.JwtBlacklistService;
