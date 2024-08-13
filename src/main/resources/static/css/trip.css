@@ -130,3 +130,14 @@ span {
 .placeNameContainer button {
     width: 22%;
 }
+
+.backLink {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #8fc6ff;
+    text-decoration: none;
+}
+
+.backLink:hover {
+    text-decoration: underline;
+}

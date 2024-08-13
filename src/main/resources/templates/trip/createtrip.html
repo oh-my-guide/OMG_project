@@ -12,6 +12,7 @@
 <div class="container">
     <!-- 여행 일정 생성 영역 -->
     <div class="form_wrap">
+        <a href="" class="backLink">↩️ 목록으로 돌아가기(경로 추가 필요)</a>
         <form id="tripForm">
             <h1>여행 일정 생성</h1>
             <label for="tripName">여행 이름</label>
@@ -405,10 +406,14 @@
             locationsContainer.appendChild(locations);
         });
 
+        console.log('초기화 전: {}', selectedPlaces);
+
         selectedPlaces = [];
         selectedDateDiv = null;
         // 선택 완료 버튼 누를 시 검색창 숨기기
         $('#menu_wrap').hide();
+
+        console.log('초기화 후: {}', selectedPlaces);
     }
 
     // 선택 완료 버튼 클릭 이벤트
