@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>여행 일정 상세 조회</title>
     <link rel="stylesheet" href="/css/trip.css">
+    <link rel="stylesheet" href="/css/header.css">
     <style>
         body {
             margin: 0;
@@ -16,6 +17,7 @@
             box-sizing: border-box;
             max-width: 1200px; /* 바디의 최대 너비 설정 */
             margin: auto; /* 바디를 중앙으로 정렬 */
+            padding-top: 60px; /* 헤더 높이에 맞게 패딩 추가 */
         }
 
         .sidebar {
@@ -153,6 +155,7 @@
     </style>
 </head>
 <body>
+<div th:replace="fragments/header :: headerFragment"></div>
 
 <div class="sidebar">
     <button onclick="showDay('all')">전체 일정</button>
