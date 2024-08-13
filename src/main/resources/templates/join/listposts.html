@@ -2,8 +2,9 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/header.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>게시글 목록</title>
+    <title>일행 모집 게시글 목록</title>
     <style>
         body {
             margin: 0;
@@ -11,10 +12,16 @@
             background-color: #fff;
         }
         h1 {
+            color: #8fc6ff; /* 글씨 색상 */
+            padding: 10px 20px; /* 테두리와 텍스트 사이의 여백 */
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 32px;
-            color: #333;
+            font-size: 20px;
+            margin: 70px auto 0; /* 위쪽 여백 70px, 좌우 중앙 정렬, 아래 여백 0 */
+            background-color: #fff; /* 배경 흰색 */
+            border: 2px solid #8fc6ff; /* 글씨와 동일한 색상으로 테두리 설정 */
+            border-radius: 25px; /* 둥근 테두리 설정 */
+            display: block; /* 블록 요소로 설정 */
+            width: fit-content; /* 콘텐츠에 맞게 너비 설정 */
         }
         #postList {
             max-width: 800px;
@@ -68,6 +75,7 @@
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
+            font-size: medium;
         }
 
         #createPostButton:hover {
@@ -77,7 +85,8 @@
     </style>
 </head>
 <body>
-<h1>일행 모집 게시글 목록</h1>
+<div th:replace="fragments/header :: headerFragment"></div>
+<h1>일행 모집 게시판</h1>
 
 <div id="postListHeader">
     <button id="createPostButton" onclick="location.href='/joinPost/createPost'">글 작성</button>

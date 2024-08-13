@@ -2,9 +2,10 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/header.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>여행 모집 게시글 보기</title>
+    <title>일행 모집 게시글 보기</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -15,7 +16,7 @@
 
         .container {
             max-width: 800px;
-            margin: 0 auto;
+            margin: 120px auto 50px auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 10px;
@@ -252,6 +253,7 @@
     </style>
 </head>
 <body>
+<div th:replace="fragments/header :: headerFragment"></div>
 <div class="container">
     <h1 class="post-title" th:text="${post.title}"></h1>
     <div class="post-meta">
