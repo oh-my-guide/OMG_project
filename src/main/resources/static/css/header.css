@@ -11,8 +11,17 @@
     z-index: 1000;
 }
 
+.navbar .logo {
+    flex: 1;
+}
+
+.navbar .logo img.logo-img {
+    height: 40px; /* 로고 이미지 높이 조절 */
+    object-fit: contain;
+}
+
 .navbar .nav-links {
-    flex: 2;
+    flex: 3;
     display: flex;
     justify-content: space-evenly; /* 링크 간격을 균등하게 배치 */
 }
@@ -61,7 +70,10 @@
     font-size: 18px;
     text-decoration: none;
     margin-left: 10px; /* 오른쪽 버튼과의 간격을 줌 */
-    margin-right: 50px; /* 오른쪽에 동일한 마진값을 줌 */
+}
+
+.navbar .username {
+    margin-right: 50px; /* username과 드롭다운 간의 공간 확보 */
 }
 
 .navbar .dropdown {
