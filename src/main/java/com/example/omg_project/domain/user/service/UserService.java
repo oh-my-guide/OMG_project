@@ -16,7 +16,7 @@ public interface UserService {
 
     void signUp(UserSignUpDto userSignUpDto); // 회원가입
 
-    void deleteUser(String username); // 회원 탈퇴
+    void deleteUser(Long userId); // 회원 탈퇴
 
     boolean existsByUsernick(String usernick); // 닉네임 중복 확인
 
