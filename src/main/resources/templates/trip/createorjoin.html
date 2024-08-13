@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 일정 선택</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 45%;
+            text-align: center;
+        }
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .card p {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        .button, .input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .button {
+            background-color: #8fc6ff;
+            color: white;
+        }
+        .button:hover {
+            background-color: #6ea8e6;
+        }
+        .input {
+            border: 1px solid #ccc;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>새로운 일정을 추가하실 건가요?</h2>
+        <p>새로운 여행 일정을 만들어 나만의 계획을 세우세요.</p>
+        <button class="button" onclick="location.href='/trip/create'">새 일정 추가</button>
+    </div>
+    <div class="card">
+        <h2>일행의 일정에 참여하시겠습니까?</h2>
+        <p>초대 코드를 입력하여 기존 여행 일정에 참여하세요.</p>
+        <button class="button" onclick="location.href='/team/join'">초대코드 입력하기</button>
+    </div>
+</div>
+</body>
+</html>

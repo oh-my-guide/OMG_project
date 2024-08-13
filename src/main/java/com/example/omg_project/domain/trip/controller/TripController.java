@@ -72,4 +72,9 @@ public class TripController {
         model.addAttribute("trip", trip);
         return "trip/updateTrip";
     }
+
+    @GetMapping("/select")
+    public String selectTripPage() {
+        return "trip/createorjoin";
+    }
 }
