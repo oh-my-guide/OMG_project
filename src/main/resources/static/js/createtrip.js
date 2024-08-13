@@ -96,16 +96,6 @@ function sendPlaceData(places) {
 function handleSelectBtnClick(event, place, placePosition) {
     event.stopPropagation();    // 이벤트 버블링 방지
 
-    // selectedPlaces 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 같은지 확인
-    // .some()은 배열의 각 요소에 대한 테스트 -> true 또는 false 반환
-    // const isAlreadySelected = selectedPlaces.some(p => p.id === place.id);
-
-    // 이미 선택된 장소인지 확인
-    // if (isAlreadySelected) {
-    //     alert('이미 선택된 장소입니다.');
-    //     return;
-    // }
-
     // addLocation에서 반환된 dayNum을 가져옴
     const dayNum = addLocation(selectedDateDiv);
 
