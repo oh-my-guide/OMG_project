@@ -6,34 +6,81 @@
     <title>후기 게시글 작성</title>
     <style>
         body {
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
         }
 
-        input, textarea, select {
-            display: block;
-            margin-bottom: 10px;
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-
-        button {
-            padding: 10px 15px;
-            background-color: #4CAF50;
+        h1 {
+            background-color: #8fc6ff;
             color: white;
-            border: none;
-            cursor: pointer;
+            padding: 20px;
+            text-align: center;
+            margin: 0;
+            font-size: 24px;
         }
 
-        button:hover {
-            background-color: #45a049;
+        #createPostForm {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         }
 
         label {
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             display: block;
+            font-size: 14px;
+            color: #555;
         }
+
+        input, textarea, select {
+            display: block;
+            margin-bottom: 20px;
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        textarea {
+            height: 200px; /* 내용 부분의 높이를 더 길게 설정 */
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #8fc6ff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #8fc6ff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #7bb4e6;
+        }
+
+        button:active {
+            background-color: #6ba0d6;
+        }
+
         .trip-info {
             margin-top: 20px;
             margin-bottom: 10px;
@@ -42,6 +89,27 @@
             border-radius: 8px;
             background-color: #f9f9f9;
         }
+
+        .trip-info h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .trip-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .trip-info ul {
+            padding-left: 20px;
+            color: #555;
+        }
+
+        .trip-info li {
+            margin-bottom: 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -52,7 +120,7 @@
     <input type="hidden" id="userId" name="userId" th:value="${userId}">
 
     <label for="title">제목</label>
-    <input type="text" id="title" placeholder="제목" required>
+    <input type="text" id="title" placeholder="제목을 입력하세요" required>
 
     <label for="tripSelect">나의 여행</label>
     <select id="tripSelect" name="tripId" required>
@@ -70,7 +138,7 @@
     </div>
 
     <label for="content">내용</label>
-    <textarea id="content" placeholder="내용" required></textarea>
+    <textarea id="content" placeholder="내용을 입력하세요" required></textarea>
 
     <button type="submit">작성하기</button>
 </form>
