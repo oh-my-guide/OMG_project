@@ -1,11 +1,12 @@
+<!-- src/main/resources/templates/user/home.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OMG Travel</title>
-    <!-- FullCalendar CSS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <link rel="stylesheet" href="/css/header.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,26 +18,6 @@
             align-items: flex-start;
             height: 100vh;
             flex-direction: column;
-        }
-        .navbar {
-            width: 100%;
-            padding: 10px 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
-        .navbar a {
-            color: #000;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-            margin: 0 10px;
         }
         .wrapper {
             width: 100%;
@@ -167,12 +148,7 @@
     </style>
 </head>
 <body>
-<div class="navbar">
-    <a href="#">홈</a>
-    <a href="#">서비스 소개</a>
-    <a href="#">게시판</a>
-    <a href="#">로그인/회원가입</a>
-</div>
+<div th:replace="fragments/header :: headerFragment"></div>
 <div class="wrapper">
     <div class="container">
         <div class="left-content">

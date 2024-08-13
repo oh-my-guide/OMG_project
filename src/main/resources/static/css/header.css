@@ -1,0 +1,95 @@
+.navbar {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.navbar .nav-links {
+    flex: 2;
+    display: flex;
+    justify-content: space-evenly; /* 링크 간격을 균등하게 배치 */
+}
+
+.navbar a {
+    color: #000;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    position: relative; /* 아래 선을 위한 위치 지정 */
+}
+
+.navbar a:hover {
+    color: #0056b3; /* 시그니처 컬러로 설정 */
+}
+
+.navbar a::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background-color: #0056b3; /* 시그니처 컬러로 설정 */
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.navbar a:hover::after {
+    transform: scaleX(1);
+}
+
+.navbar .user-info {
+    display: flex;
+    align-items: center;
+    margin-left: auto; /* 오른쪽에서 마진을 줘서 버튼이 오른쪽에 배치되도록 함 */
+}
+
+.navbar .login-btn, .navbar .username {
+    background-color: #8fc6ff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    text-decoration: none;
+    margin-left: 10px; /* 오른쪽 버튼과의 간격을 줌 */
+    margin-right: 50px; /* 오른쪽에 동일한 마진값을 줌 */
+}
+
+.navbar .dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px); /* 드롭다운 메뉴가 네비게이션 바 아래로 떨어지게 조정 */
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    min-width: 160px; /* 드롭다운 메뉴의 최소 너비 설정 */
+    transform: translateX(-20px); /* 드롭다운 메뉴를 왼쪽으로 이동 */
+}
+
+.navbar .dropdown a {
+    display: block;
+    padding: 10px 20px;
+    color: #000;
+    text-decoration: none;
+    font-size: 16px;
+    border-bottom: 1px solid #f4f4f4;
+}
+
+.navbar .dropdown a:last-child {
+    border-bottom: none; /* 마지막 항목의 밑줄 제거 */
+}
+
+.navbar .dropdown a:hover {
+    background-color: #f0f0f0;
+}
