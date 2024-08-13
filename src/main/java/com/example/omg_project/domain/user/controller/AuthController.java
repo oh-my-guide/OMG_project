@@ -1,8 +1,10 @@
 package com.example.omg_project.domain.user.controller;
 
 import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
+import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
-import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
+import com.example.omg_project.global.jwt.util.JwtTokenizer;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -20,12 +22,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtTokenizer jwtTokenizer;
 
     /**
      * 메인 홈 페이지
      */
     @GetMapping("/")
-    public String home() {
+    public String home(HttpServletRequest request, Model model) {
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElse(null);
+            model.addAttribute("user", user);
+        }
         return "/user/home";
     }
 
