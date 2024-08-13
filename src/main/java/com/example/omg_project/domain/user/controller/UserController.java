@@ -31,7 +31,6 @@ public class UserController {
     @GetMapping("/my")
     public String myPage(Model model, HttpServletRequest request) {
         try {
-            // 쿠키에서 accessToken 찾기
             String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
 
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
@@ -56,7 +55,6 @@ public class UserController {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
 
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
-        //User user = userService.findByUsername(username).orElseThrow();
 
         Optional<User> userOptional = userService.findByUsername(username);
 
@@ -94,7 +92,6 @@ public class UserController {
         }
         return "redirect:/oauthPage";
     }
-
 
     /**
      * 회원 정보 수정
