@@ -193,6 +193,6 @@ public class JwtTokenizer {
                 }
             }
         }
-        throw new RuntimeException("Access token이 없습니다.");  // accessToken이 없으면 예외 발생
+        return null;
     }
 }
