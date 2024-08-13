@@ -18,6 +18,7 @@
             <img src="/files/user.png" alt="Profile Picture">
             <p><span th:text="${user.usernick}"></span>님</p>
             <a href="/my/profile" class="link-button">프로필 편집</a>
+            <input type="hidden" id="userId" name="userId" th:value="${user.getId()}">
         </div>
 
         <div class="navigation">
@@ -48,7 +49,8 @@
 
 <script>
     // Thymeleaf 변수를 JavaScript 변수로 할당
-    var userId = /*[[${user.id}]]*/ 0; // 사용자가 로그인하지 않았을 때를 대비한 기본값
+    // var userId = /*[[${user.id}]]*/ 0; // 사용자가 로그인하지 않았을 때를 대비한 기본값
+    const userId = document.getElementById('userId').value;
 
     $(document).ready(function() {
         $('.navigation a').click(function(event) {
