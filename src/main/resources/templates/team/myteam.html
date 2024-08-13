@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/header.css">
     <title>팀 목록 관리</title>
     <style>
         body {
@@ -15,6 +16,7 @@
             align-items: center;
             min-height: 100vh;
             box-sizing: border-box;
+            padding-top: 60px; /* 헤더 높이에 맞게 패딩 추가 */
         }
 
         h1 {
@@ -91,6 +93,7 @@
     </style>
 </head>
 <body>
+<div th:replace="fragments/header :: headerFragment"></div>
 <br>
 <h1>나의 팀 목록</h1>
 <ul id="teamList">
@@ -98,6 +101,7 @@
 </ul>
 
 <script>
+
     async function fetchTeams() {
         try {
             const response = await fetch('/api/team/myteam');
