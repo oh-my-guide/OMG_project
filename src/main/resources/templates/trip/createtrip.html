@@ -394,6 +394,16 @@
         }
 
         const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
+        const currentLocationCount = locationsContainer.querySelectorAll('.locations').length;
+        const MAX_LOCATIONS = 15;
+
+        console.log('currentLocationCount: {}', currentLocationCount);
+        console.log('selectedPlaces: {}', selectedPlaces);
+        if (currentLocationCount + selectedPlaces.length > MAX_LOCATIONS) {
+            alert(`하루에 추가할 수 있는 장소는 최대 ${MAX_LOCATIONS}개입니다.`);
+            return;
+        }
+
         selectedPlaces.forEach(place => {
             const locations = document.createElement('div');
             locations.className = 'locations';
@@ -406,14 +416,10 @@
             locationsContainer.appendChild(locations);
         });
 
-        console.log('초기화 전: {}', selectedPlaces);
-
         selectedPlaces = [];
         selectedDateDiv = null;
         // 선택 완료 버튼 누를 시 검색창 숨기기
         $('#menu_wrap').hide();
-
-        console.log('초기화 후: {}', selectedPlaces);
     }
 
     // 선택 완료 버튼 클릭 이벤트
