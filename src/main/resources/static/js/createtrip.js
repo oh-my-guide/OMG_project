@@ -1,8 +1,8 @@
 // 마커를 담을 배열
-let markers = [];
+// let markers = [];
 
 // 선택된 장소들을 저장할 배열
-let selectedPlaces = [];
+// let selectedPlaces = [];
 
 const mapContainer = document.getElementById('map'), // 지도를 표시할 div
     mapOption = {
@@ -20,7 +20,7 @@ const bounds = new kakao.maps.LatLngBounds();
 const ps = new kakao.maps.services.Places();
 
 // 키워드로 장소를 검색합니다
-searchPlaces();
+// searchPlaces();
 
 /**
  * 키워드 검색을 요청하는 함수입니다
@@ -98,11 +98,19 @@ function handleSelectBtnClick(event, place, placePosition) {
 
     // selectedPlaces 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 같은지 확인
     // .some()은 배열의 각 요소에 대한 테스트 -> true 또는 false 반환
-    const isAlreadySelected = selectedPlaces.some(p => p.id === place.id);
+    // const isAlreadySelected = selectedPlaces.some(p => p.id === place.id);
 
     // 이미 선택된 장소인지 확인
-    if (isAlreadySelected) {
-        alert('이미 선택된 장소입니다.');
+    // if (isAlreadySelected) {
+    //     alert('이미 선택된 장소입니다.');
+    //     return;
+    // }
+
+    // addLocation에서 반환된 dayNum을 가져옴
+    const dayNum = addLocation(selectedDateDiv);
+
+    if (!dayNum) {
+        alert('날짜를 선택해 주세요.');
         return;
     }
 
@@ -112,13 +120,51 @@ function handleSelectBtnClick(event, place, placePosition) {
         return;
     }
 
+    const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
+    const currentLocationCount = locationsContainer.querySelectorAll('.locations').length;
+    const MAX_LOCATIONS = 15;
+
+    console.log('currentLocationCount: {}', currentLocationCount);
+    console.log('selectedPlaces: {}', selectedPlaces);
+    if (currentLocationCount + selectedPlaces[dayNum].length > MAX_LOCATIONS) {
+        alert(`하루에 추가할 수 있는 장소는 최대 ${MAX_LOCATIONS}개입니다.`);
+        return;
+    }
+
+    const locations = document.createElement('div');
+    locations.className = 'locations';
+
+    locations.innerHTML = `
+            <input type="text" name="placeName" value="${place.place_name}" readonly />
+            <input type="hidden" name="longitude" value="${place.x}" />
+            <input type="hidden" name="latitude" value="${place.y}" />
+        `;
+    locationsContainer.appendChild(locations);
+
+    // selectedPlaces.forEach(place => {
+    //     const locations = document.createElement('div');
+    //     locations.className = 'locations';
+    //
+    //     locations.innerHTML = `
+    //     <input type="text" name="placeName" value="${place.place_name}" readonly />
+    //     <input type="hidden" name="longitude" value="${place.x}" />
+    //     <input type="hidden" name="latitude" value="${place.y}" />
+    // `;
+    //     locationsContainer.appendChild(locations);
+    // });
+
+    // selectedPlaces = [];
+    // selectedDateDiv = null;
+    // 선택 완료 버튼 누를 시 검색창 숨기기
+    // $('#menu_wrap').hide();
+
     // 같은 id를 가진 장소가 없고, 15개 초과가 아니라면 선택 장소 목록 배열에 추가
-    selectedPlaces.push(place);
+    selectedPlaces[dayNum].push(place);
 
     // 배열 인덱스로 마커에 번호 부여
-    const index = selectedPlaces.length;
+    const index = selectedPlaces[dayNum].length;
     // 지도에 마커 추가
-    addSelectedMarker(placePosition, index);
+    addSelectedMarker(placePosition, index, dayNum);
     // 마커 번호 재정렬
     reorderMarkers(markers);
 
@@ -283,7 +329,7 @@ function getListItem(index, places) {
  * @param idx - 마커의 인덱스
  * @returns {kakao.maps.Marker} - 생성된 마커 객체
  */
-function addSelectedMarker(position, idx) {
+function addSelectedMarker(position, idx, dayNum) {
     const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
         imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
         imgOptions = {
@@ -298,7 +344,9 @@ function addSelectedMarker(position, idx) {
         });
 
     marker.setMap(map);
-    markers.push(marker);
+    // markers.push(marker);
+    markers[dayNum].push(marker);
+    console.log('createtrip.js ----- ', markers);
 
     return marker;
 }
