@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>관리자 대시보드</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -78,11 +79,8 @@
 </head>
 <body>
 <div class="container">
-    <div class="header">
-        <div class="logo">관리자 대시보드</div>
-        <a th:href="@{/}">홈</a>
-    </div>
-
+    <div th:replace="fragments/header :: headerFragment"></div>
+    <a th:href="@{/}">홈</a>
     <div class="main-content">
         <h2>OMG 사용자 목록</h2>
         <table>
