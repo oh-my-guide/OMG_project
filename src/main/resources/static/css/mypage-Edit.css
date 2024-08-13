@@ -47,6 +47,7 @@ body {
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
+    text-align: center;
 }
 
 .form-group {
@@ -76,8 +77,11 @@ input:focus {
 
 .button-group {
     display: flex;
-    justify-content: space-between;
+   /* justify-content: space-between; */
+    justify-content: center;
+    gap: 10px;
     margin-top: 10px;
+
 }
 
 button {
@@ -160,4 +164,17 @@ button:hover {
 .error {
     color: red;
     font-size: 0.9em;
+}
+#delete-account {
+    display: block;
+    margin: 0 auto; /* 탈퇴 버튼을 가운데 정렬 */
+    margin-top: 20px; /* 위쪽 여백 추가 */
+    color: red;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#delete-account:hover {
+    text-decoration: underline;
 }
