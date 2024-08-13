@@ -4,10 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import jakarta.servlet.http.Cookie;
+
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -177,5 +180,19 @@ public class JwtTokenizer {
         String name = claims.get("name", String.class);
         List<String> roles = (List<String>) claims.get("roles");
         return createAccessToken(userId, username, name, roles);
+    }
+    /**
+     * 쿠키에서 accessToken 값을 가져옴
+     */
+    public String getAccessTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("accessToken".equals(cookie.getName())) {
+                    return cookie.getValue();  // accessToken을 찾으면 반환
+                }
+            }
+        }
+        throw new RuntimeException("Access token이 없습니다.");  // accessToken이 없으면 예외 발생
     }
 }
