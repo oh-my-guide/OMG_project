@@ -19,7 +19,7 @@ public class TeamController {
     private final UserService userService;
     // 팀에 가입하는 폼
     @GetMapping("/join")
-    public String showJoinTeamForm(@RequestParam Model model, HttpServletRequest request) {
+    public String showJoinTeamForm(Model model, HttpServletRequest request) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
         User user = userService.findByUsername(username).orElseThrow();
@@ -28,7 +28,7 @@ public class TeamController {
     }
 
     @GetMapping("/myteam")
-    public String showTeamsPage(@RequestParam Model model, HttpServletRequest request) {
+    public String showTeamsPage(Model model, HttpServletRequest request) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
         User user = userService.findByUsername(username).orElseThrow();
