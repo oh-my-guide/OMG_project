@@ -2,7 +2,6 @@ package com.example.omg_project.domain.user.controller;
 
 import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
 import com.example.omg_project.domain.user.service.UserService;
-import com.example.omg_project.domain.user.service.impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
