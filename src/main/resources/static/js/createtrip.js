@@ -104,12 +104,6 @@ function handleSelectBtnClick(event, place, placePosition) {
         return;
     }
 
-    // 장소는 최대 15개까지만 선택되도록 제한
-    if (selectedPlaces.length >= 15) {
-        alert('최대 15개의 장소만 추가할 수 있습니다.');
-        return;
-    }
-
     const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
     const MAX_LOCATIONS = 15;
 
@@ -135,7 +129,7 @@ function handleSelectBtnClick(event, place, placePosition) {
         `;
     locationsContainer.appendChild(locations);
 
-    // 같은 id를 가진 장소가 없고, 15개 초과가 아니라면 선택 장소 목록 배열에 추가
+    // 15개 초과가 아니라면 선택 장소 목록 배열에 추가
     selectedPlaces[dayNum].push(place);
 
     // 배열 인덱스로 마커에 번호 부여
