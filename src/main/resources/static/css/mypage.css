@@ -13,25 +13,19 @@ body {
 }
 
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: #fff;
     padding: 10px 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-.header .logo {
-    font-size: 24px;
-    font-weight: bold;
+    margin-bottom: 40px;
+    border-radius: 10px;
 }
 
 .main-content {
-    padding: 20px;
     background-color: #fff;
+    padding: 40px;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: -20px;
 }
 
 .user-info {
@@ -47,7 +41,7 @@ body {
     margin-right: 20px;
 }
 
-.user-info div {
+.user-info p {
     font-size: 20px;
     font-weight: bold;
 }
@@ -91,7 +85,7 @@ body {
     color: #333;
 }
 
-.trip-info, .review-section, .my-wishlist, .my-trip {
+.content-section {
     display: none;
     background-color: #f9f9f9;
     padding: 20px;
@@ -100,11 +94,11 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.trip-info h3, .review-section h3, .my-wishlist h3, .my-trip h3 {
+.content-section h3 {
     margin-bottom: 10px;
 }
 
-.trip-item {
+.trip-item, .post-item, .review-item {
     display: flex;
     justify-content: space-between;
     align-items: center;

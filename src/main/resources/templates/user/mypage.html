@@ -5,12 +5,14 @@
     <title>마이페이지</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="/css/mypage.css">
+    <link rel="stylesheet" href="/css/header.css">
 </head>
 <body>
 
 <div class="container">
+
     <header class="header">
-        <h1>OMG</h1>
+        <div th:replace="fragments/header :: headerFragment"></div>
     </header>
 
     <div class="main-content">
@@ -21,28 +23,28 @@
             <input type="hidden" id="userId" name="userId" th:value="${user.getId()}">
         </div>
 
-        <div class="navigation">
+        <nav class="navigation">
             <a href="#" data-target="my-trip">나의 일정</a>
             <a href="#" data-target="trip-info">일행 모집</a>
             <a href="#" data-target="review-section">내 여행 후기</a>
             <a href="#" data-target="my-wishlist">찜</a>
-        </div>
+        </nav>
 
-        <div class="my-trip">
+        <section class="content-section my-trip">
             <h3>나의 일정</h3>
-        </div>
+        </section>
 
-        <div class="trip-info">
+        <section class="content-section trip-info">
             <h3>일행 모집</h3>
-        </div>
+        </section>
 
-        <div class="review-section">
+        <section class="content-section review-section">
             <h3>내 여행 후기</h3>
-        </div>
+        </section>
 
-        <div class="my-wishlist">
+        <section class="content-section my-wishlist">
             <h3>찜</h3>
-        </div>
+        </section>
 
         <a href="/" class="link-button light-button">돌아가기</a>
     </div>
@@ -65,11 +67,10 @@
             } else if (target === "review-section") {
                 loadReviewSection(userId);
             } else if (target === "my-wishlist") {
-                loadWishlist();
+                loadWishlist(userId);
             }
         });
 
-        // 나의 일정
         function loadMyTrip(userId) {
             $.ajax({
                 url: `/api/trips/user/${userId}`,
@@ -96,7 +97,7 @@
                             $('.my-trip').append(tripItem);
                         });
                     } else {
-                        $('.my-trip').html('<p>해당 사용자의 여행 일정이 없습니다.</p>');
+                        $('.my-trip').html('<p>여행 일정이 없습니다.</p>');
                     }
 
                     $('.my-trip').show();
@@ -108,7 +109,6 @@
             });
         }
 
-        // 일행 모집 글 목록 나열
         function loadTripInfo(userId) {
             $.ajax({
                 url: `/api/joinPosts/user/${userId}`,
@@ -143,7 +143,6 @@
             });
         }
 
-        // 여행 후기 글 목록 나열
         function loadReviewSection(userId) {
             $.ajax({
                 url: `/api/reviewPosts/user/${userId}`,
@@ -178,7 +177,37 @@
             });
         }
 
-        // 찜 목록 나열
+        function loadWishlist(userId) {
+            $.ajax({
+                url: `/api/reviewPosts/wishlists/${userId}`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Wishlist data received:", data);
+                    $('.my-wishlist').empty().append('<h3>찜 목록</h3>');
+
+                    if (data && data.length > 0) {
+                        data.forEach(function(wish) {
+                            const wishlistItem = `
+                        <div class="wishlist-item">
+                            <h2>${wish.reviewPostTitle}</h2>
+                            <p>작성자: ${wish.userNick}</p>
+                            <button class="chat-button" onclick="window.location.href='/reviewPost/${wish.reviewPostId}'">자세히 보기</button>
+                        </div>
+                    `;
+                            $('.my-wishlist').append(wishlistItem);
+                        });
+                    } else {
+                        $('.my-wishlist').html('<p>찜한 항목이 없습니다.</p>');
+                    }
+                    $('.my-wishlist').show();
+                },
+                error: function(xhr, status, error) {
+                    console.error("찜 목록 데이터를 불러오는 데 실패했습니다. :", error);
+                    $('.my-wishlist').html('<p>찜 목록 데이터를 불러오는 데 실패했습니다.</p>').show();
+                }
+            });
+        }
     });
 </script>
 </body>
