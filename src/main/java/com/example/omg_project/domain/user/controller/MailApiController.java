@@ -54,7 +54,7 @@ public class MailApiController {
      * 닉네임 중복 체크 메서드
      */
     @PostMapping("/api/users/check-usernick")
-    public ResponseEntity<Boolean> checkUsername(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Boolean> checkUsernick(@RequestBody Map<String, String> request) {
         return ResponseEntity.ok(userService.existsByUsernick(request.get("usernick")));
     }
 

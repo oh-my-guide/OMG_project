@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -165,5 +166,13 @@ public class UserServiceImpl implements UserService {
             log.info("로그인 사용자를 찾지 못했습니다.", e);
             return Optional.empty();
         }
+    }
+
+    /**
+     * 모든 사용자 정보 가져오기
+     */
+    @Override
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 }
