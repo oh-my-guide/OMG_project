@@ -119,6 +119,8 @@ function handleSelectBtnClick(event, place, placePosition) {
     const index = selectedPlaces.length;
     // 지도에 마커 추가
     addSelectedMarker(placePosition, index);
+    // 마커 번호 재정렬
+    reorderMarkers(markers);
 
     // 지도 범위 재설정
     setBounds(placePosition);
