@@ -400,34 +400,33 @@
             contentHTML = `<p class="comment-content">비밀 댓글입니다.</p>`;
         } else {
             contentHTML = `
-    <div class="comment-meta">
-        <div class="meta-left">
-            <span class="comment-author">${comment.usernick}</span>
-            <span class="comment-date">${comment.formattedCreatedAt}</span>
-        </div>
-        <div class="comment-buttons">`;
-            if (comment.userId === parseInt(userId)) {
-                contentHTML += `
-            <button class="edit-btn" onclick="editComment(${comment.id})">수정</button>
-            <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>`;
-            }
-            contentHTML += `
-            <button class="edit-btn" onclick="toggleReplyForm(${comment.id})">답글 달기</button>
-        </div>
-    </div>
-    <p class="comment-content">${comment.content}</p>
-    <div class="reply-section" id="replySection-${comment.id}"></div>
-    <form class="reply-form" id="replyForm-${comment.id}" style="display:none;">
-    <div class="reply-form-row">
-        <input type="text" placeholder="답글을 작성하세요" />
-        <button type="button" onclick="submitReply(${comment.id})">등록</button>
-    </div>
-    <label>
-        <input type="checkbox" class="replySecret" name="secret"> 비밀글
-    </label>
-</form>`;
+                <div class="comment-meta">
+                    <div class="meta-left">
+                        <span class="comment-author">${comment.usernick}</span>
+                        <span class="comment-date">${comment.formattedCreatedAt}</span>
+                    </div>
+                    <div class="comment-buttons">`;
+                        if (comment.userId === parseInt(userId)) {
+                            contentHTML += `
+                        <button class="edit-btn" onclick="editComment(${comment.id})">수정</button>
+                        <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>`;
+                        }
+                        contentHTML += `
+                        <button class="edit-btn" onclick="toggleReplyForm(${comment.id})">답글 달기</button>
+                    </div>
+                </div>
+                <p class="comment-content">${comment.content}</p>
+                <div class="reply-section" id="replySection-${comment.id}"></div>
+                <form class="reply-form" id="replyForm-${comment.id}" style="display:none;">
+                    <div class="reply-form-row">
+                        <input type="text" placeholder="답글을 작성하세요" />
+                        <button type="button" onclick="submitReply(${comment.id})">등록</button>
+                    </div>
+                    <label>
+                        <input type="checkbox" class="replySecret" name="secret"> 비밀글
+                    </label>
+                </form>`;
         }
-
 
         commentElement.html(contentHTML);
         commentContainer.append(commentElement);
@@ -451,7 +450,10 @@
         const replySection = $(`#replySection-${commentId}`);
         const replyElement = $('<div class="reply"></div>').attr('id', `reply-${reply.id}`);
 
-        const isSecret = (reply.secret && (reply.userId !== parseInt(userId) && parseInt(userId) !== parseInt(postUserId)));
+        const isSecret = reply.secret &&
+            reply.userId !== parseInt(userId) &&
+            parseInt(userId) !== parseInt(postUserId) &&
+            parseInt(userId) !== parseInt(reply.joinPostCommentUserId);
 
         let contentHTML;
 

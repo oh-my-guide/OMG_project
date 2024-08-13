@@ -46,6 +46,7 @@ public class JoinPostReplyDto {
         private Long userId;
         private Long joinPostCommentId;
         private String usernick;
+        private Long joinPostCommentUserId;
 
         // Entity -> DTO 변환 메서드
         public static Response fromEntity(JoinPostReply joinPostReply) {
@@ -57,6 +58,7 @@ public class JoinPostReplyDto {
                     .userId(joinPostReply.getUser().getId())
                     .joinPostCommentId(joinPostReply.getJoinPostComment().getId())
                     .usernick(joinPostReply.getUser().getUsernick())
+                    .joinPostCommentUserId(joinPostReply.getJoinPostComment().getUser().getId())
                     .build();
         }
 
