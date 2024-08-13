@@ -1,21 +1,249 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>OMG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMG Travel</title>
+    <!-- FullCalendar CSS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .navbar {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        .navbar a {
+            color: #000;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+        .wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 80px;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .left-content {
+            width: 35%;
+            text-align: left;
+        }
+        .title {
+            font-size: 48px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 20px;
+        }
+        .title .highlight {
+            color: #8fc6ff;
+        }
+        .button-container {
+            margin-bottom: 40px;
+        }
+        .button {
+            background-color: #8fc6ff;
+            color: white;
+            padding: 20px 40px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 32px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .weather {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 160px;
+        }
+        .weather-item {
+            margin-right: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        .weather-item .day {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .weather-item .temp {
+            font-size: 18px;
+            color: #f00;
+        }
+        .calendar {
+            width: 700px;
+        }
+        #calendar {
+            width: 100%;
+            height: 700px;
+        }
+
+        /* 캘린더 스타일링 */
+        .fc {
+            font-family: Arial, sans-serif;
+            background-color: rgba(240, 240, 240, 0.8);
+            color: #000;
+        }
+
+        .fc-toolbar {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .fc-toolbar-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .fc-button {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            color: #8fc6ff;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .fc-button:hover {
+            background-color: #f0f0f0;
+            color: #8fc6ff;
+        }
+
+        .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: #8fc6ff;
+            color: white;
+        }
+
+        .fc-daygrid-day {
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        .fc-daygrid-day-number {
+            color: #000;
+        }
+
+        .fc-daygrid-day.fc-day-today {
+            background-color: #f0f8ff;
+            border: 1px solid #8fc6ff;
+        }
+
+        .fc-daygrid-day.fc-day-sat, .fc-daygrid-day.fc-day-sun {
+            background-color: #f9f9f9;
+        }
+
+        .fc-event {
+            background-color: #8fc6ff;
+            color: #000;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-<h1> 안녕하세요. OMG에 오신걸 환영합니다.! </h1>
-<h2>로그인 후 이용해주세요.</h2>
-
-<!-- 에러 메시지 출력 -->
-<div th:if="${errorMessage}" style="color: red;">
-    <p th:text="${errorMessage}"></p>
+<div class="navbar">
+    <a href="#">홈</a>
+    <a href="#">서비스 소개</a>
+    <a href="#">게시판</a>
+    <a href="#">로그인/회원가입</a>
+</div>
+<div class="wrapper">
+    <div class="container">
+        <div class="left-content">
+            <div class="title">
+                여행이 필요한 순간 <span class="highlight">OMG</span>
+            </div>
+            <div class="button-container">
+                <a href="#" class="button">OMG 시작하기</a>
+            </div>
+            <div class="weather">
+                <div class="weather-item">
+                    <div class="day">목</div>
+                    <div class="temp">26° 35°</div>
+                    <div>0% 20%</div>
+                </div>
+                <div class="weather-item">
+                    <div class="day">금</div>
+                    <div class="temp">27° 33°</div>
+                    <div>30% 40%</div>
+                </div>
+                <div class="weather-item">
+                    <div class="day">토</div>
+                    <div class="temp">27° 33°</div>
+                    <div>40% 40%</div>
+                </div>
+                <div class="weather-item">
+                    <div class="day">일</div>
+                    <div class="temp">27° 33°</div>
+                    <div>40% 40%</div>
+                </div>
+                <div class="weather-item">
+                    <div class="day">월</div>
+                    <div class="temp">26° 32°</div>
+                    <div>40% 40%</div>
+                </div>
+                <div class="weather-item">
+                    <div class="day">화</div>
+                    <div class="temp">26° 33°</div>
+                    <div>40% 40%</div>
+                </div>
+            </div>
+        </div>
+        <div class="calendar">
+            <div id='calendar'></div>
+        </div>
+    </div>
 </div>
 
-<nav>
-    <a href="/signup">회원가입</a>
-    <a href="/signin">로그인</a>
-</nav>
+<!-- FullCalendar JS -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/main.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'title',
+                right: 'prev,next today'
+            },
+            events: function(fetchInfo, successCallback, failureCallback) {
+                fetch('/api/events')
+                    .then(response => response.json())
+                    .then(data => successCallback(data))
+                    .catch(error => {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error);
+                    });
+            }
+        });
+        calendar.render();
+    });
+</script>
 </body>
 </html>
