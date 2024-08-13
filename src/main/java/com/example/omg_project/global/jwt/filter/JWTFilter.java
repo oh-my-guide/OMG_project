@@ -52,7 +52,7 @@ public class JWTFilter extends OncePerRequestFilter {
             "/api/users/mail","/api/users/verify-code", "/api/users/check-email","/api/users/check-usernick",
             "/oauth2/.*", "/login/oauth2/.*", "/api/users/randomNickname",
             "/css/.*", "/js/.*", "/files/.*",
-            "/api/users/reset-password", "/api/users/verify-temporary-password", "/my/change-password"
+            "/api/users/reset-password", "/api/users/verify-temporary-password", "/my/change-password", "/service", "/reviewPost"
     );
 
     /**
