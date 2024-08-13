@@ -258,14 +258,12 @@
     <div class="trip-info">
         <h3>여행 일정</h3>
         <p><strong>여행 이름:</strong> <span th:text="${post.trip.tripName}"></span></p>
-        <p><strong>여행 시작일:</strong> <span th:text="${post.trip.startDate}"></span></p>
-        <p><strong>여행 종료일:</strong> <span th:text="${post.trip.endDate}"></span></p>
-        <p><strong>도시 이름:</strong> <span th:text="${post.trip.city.name}"></span></p>
+        <p><strong>여행 날짜:</strong> <span th:text="${post.trip.startDate}"></span> ~ <span th:text="${post.trip.endDate}"></span></p>
         <div th:each="date : ${post.trip.tripDates}">
             <h4 th:text="${date.tripDate}">여행 날짜</h4>
             <ul>
                 <li th:each="location : ${date.tripLocations}">
-                    <span th:text="${location.placeName}">장소 이름</span> (위도: <span th:text="${location.latitude}">위도</span>, 경도: <span th:text="${location.longitude}">경도</span>)
+                    <span th:text="${location.placeName}">장소 이름</span>
                 </li>
             </ul>
         </div>
