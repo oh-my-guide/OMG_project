@@ -67,4 +67,12 @@ public class AuthController {
     public String showLoginForm() {
         return "/main/loginform";
     }
+
+    /**
+     * 서비스 소개 페이지
+     */
+    @GetMapping("/service")
+    public String showServiceInfo(){
+        return "/main/service";
+    }
 }
