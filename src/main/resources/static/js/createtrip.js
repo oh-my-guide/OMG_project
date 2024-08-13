@@ -123,42 +123,27 @@ function handleSelectBtnClick(event, place, placePosition) {
     const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
     const MAX_LOCATIONS = 15;
 
-    console.log('selectedPlaces[dayNum]: {}', selectedPlaces[dayNum]);
     if (selectedPlaces[dayNum].length >= MAX_LOCATIONS) {
         alert(`하루에 추가할 수 있는 장소는 최대 ${MAX_LOCATIONS}개입니다.`);
         return;
     }
 
+    // 장소의 고유 ID 생성 (ex. 몇일차-몇번째장소: 1-1, 1-2, 2-1, ..) 나중에 삭제 시 같은 장소 겹침 문제 해결 위해 고유 ID 지정
+    const uniqueId = `${dayNum}-${selectedPlaces[dayNum].length + 1}`;
+
     const locations = document.createElement('div');
     locations.className = 'locations';
-
     locations.innerHTML = `
             <div class="placeNameContainer">
-                <span>${selectedPlaces[dayNum].length + 1}</span>
-                <input type="text" class="placeNameInput" value="${place.place_name}" readonly />
-                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+                <span id="${uniqueId}">${selectedPlaces[dayNum].length + 1}</span>
+                <input type="text" class="placeNameInput" name="placeName" value="${place.place_name}" readonly />
+<!--                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>-->
+                <button type="button" onclick="handleRemoveBtnClick(event, '${uniqueId}', ${placePosition.La}, ${placePosition.Ma})">삭제</button>
             </div>
             <input type="hidden" name="longitude" value="${place.x}" />
             <input type="hidden" name="latitude" value="${place.y}" />
         `;
     locationsContainer.appendChild(locations);
-
-    // selectedPlaces.forEach(place => {
-    //     const locations = document.createElement('div');
-    //     locations.className = 'locations';
-    //
-    //     locations.innerHTML = `
-    //     <input type="text" name="placeName" value="${place.place_name}" readonly />
-    //     <input type="hidden" name="longitude" value="${place.x}" />
-    //     <input type="hidden" name="latitude" value="${place.y}" />
-    // `;
-    //     locationsContainer.appendChild(locations);
-    // });
-
-    // selectedPlaces = [];
-    // selectedDateDiv = null;
-    // 선택 완료 버튼 누를 시 검색창 숨기기
-    // $('#menu_wrap').hide();
 
     // 같은 id를 가진 장소가 없고, 15개 초과가 아니라면 선택 장소 목록 배열에 추가
     selectedPlaces[dayNum].push(place);
@@ -177,83 +162,53 @@ function handleSelectBtnClick(event, place, placePosition) {
 /**
  * 제거 버튼 클릭 이벤트 핸들러
  * @param event - 이벤트 객체
- * @param place - 선택된 장소 데이터
- * @param placePosition - 장소의 좌표 객체
+ * @param placeUniqueId - 선택된 요소의 장소 식별자
+ * @param placePositionLa - 장소의 좌표 정보
+ * @param placePositionMa - 장소의 좌표 정보
  */
-function handleRemoveBtnClick(event, place, placePosition) {
+function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositionMa) {
     event.stopPropagation();
 
-    // 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 다른 요소만 filter해서 selectedPlaces에 남김
-    // (넘어온 place를 배열에서 삭제)
-    selectedPlaces = selectedPlaces.filter(p => p.id !== place.id);
+    // uniqueId에서 dayNum과 placeIndex를 추출
+    const [dayNum, placeIndex] = placeUniqueId.split('-').map(Number);
 
-    // findIndex는 배열에 각 요소에 대해 조건을 만족하는 첫 번째 요소의 인덱스 반환
-    // markers 배열에서 해당 장소 위치에 해당하는 marker 요소 제거
-    const tolerance = 0.00000001; // 허용 오차 범위 설정
+    // selectedPlaces에서 해당 날짜와 인덱스에 있는 장소를 삭제
+    if (selectedPlaces[dayNum]) {
+        // 인덱스가 유효한지 확인하고 해당 장소를 삭제
+        if (placeIndex <= selectedPlaces[dayNum].length && placeIndex > 0) {
+            selectedPlaces[dayNum].splice(placeIndex - 1, 1); // 인덱스는 0부터 시작하므로 -1
 
-    const markerIndex = markers.findIndex(marker => {
-        const markerPos = marker.getPosition();
-        // 오차 범위 내면 같은 장소로 취급
-        return Math.abs(markerPos.La - placePosition.La) < tolerance &&
-            Math.abs(markerPos.Ma - placePosition.Ma) < tolerance;
-    });
+            // placesContainer에서 해당 장소를 포함하는 element를 찾아서 삭제
+            const locationElements = document.querySelectorAll('.placeNameContainer');
+            locationElements.forEach(element => {
+                if (element.querySelector('span').id === placeUniqueId) {
+                    element.parentNode.remove(); // 해당 요소 삭제
+                }
+            });
 
-    if (markerIndex !== -1) {   // 해당 장소 위치의 마커가 존재한다면
-        markers[markerIndex].setMap(null);  // 지도에서 마커 제거
-        markers.splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
-        reorderMarkers(markers);    // 마커 번호 재정렬
+            // markers 배열에서 해당 장소 위치에 해당하는 marker 요소 제거
+            const tolerance = 0.00000001; // 허용 오차 범위 설정
+
+            // findIndex는 배열에 각 요소에 대해 조건을 만족하는 첫 번째 요소의 인덱스 반환
+            const markerIndex = markers[dayNum].findIndex(marker => {
+                const markerPos = marker.getPosition();
+                // 오차 범위 이내면 같은 장소로 취급
+                return Math.abs(markerPos.La - placePositionLa) < tolerance &&
+                    Math.abs(markerPos.Ma - placePositionMa) < tolerance;
+            });
+
+            if (markerIndex !== -1) {   // 해당 장소 위치의 마커가 존재한다면
+                markers[dayNum][markerIndex].setMap(null);  // 지도에서 마커 제거
+                markers[dayNum].splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
+                reorderMarkers(markers[dayNum]);    // 마커 번호 재정렬
+            }
+        } else {
+            console.error('장소 인덱스가 유효하지 않습니다.');
+        }
+    } else {
+        console.error('dayNum이 존재하지 않습니다.');
     }
-
-    // 지도 범위 재설정
-    setBounds(placePosition);
 }
-
-/**
- * 선택 완료 버튼 클릭 이벤트 핸들러
- */
-// function handleSelectCompleteBtnClick() {
-//     if (selectedPlaces.length === 0) {
-//         alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
-//         return;
-//     }
-//     sendPlaceData(selectedPlaces);
-//
-//     // 선택된 장소를 createtrip.html에 전달하는 로직을 추가
-//     window.selectedPlaces = [...selectedPlaces];
-//
-//     // 선택 완료 버튼 누를 시 검색창 숨기기
-//     $('#menu_wrap').hide();
-// }
-
-// function handleSelectCompleteBtnClick() {
-//     if (selectedPlaces.length === 0) {
-//         alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
-//         return;
-//     }
-//
-//     if (!selectedDateDiv) {
-//         alert('장소를 추가할 날짜를 선택해 주세요.');
-//         return;
-//     }
-//
-//     const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
-//     selectedPlaces.forEach(place => {
-//         const locations = document.createElement('div');
-//         locations.className = 'locations';
-//
-//         locations.innerHTML = `
-//             <input type="text" name="placeName" value="${place.place_name}" readonly />
-//             <input type="hidden" name="longitude" value="${place.x}" />
-//             <input type="hidden" name="latitude" value="${place.y}" />
-//         `;
-//         locationsContainer.appendChild(locations);
-//     });
-//
-//     selectedPlaces = [];
-//     selectedDateDiv = null;
-//     // 선택 완료 버튼 누를 시 검색창 숨기기
-//     $('#menu_wrap').hide();
-// }
 
 /**
  * 검색 결과 목록과 마커를 표출하는 함수입니다
@@ -278,12 +233,6 @@ function displayPlaces(places) {
         selectBtn.addEventListener('click', function (event) {
             handleSelectBtnClick(event, places[i], placePosition);
         });
-
-        // 항목 당 제거 버튼 클릭 이벤트
-        // const removeBtn = itemEl.querySelector('.remove-btn');
-        // removeBtn.addEventListener('click', function (event) {
-        //     handleRemoveBtnClick(event, places[i], placePosition);
-        // });
 
         fragment.appendChild(itemEl);
     }
@@ -316,9 +265,6 @@ function getListItem(index, places) {
     itemStr += '  <span class="tel">' + places.phone + '</span>' +
         '</div>';
 
-    // itemStr += '<div><button class="select-btn" id="selectBtn">선택</button>' +
-    //     '<button class="remove-btn" id="removeBtn">제거</button></div>';
-
     itemStr += '<div><button class="select-btn" id="selectBtn">선택</button></div>';
 
     el.innerHTML = itemStr;
@@ -350,7 +296,6 @@ function addSelectedMarker(position, idx, dayNum) {
     marker.setMap(map);
     // markers.push(marker);
     markers[dayNum].push(marker);
-    console.log('createtrip.js ----- ', markers);
 
     return marker;
 }
@@ -441,6 +386,3 @@ function removeAllChildNods(el) {
         el.removeChild(el.lastChild);
     }
 }
-
-// 선택 완료 버튼에 클릭 이벤트 리스너 추가
-// document.querySelector('button[type="button"]').addEventListener('click', handleSelectCompleteBtnClick);

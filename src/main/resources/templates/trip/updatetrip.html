@@ -58,6 +58,8 @@
 
 <script>
     let tripDatesCounter = 0;
+    let selectedDateDiv = null;
+    let selectedPlaces = [];
 
     document.getElementById('tripForm').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -121,6 +123,24 @@
           ${tripDateData.tripLocations ? tripDateData.tripLocations.map(loc => createTripLocationHtml(loc)).join('') : ''}
         </div>
         <button type="button" onclick="addTripLocation(this.parentNode)">장소 추가</button>
+
+        <!-- 이 날짜의 장소 목록 및 검색 기능 -->
+        <div id="menu_wrap_${tripDateId}" class="menu_wrap" style="display: none;">
+            <div class="option">
+                <div>
+                    <form onsubmit="searchPlaces(${tripDateId}); return false;">
+                        키워드 : <input type="text" value="부산 맛집" id="keyword_${tripDateId}" size="15">
+                        <button type="submit">검색하기</button>
+                    </form>
+                </div>
+            </div>
+            <div>
+                <button type="button" onclick="handleSelectCompleteBtnClick(${tripDateId})">선택 완료</button>
+            </div>
+            <hr>
+            <ul id="placesList_${tripDateId}"></ul>
+            <div id="pagination_${tripDateId}"></div>
+        </div>
       `;
 
         document.getElementById('tripDatesContainer').appendChild(tripDateElement);
@@ -256,11 +276,16 @@
     const tripId = window.location.pathname.split('/').pop();
     fetchTripData();
 
+    // $(document).ready(function () {
+    //     // 페이지 로드 시 tripId에 해당하는 장소 데이터를 읽어와 지도에 마커로 표시
+    //     loadSavedPlaces(tripId);
+    // })
+
     // 선택 완료 버튼 클릭 이벤트
     document.getElementById('completeBtn').addEventListener('click', handleSelectCompleteBtnClick);
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
-<script src="/js/map.js"></script>
+<script src="/js/updatetrip.js"></script>
 </body>
 </html>
