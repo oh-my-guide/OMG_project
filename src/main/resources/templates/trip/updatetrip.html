@@ -109,6 +109,11 @@
         });
     });
 
+    /**
+     * fetchTripData에서 호출되어 각 여행 날짜 동적으로 생성
+     * 여행 장소 상세는 createTripLocationHtml에서 생성
+     * @param tripDateData
+     */
     function addTripDate(tripDateData = {}) {
         const tripDateId = tripDatesCounter++;
         const tripDateElement = document.createElement('div');
@@ -122,7 +127,7 @@
           <input type="hidden" class="tripDateInput" value="${tripDateData.tripDate || ''}" disabled>
         </div>
         <div class="trip-locations">
-          ${tripDateData.tripLocations ? tripDateData.tripLocations.map(loc => createTripLocationHtml(loc)).join('') : ''}
+          ${tripDateData.tripLocations ? tripDateData.tripLocations.map((loc, index) => createTripLocationHtml(loc, tripDateId + 1, index + 1)).join('') : ''}
         </div>
         <button type="button" onclick="addTripLocation(this)">장소 추가</button>
       `;
@@ -137,17 +142,15 @@
                 latitude: loc.latitude,
                 longitude: loc.longitude
             }));
-        } else {    // tripDateData의 tripLocations이 존재하지 않는다면 해당 날짜에는 장소가 없으니 빈 배열로 초기화
-            selectedPlaces[dayNum] = [];
-        }
 
-        // 받아온 데이터를 기반으로 markers 객체 초기화
-        if (tripDateData.tripLocations) {
-            markers[dayNum] = tripDateData.tripLocations.map(loc => ({  // 배열을 순회하면서 객체에 할당
-                latitude: loc.latitude,
-                longitude: loc.longitude
-            }));
-        } else { // tripDateData의 tripLocations이 존재하지 않는다면 해당 날짜에는 마커가 없으니 빈 배열로 초기화
+            markers[dayNum] = [];
+            tripDateData.tripLocations.forEach((loc) => {
+                // 카카오 API 기본 markers와 같게 구현하기 위해 addSavedPlacesMarker를 통해 카카오 API marker 객체로 생성
+                addSavedPlacesMarker(loc.latitude, loc.longitude, markers[dayNum].length, dayNum);
+            });
+
+        } else {    // tripDateData의 tripLocations이 존재하지 않는다면 해당 날짜에는 장소와 마커가 없으니 빈 배열로 초기화
+            selectedPlaces[dayNum] = [];
             markers[dayNum] = [];
         }
 
@@ -159,7 +162,37 @@
         // 장소 추가 버튼을 누를 시 menu_wrap이 보이도록 설정
         document.getElementById('menu_wrap').style.display = 'block';
 
-        selectedDateDiv = button.closest('.tripDate');
+        selectedDateDiv = button.closest('.trip-date');
+
+        // 여행 몇째 날인지 추출 (ex. 1, 2, ..)
+        if (selectedDateDiv) {
+            // Day 정보를 포함하는 span 요소 선택
+            const dayCountSpan = selectedDateDiv.querySelector('.dayCountLabel');
+
+            if (dayCountSpan) {
+                // "Day 1"과 같은 텍스트를 가져옴
+                const dayText = dayCountSpan.textContent.trim();
+
+                // "Day 1"에서 숫자 부분만 추출
+                const dayNum = dayText.replace('Day ', '');
+
+                // selectedPlaces 객체에서 dayNum에 해당하는 배열이 없으면 초기화
+                if (!selectedPlaces[dayNum]) {
+                    selectedPlaces[dayNum] = [];
+                }
+
+                if (!markers[dayNum]) {
+                    markers[dayNum] = [];
+                }
+
+                return dayNum; // 예: "1"
+            } else {
+                console.error('Day count span not found in selectedDateDiv.');
+            }
+        } else {
+            console.error('selectedDateDiv is not set.');
+        }
+        return null;
 
     }
 
@@ -192,7 +225,7 @@
             tripLocationElement.innerHTML = `
             <div class="placeNameContainer">
                 <input type="text" class="placeNameInput" value="${place.place_name}" readonly />
-                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+<!--                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>-->
             </div>
             <input type="hidden" class="longitudeInput" value="${formattedLongitude}" />
             <input type="hidden" class="latitudeInput" value="${formattedLatitude}" />
@@ -208,28 +241,45 @@
         $('#menu_wrap').hide();
     }
 
-    function removeElement(element) {
-        // // element는 trip-location div
-        // const locationId = element.dataset.id;
-        //
-        // // 화면에서 요소 제거
-        // element.parentNode.removeChild(element);
+    /**
+     * 여행 장소 삭제
+     * HTML에서 제거 후 날짜 카운트 업데이트
+     * @param element
+     */
+    // function removeElement(element) {
+    //     // // element는 trip-location div
+    //     // const locationId = element.dataset.id;
+    //     //
+    //     // // 화면에서 요소 제거
+    //     // element.parentNode.removeChild(element);
+    //
+    //     // `element`는 삭제 버튼이 포함된 `placeNameContainer`의 참조
+    //     const tripLocationElement = element.closest('.trip-location');
+    //     if (tripLocationElement) {
+    //         tripLocationElement.remove();
+    //     }
+    //
+    //     updateDayCount();
+    // }
 
-        // `element`는 삭제 버튼이 포함된 `placeNameContainer`의 참조
-        const tripLocationElement = element.closest('.trip-location');
-        if (tripLocationElement) {
-            tripLocationElement.remove();
-        }
+    /**
+     * 장소 상세 HTML 생성
+     * @param tripLocationData
+     * @param dayNum
+     * @param placeIndex
+     * @returns {string}
+     */
+    function createTripLocationHtml(tripLocationData, dayNum, placeIndex) {
 
-        updateDayCount();
-    }
+        // 장소의 고유 ID 생성 (ex. 몇일차-몇번째장소: 1-1, 1-2, 2-1, ..) 나중에 삭제 시 같은 장소 겹침 문제 해결 위해 고유 ID 지정
+        const uniqueId = `${dayNum}-${placeIndex}`;
 
-    function createTripLocationHtml(tripLocationData) {
         return `
         <div class="trip-location" data-id="${tripLocationData.id || ''}">
           <div class="placeNameContainer">
+            <span id="${uniqueId}">${placeIndex}</span>
             <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
-            <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+            <button type="button" onclick="handleRemoveBtnClick(event, '${uniqueId}', ${tripLocationData.latitude}, ${tripLocationData.longitude})">삭제</button>
           </div>
           <input type="hidden" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
           <input type="hidden" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
@@ -237,6 +287,9 @@
       `;
     }
 
+    /**
+     * 여행 데이터 가져와서 HTML에 채워넣음
+     */
     function fetchTripData() {
         fetch(`/api/trips/${tripId}`)
             .then(response => response.json())
@@ -249,6 +302,9 @@
             });
     }
 
+    /**
+     * 날짜 카운트 업데이트 (Day 숫자 업데이트)
+     */
     function updateDayCount() {
         const tripDateInputs = document.querySelectorAll('.tripDateInput');
         tripDateInputs.forEach((input, index) => {
@@ -272,13 +328,10 @@
     const tripId = window.location.pathname.split('/').pop();
     fetchTripData();
 
-    // $(document).ready(function () {
-    //     // 페이지 로드 시 tripId에 해당하는 장소 데이터를 읽어와 지도에 마커로 표시
-    //     loadSavedPlaces(tripId);
-    // })
-
-    // // 선택 완료 버튼 클릭 이벤트
-    // document.getElementById('completeBtn').addEventListener('click', handleSelectCompleteBtnClick);
+    // 창 닫기 버튼 클릭 시 #menu_wrap 숨기기
+    document.getElementById('closeBtn').addEventListener('click', function() {
+        $('#menu_wrap').hide();
+    });
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
