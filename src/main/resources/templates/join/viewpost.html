@@ -30,6 +30,17 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
+        .trip-info h4 {
+            font-size: 1em;
+            color: #555;
+        }
+
+        .trip-info h5 {
+            font-size: 0.9em;
+            color: #777;
+            margin: 0;
+        }
+
         .post-title {
             margin-bottom: 20px;
             font-size: 28px;
@@ -256,11 +267,9 @@
 
     <!-- 여행 일정 정보 추가 -->
     <div class="trip-info">
-        <h3>여행 일정</h3>
-        <p><strong>여행 이름:</strong> <span th:text="${post.trip.tripName}"></span></p>
-        <p><strong>여행 날짜:</strong> <span th:text="${post.trip.startDate}"></span> ~ <span th:text="${post.trip.endDate}"></span></p>
+        <h4><span th:text="${post.trip.tripName}"></span> ( <span th:text="${post.trip.startDate}"></span> ~ <span th:text="${post.trip.endDate}"></span> )</h4>
         <div th:each="date : ${post.trip.tripDates}">
-            <h4 th:text="${date.tripDate}">여행 날짜</h4>
+            <h5 th:text="${date.tripDate}">여행 날짜</h5>
             <ul>
                 <li th:each="location : ${date.tripLocations}">
                     <span th:text="${location.placeName}">장소 이름</span>
