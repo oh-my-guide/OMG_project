@@ -30,11 +30,10 @@
 
         <div class="my-trip">
             <h3>나의 일정</h3>
-            <!-- 섹션? 형식으로 값이 요약되어서 보여지도록..? -->
         </div>
 
         <div class="trip-info">
-            <h3>일정 모집</h3>
+            <h3>일행 모집</h3>
         </div>
 
         <div class="review-section">
@@ -44,12 +43,12 @@
         <div class="my-wishlist">
             <h3>찜</h3>
         </div>
+
+        <a href="/" class="link-button light-button">돌아가기</a>
     </div>
 </div>
 
 <script>
-    // Thymeleaf 변수를 JavaScript 변수로 할당
-    // var userId = /*[[${user.id}]]*/ 0; // 사용자가 로그인하지 않았을 때를 대비한 기본값
     const userId = document.getElementById('userId').value;
 
     $(document).ready(function() {
@@ -60,28 +59,28 @@
             $('.my-trip, .trip-info, .review-section, .my-wishlist').hide();
 
             if (target === "my-trip") {
-                loadMyTrip(userId);  // userId를 함수에 전달
+                loadMyTrip(userId);
             } else if (target === "trip-info") {
-                loadTripInfo();
+                loadTripInfo(userId);
             } else if (target === "review-section") {
-                loadReviewSection();
+                loadReviewSection(userId);
             } else if (target === "my-wishlist") {
                 loadWishlist();
             }
         });
 
+        // 나의 일정
         function loadMyTrip(userId) {
             $.ajax({
-                url: `/api/trips/user/${userId}`,  // userId를 사용하여 URL 구성
+                url: `/api/trips/user/${userId}`,
                 method: 'GET',
                 dataType: 'json',
                 success: function(data) {
-                    console.log("Data received:", data); // 데이터 확인용 콘솔 로그
+                    console.log("Data received:", data);
                     $('.my-trip').empty().append('<h3>나의 일정</h3>');
 
                     if (data.length > 0) {
                         data.forEach(function(item) {
-                            // ISO 문자열을 JavaScript Date 객체로 변환
                             const startDate = new Date(item.startDate).toLocaleDateString('ko-KR');
                             const endDate = new Date(item.endDate).toLocaleDateString('ko-KR');
 
@@ -108,6 +107,78 @@
                 }
             });
         }
+
+        // 일행 모집 글 목록 나열
+        function loadTripInfo(userId) {
+            $.ajax({
+                url: `/api/joinPosts/user/${userId}`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Data received:", data);
+                    $('.trip-info').empty().append('<h3>일행 모집</h3>');
+
+                    if (data.length > 0) {
+                        data.forEach(function(post) {
+                            const postItem = `
+                                <div class="post-item">
+                                    <h2>${post.title}</h2>
+                                    <p>작성자: ${post.usernick}</p>
+                                    <p>${post.content}</p>
+                                    <button class="chat-button" onclick="window.location.href='/joinPost/${post.id}'">자세히 보기</button>
+                                </div>
+                            `;
+                            $('.trip-info').append(postItem);
+                        });
+                    } else {
+                        $('.trip-info').html('<p>현재 모집 중인 일정이 없습니다.</p>');
+                    }
+
+                    $('.trip-info').show();
+                },
+                error: function(xhr, status, error) {
+                    console.error("일정 모집 데이터를 불러오는 데 실패했습니다. :", error);
+                    $('.trip-info').html('<p>일정 모집 데이터를 불러오는 데 실패했습니다.</p>').show();
+                }
+            });
+        }
+
+        // 여행 후기 글 목록 나열
+        function loadReviewSection(userId) {
+            $.ajax({
+                url: `/api/reviewPosts/user/${userId}`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Data received:", data);
+                    $('.review-section').empty().append('<h3>내 여행 후기</h3>');
+
+                    if (data.length > 0) {
+                        data.forEach(function(review) {
+                            const reviewItem = `
+                                <div class="review-item">
+                                    <h2>${review.title}</h2>
+                                    <p>작성자: ${review.usernick}</p>
+                                    <p>${review.content}</p>
+                                    <button class="chat-button" onclick="window.location.href='/reviewPost/${review.id}'">자세히 보기</button>
+                                </div>
+                            `;
+                            $('.review-section').append(reviewItem);
+                        });
+                    } else {
+                        $('.review-section').html('<p>작성된 여행 후기가 없습니다.</p>');
+                    }
+
+                    $('.review-section').show();
+                },
+                error: function(xhr, status, error) {
+                    console.error("여행 후기 데이터를 불러오는 데 실패했습니다. :", error);
+                    $('.review-section').html('<p>여행 후기 데이터를 불러오는 데 실패했습니다.</p>').show();
+                }
+            });
+        }
+
+        // 찜 목록 나열
     });
 </script>
 </body>
