@@ -121,12 +121,10 @@ function handleSelectBtnClick(event, place, placePosition) {
     }
 
     const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
-    const currentLocationCount = locationsContainer.querySelectorAll('.locations').length;
     const MAX_LOCATIONS = 15;
 
-    console.log('currentLocationCount: {}', currentLocationCount);
-    console.log('selectedPlaces: {}', selectedPlaces);
-    if (currentLocationCount + selectedPlaces[dayNum].length > MAX_LOCATIONS) {
+    console.log('selectedPlaces[dayNum]: {}', selectedPlaces[dayNum]);
+    if (selectedPlaces[dayNum].length >= MAX_LOCATIONS) {
         alert(`하루에 추가할 수 있는 장소는 최대 ${MAX_LOCATIONS}개입니다.`);
         return;
     }
@@ -135,7 +133,11 @@ function handleSelectBtnClick(event, place, placePosition) {
     locations.className = 'locations';
 
     locations.innerHTML = `
-            <input type="text" name="placeName" value="${place.place_name}" readonly />
+            <div class="placeNameContainer">
+                <span>${selectedPlaces[dayNum].length + 1}</span>
+                <input type="text" class="placeNameInput" value="${place.place_name}" readonly />
+                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+            </div>
             <input type="hidden" name="longitude" value="${place.x}" />
             <input type="hidden" name="latitude" value="${place.y}" />
         `;
@@ -278,10 +280,10 @@ function displayPlaces(places) {
         });
 
         // 항목 당 제거 버튼 클릭 이벤트
-        const removeBtn = itemEl.querySelector('.remove-btn');
-        removeBtn.addEventListener('click', function (event) {
-            handleRemoveBtnClick(event, places[i], placePosition);
-        });
+        // const removeBtn = itemEl.querySelector('.remove-btn');
+        // removeBtn.addEventListener('click', function (event) {
+        //     handleRemoveBtnClick(event, places[i], placePosition);
+        // });
 
         fragment.appendChild(itemEl);
     }
@@ -314,8 +316,10 @@ function getListItem(index, places) {
     itemStr += '  <span class="tel">' + places.phone + '</span>' +
         '</div>';
 
-    itemStr += '<div><button class="select-btn" id="selectBtn">선택</button>' +
-        '<button class="remove-btn" id="removeBtn">제거</button></div>';
+    // itemStr += '<div><button class="select-btn" id="selectBtn">선택</button>' +
+    //     '<button class="remove-btn" id="removeBtn">제거</button></div>';
+
+    itemStr += '<div><button class="select-btn" id="selectBtn">선택</button></div>';
 
     el.innerHTML = itemStr;
     el.className = 'item';

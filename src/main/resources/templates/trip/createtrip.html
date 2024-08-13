@@ -65,7 +65,7 @@
                         <input type="text" placeholder="장소명을 입력해주세요." id="keyword" size="15">
                         <button type="submit" id="searchBtn">검색하기</button>
                     </form>
-                    <button type="button" id="completeBtn">선택 완료</button>
+                    <button type="button" id="closeBtn">창 닫기</button>
                 </div>
             </div>
             <hr>
@@ -265,8 +265,10 @@
         return null;
     }
 
-    // 선택 완료 버튼 클릭 이벤트
-    // document.getElementById('completeBtn').addEventListener('click', handleSelectCompleteBtnClick);
+    // 창 닫기 버튼 클릭 시 #menu_wrap 숨기기
+    document.getElementById('closeBtn').addEventListener('click', function() {
+        $('#menu_wrap').hide();
+    });
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
