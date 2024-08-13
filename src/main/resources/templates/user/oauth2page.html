@@ -5,10 +5,12 @@
     <title>추가 정보 기입</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="/css/oauth2-page.css">
+    <link rel="stylesheet" href="/css/header.css">
 </head>
 <body>
 
 <div class="container">
+    <div th:replace="fragments/header :: headerFragment"></div>
     <h1>추가 정보 기입</h1>
     <form th:action="@{/oauthPage}" th:object="${user}" method="post">
 
