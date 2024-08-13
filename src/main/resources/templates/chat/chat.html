@@ -7,34 +7,122 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <style>
+    /* Body 스타일 */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    /* 채팅 컨테이너 스타일 */
+    .section {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      width: 700px;
+      height: 700px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #333;
+    }
+
+    /* 채팅창 스타일 */
     #chat {
-      height: 400px;
+      height: 600px;
       overflow-y: scroll;
       margin-bottom: 20px;
       border: 1px solid #ccc;
       padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column; /* 메시지를 위에서 아래로 나열 */
+      gap: 10px; /* 메시지 사이 간격 */
     }
+
+    /* 메시지 스타일 */
     .message {
-      margin-bottom: 10px;
+      max-width: 70%; /* 최대 너비를 설정하여 말풍선의 길이 제한 */
+      padding: 10px 15px;
+      border-radius: 10px;
+      overflow-wrap: break-word; /* 긴 단어 줄바꿈 처리 */
+      font-size: 14px;
+      background-color: #e0f7fa; /* 기본 배경 색상 */
+      display: flex;
+      flex-direction: row;
+      align-items: center;
     }
+
+    /* 보낸 메시지 (오른쪽 정렬) */
+    .message.sent {
+      background-color: #e0f7fa;
+      margin-left: auto;
+      align-self: flex-end; /* 오른쪽 정렬 */
+    }
+
+    /* 받은 메시지 (왼쪽 정렬) */
+    .message.received {
+      background-color: #fce4ec;
+      margin-right: auto;
+      align-self: flex-start; /* 왼쪽 정렬 */
+    }
+
+    /* 타임스탬프 스타일 */
     .timestamp {
       font-size: 0.8em;
       color: #888;
+      display: block;
+      margin-top: 5px;
+    }
+
+    /* 입력 필드 및 버튼 스타일 */
+    .field.has-addons {
+      display: flex;
+      align-items: center;
+    }
+
+    .input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .button.is-info {
+      padding: 12px;
+      background-color: #8FC6FF;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .button.is-info:hover {
+      background-color: #7AB8E3;
     }
   </style>
 </head>
 <body>
 <section class="section">
-  <div class="container">
-    <h1 class="title">Group Chat</h1>
-    <div id="chat"></div>
-    <div class="field has-addons">
-      <div class="control is-expanded">
-        <input id="messageInput" class="input" type="text" placeholder="Type a message">
-      </div>
-      <div class="control">
-        <button id="sendButton" class="button is-info">Send</button>
-      </div>
+  <h1 class="title" th:text="${tripName}"></h1>
+  <div id="chat"></div>
+  <div class="field has-addons">
+    <div class="control is-expanded">
+      <input id="messageInput" class="input" type="text" placeholder="메세지를 입력하세요">
+    </div>
+    <div class="control">
+      <button id="sendButton" class="button is-info">전송</button>
     </div>
   </div>
 </section>
@@ -45,54 +133,53 @@
     var roomId = pathArray[pathArray.length - 1];
     console.log("채팅방 번호: " + roomId);
 
-    // 초기 채팅 내역을 요청하여 화면에 표시
-    $.getJSON(`/api/chat/rooms/${roomId}/messages`, function(messages) {
+    var currentUserNickname = '[[${usernick}]]';
+    console.log("현재 사용자 닉네임: " + currentUserNickname);
+
+    function appendMessage(messageData) {
       var chat = $('#chat');
+      var message = $('<div>').addClass('message');
+      var createdAt = new Date(messageData.createdAt).toLocaleTimeString();
+      var messageClass = (messageData.userNickname === currentUserNickname) ? 'sent' : 'received';
+      message.addClass(messageClass);
+      message.html(`<strong>${messageData.userNickname}</strong>: ${messageData.message} <span class="timestamp">${createdAt}</span>`);
+      chat.append(message);
+      chat.scrollTop(chat[0].scrollHeight);
+    }
+
+    $.getJSON(`/api/chat/rooms/${roomId}/messages`, function(messages) {
       console.log(messages);
       messages.forEach(function(message) {
-        console.log(message);
-        console.log(message.message);
-        var messageElement = $('<div>').addClass('message');
-        var createdAt = new Date(message.createdAt).toLocaleTimeString(); // 시간 변환
-        messageElement.html(`<strong>${message.userNickname}</strong>: ${message.message} <span class="timestamp">${createdAt}</span>`);
-        chat.append(messageElement);
+        appendMessage(message);
       });
-      chat.scrollTop(chat[0].scrollHeight);
     }).fail(function(jqXHR, textStatus, errorThrown) {
       console.error('Fetch operation error:', textStatus, errorThrown);
     });
 
-    // WebSocket 연결 설정
     var socket = new WebSocket("ws://localhost:8080/chat/" + roomId);
 
     socket.onopen = function() {
-      console.log("Connected to WebSocket server");
+      console.log("WebSocket 서버에 연결되었습니다.");
     };
 
     socket.onmessage = function(event) {
-      var chat = $('#chat');
-      var message = $('<div>').addClass('message');
       var messageData = JSON.parse(event.data);
-      var createdAt = new Date(messageData.createdAt).toLocaleTimeString(); // 시간 변환
-      message.html(`<strong>${messageData.userNickname}</strong>: ${messageData.message} <span class="timestamp">${createdAt}</span>`);
-      chat.append(message);
-      chat.scrollTop(chat[0].scrollHeight);
+      appendMessage(messageData);
     };
 
     socket.onclose = function(event) {
       if (event.wasClean) {
-        console.log("Connection closed cleanly");
+        console.log("연결이 정상적으로 종료되었습니다.");
       } else {
-        console.log("Connection closed with error");
+        console.log("연결에 문제가 발생했습니다.");
       }
-      console.log("Code: " + event.code + " reason: " + event.reason);
+      console.log("코드: " + event.code + " 이유: " + event.reason);
     };
 
     socket.onerror = function(error) {
-      console.log("WebSocket error: " + error.message);
+      console.log("WebSocket 오류: " + error.message);
     };
 
-    // 메시지 전송
     $('#sendButton').click(function() {
       var messageInput = $('#messageInput');
       var message = messageInput.val();

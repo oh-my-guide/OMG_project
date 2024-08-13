@@ -1,6 +1,9 @@
 package com.example.omg_project.domain.chat.controller;
 
 import com.example.omg_project.domain.chat.service.ChatService;
+import com.example.omg_project.domain.user.entity.User;
+import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ChatController {
 
     private final ChatService chatService;
+    private final JwtTokenizer jwtTokenizer;
+    private final UserService userService;
 
     /**
      * 채팅방 화면을 렌더링하는 엔드포인트
@@ -48,8 +53,17 @@ public class ChatController {
             // 유효한 accessToken과 채팅방 ID를 기반으로 사용자가 해당 채팅방에 참여하고 있는지 확인
             chatService.validateUserInChatRoom(roomId, accessToken);
 
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElseThrow();
+            String usernick = user.getUsernick();
+
+            String tripName = chatService.findTripName(roomId);
+
             // 검증에 성공하면, 모델에 roomId를 추가하고 채팅방 화면으로 이동
             model.addAttribute("roomId", roomId);
+            model.addAttribute("usernick", usernick);
+            model.addAttribute("tripName", tripName);
+
             return "chat/chat";  // 채팅 화면으로 이동
 
         } catch (RuntimeException e) {

@@ -12,4 +12,5 @@ public interface ChatService {
     ChatMessageDTO convertToDTO(ChatMessage chatMessage);
     ChatRoom createRoom();
     void validateUserInChatRoom(Long roomId, String accessToken);
+    String findTripName(Long roomId);
 }
