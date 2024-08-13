@@ -34,20 +34,7 @@ public class ChatController {
     public String getChatRoom(@PathVariable Long roomId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         try {
             // 쿠키에서 accessToken 찾기
-            String accessToken = null;
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if ("accessToken".equals(cookie.getName())) {
-                        accessToken = cookie.getValue();
-                        break;  // accessToken을 찾으면 반복문 종료
-                    }
-                }
-            }
-            // accessToken이 없으면 예외 발생
-            if (accessToken == null) {
-                throw new RuntimeException("Access token이 없습니다.");
-            }
+            String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
 
             // 사용자 및 채팅방 검증 로직 호출
             // 유효한 accessToken과 채팅방 ID를 기반으로 사용자가 해당 채팅방에 참여하고 있는지 확인
