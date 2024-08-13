@@ -13,23 +13,23 @@
     <div class="form_wrap">
         <form id="tripForm">
             <h1>여행 일정 수정</h1>
-            <label for="tripName">여행 이름:</label>
+            <label for="tripName">여행 이름</label>
             <input type="text" id="tripName" name="tripName">
 
-            <label for="startDate">시작 날짜:</label>
+            <label for="startDate">여행 시작일</label>
             <input type="date" id="startDate" name="startDate" disabled>
 
-            <label for="endDate">종료 날짜:</label>
+            <label for="endDate">여행 종료일</label>
             <input type="date" id="endDate" name="endDate" disabled>
 
+            <h2>세부 일정</h2>
             <div id="tripDatesContainer">
                 <!-- 여행 날짜 및 장소들이 동적으로 추가될 부분 -->
             </div>
-            <button id="editButton">수정</button>
+            <button type="submit" id="editButton">수정</button>
         </form>
     </div>
     <div class="map_wrap">
-        <!--        <div id="map" style="width:70%;height:100%;position:relative;overflow:hidden;"></div>-->
         <div id="map"></div>
 
         <!-- 검색 메뉴 컨테이너 -->
@@ -96,7 +96,8 @@
         }).then(response => {
             if (response.ok) {
                 alert('여행 일정이 성공적으로 수정되었습니다.');
-                window.location.href = '/';
+                window.location.href = `/trip/update/${tripId}`;
+                // window.location.href = '/';
             } else {
                 alert('여행 일정 수정 중 오류가 발생했습니다.');
             }
@@ -111,7 +112,9 @@
 
         tripDateElement.innerHTML = `
         <div class="trip-date-title">
-          <input type="date" class="tripDateInput" value="${tripDateData.tripDate || ''}" disabled>
+          <span class="dayCountLabel">Day ${tripDateId + 1}</span>
+          <span> ${tripDateData.tripDate || ''}</span>
+          <input type="hidden" class="tripDateInput" value="${tripDateData.tripDate || ''}" disabled>
         </div>
         <div class="trip-locations">
           ${tripDateData.tripLocations ? tripDateData.tripLocations.map(loc => createTripLocationHtml(loc)).join('') : ''}
@@ -170,10 +173,12 @@
 
             // locations.innerHTML = `
             tripLocationElement.innerHTML = `
-            <input type="text" class="placeNameInput" value="${place.place_name}" readonly />
-            <input type="text" class="longitudeInput" value="${formattedLongitude}" />
-            <input type="text" class="latitudeInput" value="${formattedLatitude}" />
-            <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+            <div class="placeNameContainer">
+                <input type="text" class="placeNameInput" value="${place.place_name}" readonly />
+                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+            </div>
+            <input type="hidden" class="longitudeInput" value="${formattedLongitude}" />
+            <input type="hidden" class="latitudeInput" value="${formattedLatitude}" />
         `;
 
             locationsContainer.appendChild(tripLocationElement);
@@ -187,11 +192,17 @@
     }
 
     function removeElement(element) {
-        // element는 trip-location div
-        const locationId = element.dataset.id;
+        // // element는 trip-location div
+        // const locationId = element.dataset.id;
+        //
+        // // 화면에서 요소 제거
+        // element.parentNode.removeChild(element);
 
-        // 화면에서 요소 제거
-        element.parentNode.removeChild(element);
+        // `element`는 삭제 버튼이 포함된 `placeNameContainer`의 참조
+        const tripLocationElement = element.closest('.trip-location');
+        if (tripLocationElement) {
+            tripLocationElement.remove();
+        }
 
         updateDayCount();
     }
@@ -199,10 +210,12 @@
     function createTripLocationHtml(tripLocationData) {
         return `
         <div class="trip-location" data-id="${tripLocationData.id || ''}">
-          <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
-          <input type="text" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
-          <input type="text" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
-          <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+          <div class="placeNameContainer">
+            <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
+            <button type="button" onclick="removeElement(this.parentNode)">삭제</button>
+          </div>
+          <input type="hidden" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
+          <input type="hidden" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
         </div>
       `;
     }
@@ -222,24 +235,25 @@
     function updateDayCount() {
         const tripDateInputs = document.querySelectorAll('.tripDateInput');
         tripDateInputs.forEach((input, index) => {
-            const dayLabel = input.parentNode.querySelector('.dayLabel');
-            if (dayLabel) {
-                dayLabel.remove();
+            const dayCountLabel = input.parentNode.querySelector('.dayCountLabel');
+            if (dayCountLabel) {
+                // dayCountLabel이 존재하면 내용을 업데이트
+                // dayCountLabel.remove();
+                dayCountLabel.textContent = `Day ${index + 1}`;
+            } else {
+                // 존재하지않으면 새로 생성
+                const newDayCountLabel = document.createElement('span');
+                newDayCountLabel.className = 'dayCountLabel';
+                newDayCountLabel.textContent = `Day ${index + 1}`;
+                // input.parentNode.insertBefore(newDayCountLabel, input.nextSibling);
+                input.parentNode.insertBefore(newDayCountLabel, input);
             }
-            const newDayLabel = document.createElement('span');
-            newDayLabel.className = 'dayLabel';
-            newDayLabel.textContent = `${index + 1}일째`;
-            input.parentNode.insertBefore(newDayLabel, input.nextSibling);
         });
     }
 
     // 페이지 로드 시 여행 데이터를 가져옴
     const tripId = window.location.pathname.split('/').pop();
     fetchTripData();
-
-    document.getElementById('editButton').addEventListener('click', function () {
-        window.location.href = `/trip/update/${tripId}`;
-    });
 
     // 선택 완료 버튼 클릭 이벤트
     document.getElementById('completeBtn').addEventListener('click', handleSelectCompleteBtnClick);

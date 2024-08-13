@@ -266,8 +266,8 @@ function getListItem(index, places) {
     itemStr += '  <span class="tel">' + places.phone + '</span>' +
         '</div>';
 
-    itemStr += '<div><button class="select-btn">선택</button></div>';
-    itemStr += '<button class="remove-btn">제거</button>';
+    itemStr += '<div><button class="select-btn" id="selectBtn">선택</button>' +
+        '<button class="remove-btn" id="removeBtn">제거</button></div>';
 
     el.innerHTML = itemStr;
     el.className = 'item';
