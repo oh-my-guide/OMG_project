@@ -11,7 +11,7 @@
         <div class="nav-links">
             <a href="/">홈</a>
             <a href="/service">서비스 소개</a>
-            <a href="/board">게시판</a>
+            <a href="/reviewPost/">게시판</a>
         </div>
         <div class="user-info">
             <th:block th:if="${user == null}">
@@ -21,7 +21,7 @@
                 <div class="username" id="username" onclick="toggleDropdown()" th:text="${user.usernick}">사용자이름</div>
                 <div class="dropdown" id="dropdown-menu">
                     <a href="/my">내 정보</a>
-                    <a href="/logout">로그아웃</a>
+                    <a href="/api/users/logout">로그아웃</a>
                 </div>
             </th:block>
         </div>
