@@ -1,40 +1,111 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>마이페이지</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/css/mypage.css">
 </head>
 <body>
-<h2>로그인에 성공하셨습니다. 축하합니다!</h2>
-<p>이름 :: <span th:text="${user.usernick}"></span>님</p>
-<p>이메일 :: <span th:text="${user.username}"></span></p>
-<p>생일 :: <span th:text="${user.birthdate}"></span></p>
 
-<a href="/api/users/logout">로그아웃</a>
-<a href="/my">마이페이지로 돌아가기</a>
-<a href="/my/profile">마이페이지 수정</a>
+<div class="container">
+    <header class="header">
+        <h1>OMG</h1>
+    </header>
 
-<input type="hidden" id="userId" th:value="${user.id}"/>
-<button id="delete-account">회원 탈퇴</button>
+    <div class="main-content">
+        <div class="user-info">
+            <img src="/files/user.png" alt="Profile Picture">
+            <p><span th:text="${user.usernick}"></span>님</p>
+            <a href="/my/profile" class="link-button">프로필 편집</a>
+        </div>
+
+        <div class="navigation">
+            <a href="#" data-target="my-trip">나의 일정</a>
+            <a href="#" data-target="trip-info">일행 모집</a>
+            <a href="#" data-target="review-section">내 여행 후기</a>
+            <a href="#" data-target="my-wishlist">찜</a>
+        </div>
+
+        <div class="my-trip">
+            <h3>나의 일정</h3>
+            <!-- 섹션? 형식으로 값이 요약되어서 보여지도록..? -->
+        </div>
+
+        <div class="trip-info">
+            <h3>일정 모집</h3>
+        </div>
+
+        <div class="review-section">
+            <h3>내 여행 후기</h3>
+        </div>
+
+        <div class="my-wishlist">
+            <h3>찜</h3>
+        </div>
+    </div>
+</div>
 
 <script>
+    // Thymeleaf 변수를 JavaScript 변수로 할당
+    var userId = /*[[${user.id}]]*/ 0; // 사용자가 로그인하지 않았을 때를 대비한 기본값
+
     $(document).ready(function() {
-        $('#delete-account').on('click', function() {
-            if (confirm("정말로 탈퇴 하시겠습니까?")) {
-                $.ajax({
-                    type: 'DELETE',
-                    url: '/api/users/' + $('#userId').val(),
-                    success: function(response) {
-                        alert('성공적으로 회원 탈퇴 되었습니다.');
-                        window.location.href = '/';
-                    },
-                    error: function(error) {
-                        alert('회원 탈퇴에 실패했습니다.');
-                    }
-                });
+        $('.navigation a').click(function(event) {
+            event.preventDefault();
+            const target = $(this).data('target');
+
+            $('.my-trip, .trip-info, .review-section, .my-wishlist').hide();
+
+            if (target === "my-trip") {
+                loadMyTrip(userId);  // userId를 함수에 전달
+            } else if (target === "trip-info") {
+                loadTripInfo();
+            } else if (target === "review-section") {
+                loadReviewSection();
+            } else if (target === "my-wishlist") {
+                loadWishlist();
             }
         });
+
+        function loadMyTrip(userId) {
+            $.ajax({
+                url: `/api/trips/user/${userId}`,  // userId를 사용하여 URL 구성
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log("Data received:", data); // 데이터 확인용 콘솔 로그
+                    $('.my-trip').empty().append('<h3>나의 일정</h3>');
+
+                    if (data.length > 0) {
+                        data.forEach(function(item) {
+                            // ISO 문자열을 JavaScript Date 객체로 변환
+                            const startDate = new Date(item.startDate).toLocaleDateString('ko-KR');
+                            const endDate = new Date(item.endDate).toLocaleDateString('ko-KR');
+
+                            const tripItem = `
+                                <div class="trip-item">
+                                    <h2>${item.tripName}</h2>
+                                    <p>시작 날짜: ${startDate}</p>
+                                    <p>종료 날짜: ${endDate}</p>
+                                    <p>도시: ${item.city.name}</p>
+                                    <button class="chat-button" onclick="window.location.href='/trip/${item.id}'">세부 정보 보기</button>
+                                </div>
+                            `;
+                            $('.my-trip').append(tripItem);
+                        });
+                    } else {
+                        $('.my-trip').html('<p>해당 사용자의 여행 일정이 없습니다.</p>');
+                    }
+
+                    $('.my-trip').show();
+                },
+                error: function(xhr, status, error) {
+                    console.error("일정을 불러오는 데 실패했습니다. :", error);
+                    $('.my-trip').html('<p>일정을 불러오는 데 실패했습니다.</p>').show();
+                }
+            });
+        }
     });
 </script>
 </body>

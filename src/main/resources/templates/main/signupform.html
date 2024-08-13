@@ -17,15 +17,15 @@
 
     <label for="email">이메일</label>
     <input type="email" id="email" name="username" placeholder="이메일 입력" required/>
-    <button type="button" id="check-email-button" class="disabled">중복확인</button>
+    <button type="button" id="check-email-button" class="light-button">중복확인</button>
     <span id="emailCheckMessage" class="error"></span>
 
-    <button type="button" id="send-code-button" class="disabled" style="display: none;">인증 코드 발송</button>
+    <button type="button" id="send-code-button" class="light-button" style="display: none;">인증 코드 발송</button>
 
     <div id="verifyCodeSection">
         <label for="verificationCode">인증 코드</label>
         <input type="text" id="verificationCode" name="verificationCode" placeholder="인증번호 입력" required/>
-        <button type="button" id="verify-code-button" class="disabled">이메일 인증</button>
+        <button type="button" id="verify-code-button" class="light-button">이메일 인증</button>
         <span id="verificationMessage" class="error"></span>
     </div>
 
@@ -37,12 +37,22 @@
 
     <label for="name">사용자 이름</label>
     <input type="text" id="name" name="name" placeholder="ex) 홍길동" required/>
-
+<!--
     <label for="usernick">닉네임</label>
     <input type="text" id="usernick" name="usernick" placeholder="ex) 크크크크" required/>
-    <button type="button" id="check-usernick-button" class="disabled">닉네임 중복 체크</button>
-    <button type="button" id="generate-nickname-button" class="disabled">자동 닉네임 생성하기</button>
+    <button type="button" id="check-usernick-button" class="light-button">닉네임 중복 확인</button>
+    <button type="button" id="generate-nickname-button" class="light-button">자동 닉네임 생성</button>
     <span id="usernickCheckMessage" class="error"></span>
+-->
+    <div class="form-group">
+        <label for="usernick">닉네임</label>
+        <input type="text" id="usernick" name="usernick" placeholder="ex) 크크크크" required/>
+        <div class="button-group">
+            <button type="button" id="check-usernick-button" class="light-button">닉네임 중복 확인</button>
+            <button type="button" id="generate-nickname-button" class="light-button">자동 닉네임 생성</button>
+        </div>
+        <span id="usernickCheckMessage" class="error"></span>
+    </div>
 
     <label for="phoneNumber">연락처</label>
     <input type="text" id="phoneNumber" name="phoneNumber" placeholder="'-'을 제외하고 입력해주세요.'" required/>

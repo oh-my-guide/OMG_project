@@ -50,7 +50,8 @@ body {
 }
 
 .login-container button:hover {
-    background-color: #8FC6FFFF;
+    background-color: #6aabf4; /* 버튼 호버 색상 */
+    transform: scale(1.02); /* 버튼 크기 약간 확대 */
 }
 
 .login-container a {

@@ -80,7 +80,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             refreshTokenService.addRefreshToken(refreshTokenEntity);
 
-            response.sendRedirect("/oauthPage"); // 로그인 성공 후 보여질 페이지 --> 나중에 수정해야해욤
+            // 추가 정보가 없을 때만 oauthPage로 리다이렉트
+            if (user.get().getPhoneNumber().equals("01000000000")) {
+                response.sendRedirect("/oauthPage");
+            } else {
+                response.sendRedirect("/my"); // 이미 추가 정보가 있을 경우 메인 페이지로 리다이렉트
+            }
 
         } catch (Exception e) {
             log.error("Oauth2 로그인에 실패했습니다.", e);

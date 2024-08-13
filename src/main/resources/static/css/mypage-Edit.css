@@ -1,58 +1,95 @@
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-    color: #333;
 }
 
-h1 {
-    color: #333;
-    text-align: center;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
 }
 
-form {
+.header h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.profile-container {
+    text-align: center;
+}
+
+.profile-pic img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+}
+
+.form-container {
     background-color: #fff;
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
-    color: #333;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-weight: bold;
-    color: #333;
 }
 
-input, select {
+input[type="text"],
+input[type="tel"] {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 3px;
+    border-radius: 5px;
     box-sizing: border-box;
 }
 
-input:focus, select:focus {
-    border-color: #333;
+input:focus {
+    border-color: #666;
     outline: none;
 }
 
+.button-group {
+    display: flex;
+   /* justify-content: space-between; */
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+
+}
+
 button {
-    width: 100%;
+    width: 48%;
     padding: 10px;
-    background-color: #333;
+    background-color: #8FC6FFFF;
     border: none;
-    border-radius: 3px;
+    border-radius: 5px;
     color: #fff;
     font-size: 14px;
     font-weight: bold;
@@ -61,61 +98,83 @@ button {
 }
 
 button:hover {
-    background-color: #555;
+    background-color: #7ab3e0;
+    transform: scale(1.02);
 }
 
-.alert {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 3px;
-    font-weight: bold;
-    text-align: center;
+.light-button {
+    background-color: #f0f0f0;
+    color: #333;
 }
 
-.alert.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+.light-button:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.02);
 }
 
-.alert.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.error {
-    color: red;
-    font-size: 0.9em;
-}
-
-.success {
-    color: green;
-    font-size: 0.9em;
-}
-
-/* Link Button Styles */
-.link-buttons {
-    margin-top: 20px;
-    text-align: center;
+.save-button {
+    background-color: #8FC6FFFF;
 }
 
 .link-button {
-    display: inline-block;
-    width: auto;
-    padding: 10px 15px;
-    margin: 5px;
-    background-color: #333;
-    border: none;
-    border-radius: 3px;
-    color: #fff;
+    width: 48%;
+    padding: 10px;
+    text-align: center;
+    background-color: #f0f0f0;
+    color: #333;
+    border-radius: 5px;
     text-decoration: none;
-    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
 .link-button:hover {
-    background-color: #555;
+    background-color: #e0e0e0;
+    transform: scale(1.02);
+}
+
+.text-link {
+    background: none;
+    border: none;
+    color: #f44336;
+    text-decoration: underline;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 20px;
+    outline: none;
+    box-shadow: none;
+}
+
+.text-link:active,
+.text-link:focus {
+    color: #d32f2f;
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+}
+
+.text-link:hover {
+    background-color: transparent;
+    color: #d32f2f;
+    transform: scale(1.02);
+}
+
+.error {
+    color: red;
+    font-size: 0.9em;
+}
+#delete-account {
+    display: block;
+    margin: 0 auto; /* 탈퇴 버튼을 가운데 정렬 */
+    margin-top: 20px; /* 위쪽 여백 추가 */
+    color: red;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+#delete-account:hover {
+    text-decoration: underline;
 }

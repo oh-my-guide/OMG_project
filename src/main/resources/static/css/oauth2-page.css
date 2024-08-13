@@ -7,23 +7,21 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #f4f4f4;
-    color: #333;
 }
 
-h1 {
-    color: #333;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-form {
+.container {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
+}
+
+h1 {
     color: #333;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 label {
@@ -58,7 +56,7 @@ button {
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.2s ease;
-    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 button:hover {
@@ -66,30 +64,11 @@ button:hover {
     transform: scale(1.02);
 }
 
-.error {
-    color: red;
-    font-size: 0.9em;
+button:disabled {
+    background-color: #d3d3d3;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
-
-#verifyCodeSection {
-    display: none;
-}
-
-.light-button {
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-.light-button:hover {
-    background-color: #e0e0e0;
-}
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
+.save-button {
+    background-color: #8FC6FFFF;
 }
