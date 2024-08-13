@@ -111,4 +111,11 @@ public class ChatServiceImpl implements ChatService {
             throw new RuntimeException("사용자가 채팅방에 참여하고 있지 않습니다.");
         }
     }
+
+    //해당 채팅방을 가진 팀을 찾고 그 팀에 저장되어있는 여행 아이디를 찾고 그 아이디를 가지고 여행을 찾고 그 여행의 이름을 찾는다
+    @Override
+    public String findTripName(Long roomId){
+        Team team = teamService.findByChatRoomId(roomId);
+        return team.getTrip().getTripName();
+    }
 }
