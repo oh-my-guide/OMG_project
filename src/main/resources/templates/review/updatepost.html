@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="/css/header.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>후기 게시글 수정</title>
     <style>
@@ -9,17 +10,21 @@
             margin: 0;
             padding: 0;
             font-family: 'Arial', sans-serif;
-            background-color: #f4f7f9;
+            background-color: #f8f9fa;
             color: #333;
         }
 
         h1 {
-            background-color: #8fc6ff;
-            color: white;
-            padding: 20px;
+            color: #8fc6ff; /* 글씨 색상 */
+            padding: 10px 20px; /* 테두리와 텍스트 사이의 여백 */
             text-align: center;
-            margin: 0;
-            font-size: 24px;
+            font-size: 20px;
+            margin: 90px auto 0 auto; /* 위쪽 여백 70px, 좌우 중앙 정렬, 아래 여백 0 */
+            background-color: #fff; /* 배경 흰색 */
+            border: 2px solid #8fc6ff; /* 글씨와 동일한 색상으로 테두리 설정 */
+            border-radius: 25px; /* 둥근 테두리 설정 */
+            display: block; /* 블록 요소로 설정 */
+            width: fit-content; /* 글씨 크기에 맞춰 요소 크기 설정 */
         }
 
         #updatePostForm {
@@ -112,6 +117,7 @@
     </style>
 </head>
 <body>
+<div th:replace="fragments/header :: headerFragment"></div>
 <h1>후기 게시글 수정</h1>
 
 <!-- 게시글 수정 폼 -->
