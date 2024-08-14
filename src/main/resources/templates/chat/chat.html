@@ -6,6 +6,7 @@
   <title>Group Chat</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="/css/header.css">
   <style>
     /* Body 스타일 */
     body {
@@ -114,6 +115,7 @@
   </style>
 </head>
 <body>
+<div th:replace="fragments/header :: headerFragment"></div>
 <section class="section">
   <h1 class="title" th:text="${tripName}"></h1>
   <div id="chat"></div>
@@ -126,7 +128,6 @@
     </div>
   </div>
 </section>
-
 <script>
   $(document).ready(function() {
     var pathArray = window.location.pathname.split('/');
