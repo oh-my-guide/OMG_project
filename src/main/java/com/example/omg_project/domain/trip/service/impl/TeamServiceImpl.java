@@ -72,6 +72,7 @@ public class TeamServiceImpl implements TeamService {
                     Map<String, Object> teamData = new HashMap<>();
                     teamData.put("id", team.getId());
                     teamData.put("tripName", team.getTrip().getTripName());
+                    teamData.put("chatRoomId", team.getChatRoom().getId());
 
                     // 현재 사용자가 팀의 리더인지 확인
                     boolean isLeader = team.getLeader().getId().equals(userId);

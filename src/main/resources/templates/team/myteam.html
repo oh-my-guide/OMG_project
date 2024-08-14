@@ -136,7 +136,7 @@
                 const chatButton = document.createElement('button');
                 chatButton.textContent = '채팅방 이동';
                 chatButton.className = 'chat-button';
-                chatButton.onclick = () => window.location.href = `/rooms/${team.id}`;
+                chatButton.onclick = () => window.location.href = `/rooms/${team.chatRoomId}`;
                 rightAligned.appendChild(chatButton);
 
                 if (!team.isLeader) {

@@ -24,23 +24,21 @@ public class ChatController {
     private final UserService userService;
     private final TeamService teamService;
 
-    /**
+    /** TODO
      * 채팅방 화면을 렌더링하는 엔드포인트
      *
-     * @param teamId 여행팀 ID
+     * @param roomId 채팅방 ID
      * @param model  모델 객체, 뷰로 데이터를 전달하는 역할
      * @param request 클라이언트의 요청 정보를 담고 있는 HttpServletRequest 객체
      * @param redirectAttributes 리다이렉트 시에 데이터를 전달하기 위한 객체
      * @return 채팅방 화면을 반환하거나, 예외가 발생할 경우 홈 화면으로 리다이렉트
      */
-    @GetMapping("/rooms/{teamId}")
-    public String getChatRoom(@PathVariable Long teamId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    @GetMapping("/rooms/{roomId}")
+    public String getChatRoom(@PathVariable Long roomId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         try {
             // 쿠키에서 accessToken 찾기
             String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
 
-            //해당 여행에 맞는 채팅방을 찾기
-            Long roomId = teamService.findById(teamId).getChatRoom().getId();
             // 사용자 및 채팅방 검증 로직 호출
             // 유효한 accessToken과 채팅방 ID를 기반으로 사용자가 해당 채팅방에 참여하고 있는지 확인
             chatService.validateUserInChatRoom(roomId, accessToken);

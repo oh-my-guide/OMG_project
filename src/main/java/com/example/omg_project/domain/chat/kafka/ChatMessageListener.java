@@ -34,10 +34,11 @@ public class ChatMessageListener {
 
     private static final Logger logger = Logger.getLogger(ChatMessageListener.class.getName());
 
-    @KafkaListener(topicPattern = "chat-room-.*", groupId = "chat-room-listener")
+    @KafkaListener(topics = "chat_topic", groupId = "chat-room-listener")
     public void listen(@Payload String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws Exception {
         try {
-            String roomId = topic.substring("chat-room-".length()); // topic에서 채팅방 ID 추출
+            String roomId = extractRoomIdFromMessage(message);  // roomId 추출
+
             ChatMessage chatMessage = parseMessage(message, roomId);    // 받아온 message를 ChatMessage로 파싱
             chatMessageRepository.save(chatMessage);    // DB에 저장
             broadcastMessage(roomId, chatMessage);  //같은 채팅방에 연결되어있는 모두에게 브로드캐스팅
@@ -63,15 +64,15 @@ public class ChatMessageListener {
     }
 
     private ChatMessage parseMessage(String message, String roomId) {
-        String[] parts = message.split(":", 2);
-        if (parts.length < 2) {
+        String[] parts = message.split(":", 3);
+        if (parts.length < 3) {
             throw new IllegalArgumentException("올바른 메세지 형식이 아닙니다");
         }
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setMessage(parts[1].trim());
-        chatMessage.setUser(userRepository.findByUsernick(parts[0]));
-        chatMessage.setChatRoom(chatRoomRepository.findById((Long.parseLong(roomId))).orElseThrow());
-        chatMessage.setUserNickname(parts[0]);
+        chatMessage.setMessage(parts[2].trim());
+        chatMessage.setUser(userRepository.findByUsernick(parts[1]));
+        chatMessage.setChatRoom(chatRoomRepository.findById(Long.parseLong(roomId)).orElseThrow());
+        chatMessage.setUserNickname(parts[1]);
         return chatMessage;
     }
 
@@ -83,5 +84,12 @@ public class ChatMessageListener {
         dto.setCreatedAt(chatMessage.getCreatedAt().toString());
         return dto;
     }
-}
 
+    private String extractRoomIdFromMessage(String message) {
+        String[] parts = message.split(":", 3);
+        if (parts.length < 3) {
+            throw new IllegalArgumentException("올바른 메세지 형식이 아닙니다");
+        }
+        return parts[0];
+    }
+}
