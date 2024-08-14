@@ -63,6 +63,19 @@ body {
     color: #fff;
 }
 
+.link-button.team-button {
+    color: #ffffff; /* 텍스트 색상 */
+    background-color: #8fc6ff;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.link-button.team-button:hover {
+    background-color: #74b3ff; /* 호버 시 배경 색상 */
+    color: #ffffff; /* 호버 시 텍스트 색상 */
+}
+
 .navigation {
     display: flex;
     justify-content: space-around;

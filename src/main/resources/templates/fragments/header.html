@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css"> <!-- CSS 파일 링크 -->
 </head>
 <body>
 <div th:fragment="headerFragment">
     <div class="navbar">
+        <div class="logo">
+            <a href="/">
+                <img src="/images/omgLogo.jpg" alt="Logo" class="logo-img">
+            </a>
+        </div>
         <div class="nav-links">
             <a href="/">홈</a>
             <a href="/service">서비스 소개</a>
-            <a href="/reviewPost/">게시판</a>
+            <a href="/joinPost/">후기 게시판</a>
+            <a href="/joinPost/">모집 게시판</a>
         </div>
         <div class="user-info">
             <th:block th:if="${user == null}">
@@ -26,33 +31,33 @@
             </th:block>
         </div>
     </div>
-<script>
-    function toggleDropdown() {
-        var dropdownMenu = document.getElementById('dropdown-menu');
-        var isMenuVisible = dropdownMenu.style.display === 'block';
+    <script>
+        function toggleDropdown() {
+            var dropdownMenu = document.getElementById('dropdown-menu');
+            var isMenuVisible = dropdownMenu.style.display === 'block';
 
-        // 드롭다운 메뉴 보이기/숨기기
-        dropdownMenu.style.display = isMenuVisible ? 'none' : 'block';
+            // 드롭다운 메뉴 보이기/숨기기
+            dropdownMenu.style.display = isMenuVisible ? 'none' : 'block';
 
-        // 드롭다운 메뉴가 화면 밖으로 넘어가지 않도록 설정
-        var rect = dropdownMenu.getBoundingClientRect();
-        if (rect.right > window.innerWidth) {
-            dropdownMenu.style.transform = 'translateX(-50px)'; // 조정 필요시
-        } else {
-            dropdownMenu.style.transform = 'translateX(-20px)'; // 원래 위치
-        }
-
-        // 클릭 시 다른 부분 클릭 시 드롭다운 숨기기
-        function handleClickOutside(event) {
-            if (!dropdownMenu.contains(event.target) && !event.target.closest('#username')) {
-                dropdownMenu.style.display = 'none';
-                document.removeEventListener('click', handleClickOutside);
+            // 드롭다운 메뉴가 화면 밖으로 넘어가지 않도록 설정
+            var rect = dropdownMenu.getBoundingClientRect();
+            if (rect.right > window.innerWidth) {
+                dropdownMenu.style.transform = 'translateX(-50px)'; // 조정 필요시
+            } else {
+                dropdownMenu.style.transform = 'translateX(-20px)'; // 원래 위치
             }
-        }
 
-        document.addEventListener('click', handleClickOutside);
-    }
-</script>
+            // 클릭 시 다른 부분 클릭 시 드롭다운 숨기기
+            function handleClickOutside(event) {
+                if (!dropdownMenu.contains(event.target) && !event.target.closest('#username')) {
+                    dropdownMenu.style.display = 'none';
+                    document.removeEventListener('click', handleClickOutside);
+                }
+            }
+
+            document.addEventListener('click', handleClickOutside);
+        }
+    </script>
 </div>
 </body>
 </html>

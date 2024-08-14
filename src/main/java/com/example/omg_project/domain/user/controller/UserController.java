@@ -4,9 +4,10 @@ import com.example.omg_project.domain.user.dto.request.Oauth2LoginDto;
 import com.example.omg_project.domain.user.dto.request.UserEditDto;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.jwt.util.JwtTokenizer;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,30 +23,39 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenizer jwtTokenizer;
 
     /**
      * 모든 로그인 회원의 마이페이지
      */
     @GetMapping("/my")
-    public String myPage(Model model, Authentication authentication) {
+    public String myPage(Model model, HttpServletRequest request) {
+        try {
+            String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
 
-        String username = authentication.getName();
-        Optional<User> userOptional = userService.findByUsername(username);
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElseThrow();
 
-        if (userOptional.isPresent()) {
-            model.addAttribute("user", userOptional.get());
+            model.addAttribute("user", user);
+
             return "user/mypage";
+
+        } catch (RuntimeException e) {
+            System.out.println("에러 :: " + e.getMessage());
+            return "redirect:/signin";
         }
-        return "redirect:/signin";
     }
 
     /**
      * OAuth2 로그인 회원 추가 정보 기입
      */
     @GetMapping("/oauthPage")
-    public String addOauth2Form(Model model, Authentication authentication) {
+    public String addOauth2Form(Model model, HttpServletRequest request) {
 
-        String username = authentication.getName();
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+
+        String username = jwtTokenizer.getUsernameFromToken(accessToken);
+
         Optional<User> userOptional = userService.findByUsername(username);
 
         if (userOptional.isPresent()) {
@@ -62,10 +72,13 @@ public class UserController {
     }
 
     @PostMapping("/oauthPage")
-    public String addOauth2(Authentication authentication, @ModelAttribute Oauth2LoginDto oauth2LoginDto, RedirectAttributes redirectAttributes) {
+    public String addOauth2(HttpServletRequest request, @ModelAttribute Oauth2LoginDto oauth2LoginDto, RedirectAttributes redirectAttributes) {
 
         log.info("Received User: {}", oauth2LoginDto);
-        String username = authentication.getName();
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        String username = jwtTokenizer.getUsernameFromToken(accessToken);
+
+
         try {
             Optional<User> updatedUser = userService.updateOauth2(username, oauth2LoginDto);
             if (updatedUser.isPresent()) {
@@ -84,9 +97,10 @@ public class UserController {
      * 회원 정보 수정
      */
     @GetMapping("/my/profile")
-    public String userEditForm(Model model, Authentication authentication) {
+    public String userEditForm(Model model, HttpServletRequest request) {
 
-        String username = authentication.getName();
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        String username = jwtTokenizer.getUsernameFromToken(accessToken);
 
         Optional<User> userOptional = userService.findByUsername(username);
         if (userOptional.isPresent()) {
@@ -103,9 +117,10 @@ public class UserController {
      * 회원 정보 수정 처리
      */
     @PostMapping("/my/profile")
-    public String userEdit(Authentication authentication, @ModelAttribute UserEditDto userEditDto, RedirectAttributes redirectAttributes) {
+    public String userEdit(HttpServletRequest request, @ModelAttribute UserEditDto userEditDto, RedirectAttributes redirectAttributes) {
 
-        String username = authentication.getName();
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        String username = jwtTokenizer.getUsernameFromToken(accessToken);
 
         try {
             Optional<User> updatedUser = userService.updateUser(username, userEditDto);
