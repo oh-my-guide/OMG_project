@@ -153,22 +153,29 @@ function handleSelectBtnClick(event, place, placePosition) {
 function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositionMa) {
     event.stopPropagation();
 
-    // uniqueId에서 dayNum과 placeIndex를 추출
-    const [dayNum, placeIndex] = placeUniqueId.split('-').map(Number);
+    // 클릭된 버튼
+    const button = event.target;
+
+    // 버튼의 부모 요소
+    const parentElement = button.parentElement;
+
+    // 부모 요소 내에서 형제 요소 중 span 태그 찾기
+    const spanElement = parentElement.querySelector('span');
+
+    // span 태그의 id에서 dayNum과 placeIndex 추출
+    const [dayNum, placeIndex] = spanElement.id.split('-').map(Number);
+    // const [, placeIndex] = spanElement.id.split('-').map(Number);
 
     // selectedPlaces에서 해당 날짜와 인덱스에 있는 장소를 삭제
     if (selectedPlaces[dayNum]) {
+        // console.log('placeIndex: ', placeIndex);
+        // console.log('selectedPlaces[dayNum].length: ', selectedPlaces[dayNum].length);
         // 인덱스가 유효한지 확인하고 해당 장소를 삭제
-        if (placeIndex <= selectedPlaces[dayNum].length && placeIndex > 0) {
+        // if (placeIndex <= selectedPlaces[dayNum].length && placeIndex > 0) {
             selectedPlaces[dayNum].splice(placeIndex - 1, 1); // 인덱스는 0부터 시작하므로 -1
 
             // placesContainer에서 해당 장소를 포함하는 element를 찾아서 삭제
-            const locationElements = document.querySelectorAll('.placeNameContainer');
-            locationElements.forEach(element => {
-                if (element.querySelector('span').id === placeUniqueId) {
-                    element.parentNode.remove(); // 해당 요소 삭제
-                }
-            });
+            parentElement.parentElement.remove();
 
             // markers 배열에서 해당 장소 위치에 해당하는 marker 요소 제거
             const tolerance = 0.00000001; // 허용 오차 범위 설정
@@ -184,14 +191,47 @@ function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositi
             if (markerIndex !== -1) {   // 해당 장소 위치의 마커가 존재한다면
                 markers[dayNum][markerIndex].setMap(null);  // 지도에서 마커 제거
                 markers[dayNum].splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
-                reorderMarkers(markers[dayNum]);    // 마커 번호 재정렬
             }
-        } else {
-            console.error('장소 인덱스가 유효하지 않습니다.');
-        }
+
+            console.log('Selected Places:', selectedPlaces);
+            console.log('Markers:', markers);
+
+            // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 ID를 업데이트
+            updatePlaceIndexes(dayNum);
+            reorderMarkers(markers[dayNum]);    // 마커 번호 재정렬
+
+        // console.log('삭제 후 selectedPlaces[dayNum].length: ', selectedPlaces[dayNum].length);
+
+        // } else {
+        //     console.error('장소 인덱스가 유효하지 않습니다.');
+        // }
     } else {
         console.error('dayNum이 존재하지 않습니다.');
     }
+}
+
+
+/**
+ * 삭제 후 나머지 장소의 인덱스와 ID를 업데이트하는 함수
+ * @param dayNum - 선택된 날짜의 번호
+ */
+function updatePlaceIndexes(dayNum) {
+    // 해당 날짜의 모든 placeNameContainer 요소를 선택
+    const locationElements = document.querySelectorAll(`.tripDate:nth-child(${dayNum}) .dayLocation .placeNameContainer`);
+
+    // 각 placeNameContainer의 span 태그의 id와 내용을 업데이트
+    locationElements.forEach((placeNameContainer, index) => {
+        const spanElement = placeNameContainer.querySelector('span');
+        if (spanElement) {
+            console.log(`${dayNum}-${index + 1}`);
+            const newId = `${dayNum}-${index + 1}`;
+            spanElement.id = newId; // 새로운 id 설정
+            spanElement.textContent = index + 1; // 새로운 번호 설정
+        }
+    });
+    console.log('Selected Places:', selectedPlaces);
+    console.log('Markers:', markers);
+
 }
 
 /**
