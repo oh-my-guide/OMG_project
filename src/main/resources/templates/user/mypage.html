@@ -20,6 +20,7 @@
             <img src="/files/user.png" alt="Profile Picture">
             <p><span th:text="${user.usernick}"></span>님</p>
             <a href="/my/profile" class="link-button">프로필 편집</a>
+            <a href="/team/myteam" class="link-button team-button">나의 팀</a>
             <input type="hidden" id="userId" name="userId" th:value="${user.getId()}">
         </div>
 
