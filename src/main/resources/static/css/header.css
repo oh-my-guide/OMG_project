@@ -70,6 +70,7 @@
     font-size: 18px;
     text-decoration: none;
     margin-left: 10px; /* 오른쪽 버튼과의 간격을 줌 */
+    margin-right: 50px;
 }
 
 .navbar .username {

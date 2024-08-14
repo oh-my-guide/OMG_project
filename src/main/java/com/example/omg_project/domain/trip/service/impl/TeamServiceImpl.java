@@ -93,5 +93,10 @@ public class TeamServiceImpl implements TeamService {
 
         return teamOptional.orElseThrow(() -> new NoSuchElementException("채팅방 ID에 해당하는 팀을 찾을 수 없습니다. ID: " + chatRoomId));
     }
+
+    @Override
+    public Team findById(Long tripId) {
+        return teamRepository.findById(tripId).orElse(null);
+    }
 }
 

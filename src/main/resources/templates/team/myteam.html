@@ -75,6 +75,7 @@
             cursor: pointer;
             font-size: 13px;
             transition: background-color 0.3s ease;
+            margin-left: 10px; /* 버튼 사이 간격 추가 */
         }
 
         button:hover {
@@ -89,6 +90,14 @@
             background-color: #e0e0e0;
             border-radius: 12px;
             margin-left: 10px;
+        }
+
+        .chat-button {
+            background-color: #4caf50; /* 초록색 배경 */
+        }
+
+        .chat-button:hover {
+            background-color: #45a049; /* 호버 시 조금 더 어두운 초록색 */
         }
     </style>
 </head>
@@ -122,6 +131,13 @@
 
                 const rightAligned = document.createElement('div');
                 rightAligned.className = 'right-aligned';
+
+                // 채팅방으로 이동하는 버튼 추가
+                const chatButton = document.createElement('button');
+                chatButton.textContent = '채팅방 이동';
+                chatButton.className = 'chat-button';
+                chatButton.onclick = () => window.location.href = `/rooms/${team.id}`;
+                rightAligned.appendChild(chatButton);
 
                 if (!team.isLeader) {
                     const leaveButton = document.createElement('button');
