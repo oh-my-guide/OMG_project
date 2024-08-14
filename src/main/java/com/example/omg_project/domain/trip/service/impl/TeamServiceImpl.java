@@ -34,6 +34,9 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void addUserToTeam(String inviteCode, Long userId) {
         Team team = teamRepository.findByInviteCode(inviteCode);
+        if (team == null) {
+            throw new IllegalArgumentException("잘못된 초대 코드입니다.");
+        }
         User user = userRepository.findById(userId).orElse(null);
 
         if (team != null && user != null) {
