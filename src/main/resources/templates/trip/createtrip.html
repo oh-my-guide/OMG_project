@@ -12,6 +12,7 @@
 <div class="container">
     <!-- 여행 일정 생성 영역 -->
     <div class="form_wrap">
+        <a href="" class="backLink">↩️ 목록으로 돌아가기(경로 추가 필요)</a>
         <form id="tripForm">
             <h1>여행 일정 생성</h1>
             <label for="tripName">여행 이름</label>
@@ -61,10 +62,10 @@
                 <div>
                     <!-- 검색 폼 제출 시 searchPlaces() 호출 -->
                     <form onsubmit="searchPlaces(); return false;">
-                        <input type="text" value="부산 맛집" id="keyword" size="15">
+                        <input type="text" placeholder="장소명을 입력해주세요." id="keyword" size="15">
                         <button type="submit" id="searchBtn">검색하기</button>
                     </form>
-                    <button type="button" id="completeBtn">선택 완료</button>
+                    <button type="button" id="closeBtn">창 닫기</button>
                 </div>
             </div>
             <hr>
@@ -78,154 +79,21 @@
 
 <script>
     const regions = {
-        "특별시/광역시": [
-            "서울특별시",
-            "부산광역시",
-            "대구광역시",
-            "인천광역시",
-            "광주광역시",
-            "대전광역시",
-            "울산광역시",
-            "세종특별자치시"
-        ],
-        "강원도": [
-            "춘천시",
-            "원주시",
-            "강릉시",
-            "동해시",
-            "태백시",
-            "속초시",
-            "삼척시",
-            "홍천군",
-            "횡성군",
-            "평창군",
-            "정선군",
-            "영월군"
-        ],
-        "경기도": [
-            "수원시",
-            "고양시",
-            "용인시",
-            "성남시",
-            "부천시",
-            "남양주시",
-            "안산시",
-            "안양시",
-            "평택시",
-            "의정부시",
-            "군포시",
-            "오산시",
-            "시흥시",
-            "하남시",
-            "의왕시",
-            "양주시",
-            "파주시",
-            "광명시",
-            "구리시",
-            "여주시"
-        ],
-        "경상남도": [
-            "창원시",
-            "김해시",
-            "진주시",
-            "양산시",
-            "거제시",
-            "통영시",
-            "사천시",
-            "밀양시",
-            "함안군",
-            "거창군",
-            "창녕군",
-            "산청군",
-            "의령군",
-            "고성군",
-            "하동군",
-            "합천군"
-        ],
-        "경상북도": [
-            "포항시",
-            "경주시",
-            "구미시",
-            "김천시",
-            "안동시",
-            "영주시",
-            "상주시",
-            "문경시",
-            "경산시",
-            "영천시",
-            "청송군",
-            "영양군",
-            "봉화군",
-            "울릉군",
-            "예천군",
-            "성주군",
-            "군위군",
-            "의성군"
-        ],
-        "충청남도": [
-            "천안시",
-            "아산시",
-            "서산시",
-            "논산시",
-            "보령시",
-            "계룡시",
-            "당진시",
-            "금산군",
-            "부여군",
-            "서천군",
-            "홍성군",
-            "예산군",
-            "청양군",
-            "태안군"
-        ],
-        "충청북도": [
-            "청주시",
-            "충주시",
-            "제천시",
-            "보은군",
-            "옥천군",
-            "영동군"
-        ],
-        "전라남도": [
-            "여수시",
-            "순천시",
-            "목포시",
-            "나주시",
-            "광양시",
-            "담양군",
-            "곡성군",
-            "구례군",
-            "고흥군",
-            "보성군",
-            "장흥군",
-            "강진군",
-            "해남군",
-            "완도군",
-            "진도군",
-            "신안군",
-            "무안군",
-            "영암군"
-        ],
-        "전라북도": [
-            "전주시",
-            "군산시",
-            "익산시",
-            "남원시",
-            "정읍시",
-            "김제시",
-            "완주군",
-            "진안군",
-            "무주군",
-            "장수군",
-            "고창군",
-            "임실군",
-            "순창군"
-        ],
-        "제주특별자치도": [
-            "제주시",
-            "서귀포시"
-        ]
+        "특별시/광역시": ["서울특별시", "부산광역시", "대구광역시", "인천광역시", "광주광역시", "대전광역시", "울산광역시", "세종특별자치시"],
+        "강원도": ["춘천시", "원주시", "강릉시", "동해시", "태백시", "속초시", "삼척시", "홍천군", "횡성군", "평창군", "정선군", "영월군"],
+        "경기도": ["수원시", "고양시", "용인시", "성남시", "부천시", "남양주시", "안산시", "안양시", "평택시", "의정부시", "군포시", "오산시", "시흥시", "하남시", "의왕시", "양주시", "파주시", "광명시", "구리시", "여주시"],
+        "경상남도": ["창원시", "김해시", "진주시", "양산시", "거제시", "통영시", "사천시", "밀양시", "함안군", "거창군", "창녕군", "산청군", "의령군", "고성군", "하동군", "합천군"],
+        "경상북도": ["포항시", "경주시", "구미시", "김천시", "안동시", "영주시", "상주시", "문경시", "경산시", "영천시", "청송군", "영양군", "봉화군", "울릉군", "예천군", "성주군", "군위군", "의성군"],
+        "충청남도": ["천안시", "아산시", "서산시", "논산시", "보령시", "계룡시", "당진시", "금산군", "부여군", "서천군", "홍성군", "예산군", "청양군", "태안군"],
+        "충청북도": ["청주시", "충주시", "제천시", "보은군", "옥천군", "영동군"],
+        "전라남도": ["여수시", "순천시", "목포시", "나주시", "광양시", "담양군", "곡성군", "구례군", "고흥군", "보성군", "장흥군", "강진군", "해남군", "완도군", "진도군", "신안군", "무안군", "영암군"],
+        "전라북도": ["전주시", "군산시", "익산시", "남원시", "정읍시", "김제시", "완주군", "진안군", "무주군", "장수군", "고창군", "임실군", "순창군"],
+        "제주특별자치도": ["제주시", "서귀포시"]
     };
+
+    let markers = {};
+    let selectedDateDiv = null;
+    let selectedPlaces = {};
 
     function updateCities() {
         const regionSelect = document.getElementById('regionSelect');
@@ -361,62 +229,50 @@
     }
 
     function addLocation(button) {
+        // 장소 추가 버튼을 누를 시 menu_wrap이 보이도록 설정
+        document.getElementById('menu_wrap').style.display = 'block';
 
         selectedDateDiv = button.closest('.tripDate');
 
-        // const locationHtml = `
-        //     <div class="locations">
-        //         <label for="placeName">장소 이름:</label>
-        //         <input type="text" name="placeName" required><br>
-        //         <label for="latitude">위도:</label>
-        //         <input type="number" step="0.000001" name="latitude"><br>
-        //         <label for="longitude">경도:</label>
-        //         <input type="number" step="0.000001" name="longitude"><br>
-        //     </div>
-        // `;
-        // button.insertAdjacentHTML('beforebegin', locationHtml);
-        // console.log('Location added.');
+        // 여행 몇째 날인지 추출 (ex. 1, 2, ..)
+        if (selectedDateDiv) {
+            // Day 정보를 포함하는 span 요소 선택
+            const dayCountSpan = selectedDateDiv.querySelector('.dayCountLabel');
 
-        // 장소 추가 버튼을 누를 시 menu_wrap이 보이도록 설정
-        document.getElementById('menu_wrap').style.display = 'block';
+            if (dayCountSpan) {
+                // "Day 1"과 같은 텍스트를 가져옴
+                const dayText = dayCountSpan.textContent.trim();
+
+                // "Day 1"에서 숫자 부분만 추출
+                const dayNum = dayText.replace('Day ', '');
+
+                // selectedPlaces 객체에서 dayNum에 해당하는 배열이 없으면 초기화
+                if (!selectedPlaces[dayNum]) {
+                    selectedPlaces[dayNum] = [];
+                }
+
+                if (!markers[dayNum]) {
+                    markers[dayNum] = [];
+                }
+
+                return dayNum; // 예: "1"
+            } else {
+                console.error('Day count span not found in selectedDateDiv.');
+            }
+        } else {
+            console.error('selectedDateDiv is not set.');
+        }
+        return null;
     }
 
-    function handleSelectCompleteBtnClick() {
-        if (selectedPlaces.length === 0) {
-            alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
-            return;
-        }
-
-        if (!selectedDateDiv) {
-            alert('장소를 추가할 날짜를 선택해 주세요.');
-            return;
-        }
-
-        const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
-        selectedPlaces.forEach(place => {
-            const locations = document.createElement('div');
-            locations.className = 'locations';
-
-            locations.innerHTML = `
-            <input type="text" name="placeName" value="${place.place_name}" readonly />
-            <input type="hidden" name="longitude" value="${place.x}" />
-            <input type="hidden" name="latitude" value="${place.y}" />
-        `;
-            locationsContainer.appendChild(locations);
-        });
-
-        selectedPlaces = [];
-        selectedDateDiv = null;
-        // 선택 완료 버튼 누를 시 검색창 숨기기
+    // 창 닫기 버튼 클릭 시 #menu_wrap 숨기기
+    document.getElementById('closeBtn').addEventListener('click', function() {
         $('#menu_wrap').hide();
-    }
-
-    // 선택 완료 버튼 클릭 이벤트
-    document.getElementById('completeBtn').addEventListener('click', handleSelectCompleteBtnClick);
+    });
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
-<script src="/js/map.js"></script>
+<script src="/js/createtrip.js"></script>
 </body>
 </html>
 

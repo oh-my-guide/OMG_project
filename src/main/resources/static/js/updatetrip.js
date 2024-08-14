@@ -1,8 +1,8 @@
 // 마커를 담을 배열
-let markers = [];
+// let markers = [];
 
 // 선택된 장소들을 저장할 배열
-let selectedPlaces = [];
+// let selectedPlaces = [];
 
 const mapContainer = document.getElementById('map'), // 지도를 표시할 div
     mapOption = {
@@ -20,7 +20,7 @@ const bounds = new kakao.maps.LatLngBounds();
 const ps = new kakao.maps.services.Places();
 
 // 키워드로 장소를 검색합니다
-searchPlaces();
+// searchPlaces();
 
 /**
  * 키워드 검색을 요청하는 함수입니다
@@ -96,29 +96,47 @@ function sendPlaceData(places) {
 function handleSelectBtnClick(event, place, placePosition) {
     event.stopPropagation();    // 이벤트 버블링 방지
 
-    // selectedPlaces 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 같은지 확인
-    // .some()은 배열의 각 요소에 대한 테스트 -> true 또는 false 반환
-    const isAlreadySelected = selectedPlaces.some(p => p.id === place.id);
+    // addLocation에서 반환된 dayNum을 가져옴
+    const dayNum = addTripLocation(selectedDateDiv);
 
-    // 이미 선택된 장소인지 확인
-    if (isAlreadySelected) {
-        alert('이미 선택된 장소입니다.');
+    if (!dayNum) {
+        alert('날짜를 선택해 주세요.');
         return;
     }
 
-    // 장소는 최대 15개까지만 선택되도록 제한
-    if (selectedPlaces.length >= 15) {
-        alert('최대 15개의 장소만 추가할 수 있습니다.');
+    const locationsContainer = selectedDateDiv.querySelector('.trip-locations');
+    const MAX_LOCATIONS = 15;
+
+    if (selectedPlaces[dayNum].length >= MAX_LOCATIONS) {
+        alert(`하루에 추가할 수 있는 장소는 최대 ${MAX_LOCATIONS}개입니다.`);
         return;
     }
 
-    // 같은 id를 가진 장소가 없고, 15개 초과가 아니라면 선택 장소 목록 배열에 추가
-    selectedPlaces.push(place);
+    // 장소의 고유 ID 생성 (ex. 몇일차-몇번째장소: 1-1, 1-2, 2-1, ..) 나중에 삭제 시 같은 장소 겹침 문제 해결 위해 고유 ID 지정
+    const uniqueId = `${dayNum}-${selectedPlaces[dayNum].length + 1}`;
+
+    const locations = document.createElement('div');
+    locations.className = 'trip-location';
+    locations.innerHTML = `
+            <div class="placeNameContainer">
+                <span id="${uniqueId}">${selectedPlaces[dayNum].length + 1}</span>
+                <input type="text" class="placeNameInput" name="placeNameInput" value="${place.place_name}" readonly />
+                <button type="button" onclick="handleRemoveBtnClick(event, '${uniqueId}', ${placePosition.La}, ${placePosition.Ma})">삭제</button>
+            </div>
+            <input type="hidden" class="latitudeInput" name="latitudeInput" value="${place.y}" />
+            <input type="hidden" class="longitudeInput" name="longitudeInput" value="${place.x}" />
+        `;
+    locationsContainer.appendChild(locations);
+
+    // 15개 초과가 아니라면 선택 장소 목록 배열에 추가
+    selectedPlaces[dayNum].push(place);
 
     // 배열 인덱스로 마커에 번호 부여
-    const index = selectedPlaces.length;
+    const index = selectedPlaces[dayNum].length;
     // 지도에 마커 추가
-    addSelectedMarker(placePosition, index);
+    addSelectedMarker(placePosition, index, dayNum);
+    // 마커 번호 재정렬
+    reorderMarkers(markers);
 
     // 지도 범위 재설정
     setBounds(placePosition);
@@ -127,83 +145,94 @@ function handleSelectBtnClick(event, place, placePosition) {
 /**
  * 제거 버튼 클릭 이벤트 핸들러
  * @param event - 이벤트 객체
- * @param place - 선택된 장소 데이터
- * @param placePosition - 장소의 좌표 객체
+ * @param placeUniqueId - 선택된 요소의 장소 식별자
+ * @param placePositionLa - 장소의 좌표 정보
+ * @param placePositionMa - 장소의 좌표 정보
  */
-function handleRemoveBtnClick(event, place, placePosition) {
+function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositionMa) {
     event.stopPropagation();
 
-    // 배열의 각 요소 p의 id가 인자로 전달된 place의 id와 다른 요소만 filter해서 selectedPlaces에 남김
-    // (넘어온 place를 배열에서 삭제)
-    selectedPlaces = selectedPlaces.filter(p => p.id !== place.id);
+    // 클릭된 버튼
+    const button = event.target;
 
-    // findIndex는 배열에 각 요소에 대해 조건을 만족하는 첫 번째 요소의 인덱스 반환
-    // markers 배열에서 해당 장소 위치에 해당하는 marker 요소 제거
-    const tolerance = 0.00000001; // 허용 오차 범위 설정
+    // 버튼의 부모 요소
+    const parentElement = button.parentElement;
 
-    const markerIndex = markers.findIndex(marker => {
-        const markerPos = marker.getPosition();
-        // 오차 범위 내면 같은 장소로 취급
-        return Math.abs(markerPos.La - placePosition.La) < tolerance &&
-            Math.abs(markerPos.Ma - placePosition.Ma) < tolerance;
-    });
+    // 부모 요소 내에서 형제 요소 중 span 태그 찾기
+    const spanElement = parentElement.querySelector('span');
 
-    if (markerIndex !== -1) {   // 해당 장소 위치의 마커가 존재한다면
-        markers[markerIndex].setMap(null);  // 지도에서 마커 제거
-        markers.splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
-        reorderMarkers(markers);    // 마커 번호 재정렬
+    // span 태그의 id에서 dayNum과 placeIndex 추출
+    const [dayNum, placeIndex] = spanElement.id.split('-').map(Number);
+    // const [, placeIndex] = spanElement.id.split('-').map(Number);
+
+    // selectedPlaces에서 해당 날짜와 인덱스에 있는 장소를 삭제
+    if (selectedPlaces[dayNum]) {
+        selectedPlaces[dayNum].splice(placeIndex - 1, 1); // 인덱스는 0부터 시작하므로 -1
+
+        // placesContainer에서 해당 장소를 포함하는 element를 찾아서 삭제
+        parentElement.parentElement.remove();
+
+        // markers 배열에서 해당 장소 위치에 해당하는 marker 요소 제거
+        const tolerance = 0.00000001; // 허용 오차 범위 설정
+
+        // findIndex는 배열에 각 요소에 대해 조건을 만족하는 첫 번째 요소의 인덱스 반환
+        const markerIndex = markers[dayNum].findIndex(marker => {
+            const markerPos = marker.getPosition();
+            // 오차 범위 이내면 같은 장소로 취급
+            return Math.abs(markerPos.La - placePositionLa) < tolerance &&
+                Math.abs(markerPos.Ma - placePositionMa) < tolerance;
+        });
+
+        if (markerIndex !== -1) {   // 해당 장소 위치의 마커가 존재한다면
+            markers[dayNum][markerIndex].setMap(null);  // 지도에서 마커 제거
+            markers[dayNum].splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
+        }
+
+        console.log('Selected Places:', selectedPlaces);
+        console.log('Markers:', markers);
+
+        // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 ID를 업데이트
+        updatePlaceIndexes(dayNum);
+        reorderMarkers(markers[dayNum]);    // 마커 번호 재정렬
+
+        // console.log('삭제 후 selectedPlaces[dayNum].length: ', selectedPlaces[dayNum].length);
+
+        // } else {
+        //     console.error('장소 인덱스가 유효하지 않습니다.');
+        // }
+    } else {
+        console.error('dayNum이 존재하지 않습니다.');
     }
-
-    // 지도 범위 재설정
-    setBounds(placePosition);
 }
 
 /**
- * 선택 완료 버튼 클릭 이벤트 핸들러
+ * 삭제 후 나머지 장소의 인덱스와 ID를 업데이트하는 함수
+ * @param dayNum - 선택된 날짜의 번호
  */
-// function handleSelectCompleteBtnClick() {
-//     if (selectedPlaces.length === 0) {
-//         alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
-//         return;
-//     }
-//     sendPlaceData(selectedPlaces);
-//
-//     // 선택된 장소를 createtrip.html에 전달하는 로직을 추가
-//     window.selectedPlaces = [...selectedPlaces];
-//
-//     // 선택 완료 버튼 누를 시 검색창 숨기기
-//     $('#menu_wrap').hide();
-// }
+function updatePlaceIndexes(dayNum) {
+    // 해당 날짜의 모든 placeNameContainer 요소를 선택
+    const locationElements = document.querySelectorAll(`.trip-date:nth-child(${dayNum}) .trip-location .placeNameContainer`);
 
-// function handleSelectCompleteBtnClick() {
-//     if (selectedPlaces.length === 0) {
-//         alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
-//         return;
-//     }
-//
-//     if (!selectedDateDiv) {
-//         alert('장소를 추가할 날짜를 선택해 주세요.');
-//         return;
-//     }
-//
-//     const locationsContainer = selectedDateDiv.querySelector('.dayLocation');
-//     selectedPlaces.forEach(place => {
-//         const locations = document.createElement('div');
-//         locations.className = 'locations';
-//
-//         locations.innerHTML = `
-//             <input type="text" name="placeName" value="${place.place_name}" readonly />
-//             <input type="hidden" name="longitude" value="${place.x}" />
-//             <input type="hidden" name="latitude" value="${place.y}" />
-//         `;
-//         locationsContainer.appendChild(locations);
-//     });
-//
-//     selectedPlaces = [];
-//     selectedDateDiv = null;
-//     // 선택 완료 버튼 누를 시 검색창 숨기기
-//     $('#menu_wrap').hide();
-// }
+    // 각 placeNameContainer의 span 태그의 id와 내용을 업데이트
+    locationElements.forEach((placeNameContainer, index) => {
+        const spanElement = placeNameContainer.querySelector('span');
+        if (spanElement) {
+            const newId = `${dayNum}-${index + 1}`;
+            spanElement.id = newId; // 새로운 id 설정
+            spanElement.textContent = index + 1; // 새로운 번호 설정
+        }
+    });
+    console.log('Selected Places:', selectedPlaces);
+    console.log('Markers:', markers);
+
+}
+
+// 전체 날짜의 장소 인덱스를 재정렬하는 함수
+function updateAllPlaceIndexes() {
+    Object.keys(markers).forEach(dayNum => {
+        updatePlaceIndexes(Number(dayNum));
+    });
+}
 
 /**
  * 검색 결과 목록과 마커를 표출하는 함수입니다
@@ -227,12 +256,6 @@ function displayPlaces(places) {
         const selectBtn = itemEl.querySelector('.select-btn');
         selectBtn.addEventListener('click', function (event) {
             handleSelectBtnClick(event, places[i], placePosition);
-        });
-
-        // 항목 당 제거 버튼 클릭 이벤트
-        const removeBtn = itemEl.querySelector('.remove-btn');
-        removeBtn.addEventListener('click', function (event) {
-            handleRemoveBtnClick(event, places[i], placePosition);
         });
 
         fragment.appendChild(itemEl);
@@ -266,8 +289,7 @@ function getListItem(index, places) {
     itemStr += '  <span class="tel">' + places.phone + '</span>' +
         '</div>';
 
-    itemStr += '<div><button class="select-btn" id="selectBtn">선택</button>' +
-        '<button class="remove-btn" id="removeBtn">제거</button></div>';
+    itemStr += '<div><button class="select-btn" id="selectBtn">선택</button></div>';
 
     el.innerHTML = itemStr;
     el.className = 'item';
@@ -281,7 +303,7 @@ function getListItem(index, places) {
  * @param idx - 마커의 인덱스
  * @returns {kakao.maps.Marker} - 생성된 마커 객체
  */
-function addSelectedMarker(position, idx) {
+function addSelectedMarker(position, idx, dayNum) {
     const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
         imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
         imgOptions = {
@@ -296,7 +318,38 @@ function addSelectedMarker(position, idx) {
         });
 
     marker.setMap(map);
-    markers.push(marker);
+    // markers.push(marker);
+    markers[dayNum].push(marker);
+    console.log('markres: {}', markers);
+
+    return marker;
+}
+
+/**
+ * 저장된 장소의 마커를 지도에 표시하기
+ * @param latitude
+ * @param longitude
+ * @param idx
+ * @returns {kakao.maps.Marker}
+ */
+function addSavedPlacesMarker(latitude, longitude, idx, dayNum) {
+    const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
+        imgOptions = {
+            spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+            spriteOrigin: new kakao.maps.Point(0, ((idx) * 46) + 10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+            offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+        },
+        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+        marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(latitude, longitude), // 마커의 위치
+            image: markerImage
+        });
+
+    marker.setMap(map);
+    markers[dayNum].push(marker);
+    setBounds(new kakao.maps.LatLng(latitude, longitude));
+    console.log('markres: {}', markers);
 
     return marker;
 }

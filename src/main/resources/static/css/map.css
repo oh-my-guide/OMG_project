@@ -173,12 +173,12 @@
     color: #777;
 }
 
-#searchBtn, #completeBtn {
+#searchBtn, #closeBtn {
     padding: 10px;
     margin-bottom: 5px;
 }
 
-#selectBtn, #removeBtn {
+#selectBtn {
     padding: 5px;
     margin-bottom: 5px;
 }

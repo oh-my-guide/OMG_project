@@ -120,13 +120,30 @@ span {
 .placeNameContainer {
     display: flex;           /* flexbox 사용 */
     align-items: center;    /* 세로 중앙 정렬 */
-    gap: 10px;
+    justify-content: center;    /* 수평 중앙 정렬 */
+    gap: 7px;
 }
 
 .placeNameInput {
     flex: 1;                /* 입력 필드가 가능한 공간을 차지하도록 설정 */
 }
 
+.placeNameContainer span {
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+
 .placeNameContainer button {
     width: 22%;
+}
+
+.backLink {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #8fc6ff;
+    text-decoration: none;
+}
+
+.backLink:hover {
+    text-decoration: underline;
 }
