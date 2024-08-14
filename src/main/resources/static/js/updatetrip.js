@@ -344,6 +344,7 @@ function addSavedPlacesMarker(latitude, longitude, idx, dayNum) {
 
     marker.setMap(map);
     markers[dayNum].push(marker);
+    setBounds(new kakao.maps.LatLng(latitude, longitude));
     console.log('markres: {}', markers);
 
     return marker;
