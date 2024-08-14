@@ -46,6 +46,7 @@ public class ReviewPostReplyDto {
         private Long userId;
         private Long reviewPostCommentId;
         private String usernick;
+        private Long reviewPostCommentUserId;
 
         // Entity -> DTO 변환 메서드
         public static Response fromEntity(ReviewPostReply reviewPostReply) {
@@ -57,6 +58,7 @@ public class ReviewPostReplyDto {
                     .userId(reviewPostReply.getUser().getId())
                     .reviewPostCommentId(reviewPostReply.getReviewPostComment().getId())
                     .usernick(reviewPostReply.getUser().getUsernick())
+                    .reviewPostCommentUserId(reviewPostReply.getReviewPostComment().getUser().getId())
                     .build();
         }
 
