@@ -48,9 +48,9 @@ public class SecurityConfig {
             "/oauth2/**", "/login/oauth2/**", // OAuth2 로그인 허용
             "/api/users/randomNickname", // 랜덤 닉네임 생성
             "/api/users/reset-password", "/api/users/verify-temporary-password", "/my/change-password", // 임시 비밀번호 발급
-            "/service", // 프로젝트 소개 글
-            "/reviewPost/" // 여행 후기 게시글 목록
-
+            "/service",     // 프로젝트 소개 글
+            "/reviewPost/", // 여행 후기 게시글 목록
+            "/joinPost/"    // 일행 모집 게시글 목록
     };
 
     // 관리자 페이지
