@@ -1,5 +1,7 @@
 package com.example.omg_project.domain.trip.controller;
 
+import com.example.omg_project.domain.trip.entity.Team;
+import com.example.omg_project.domain.trip.repository.TeamRepository;
 import com.example.omg_project.domain.trip.service.TeamService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
@@ -21,6 +23,7 @@ import java.util.Map;
 public class TeamApiController {
     private final TeamService teamService;
     private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
 
 
     @PostMapping("/join")
@@ -41,10 +44,16 @@ public class TeamApiController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
-        // 팀에 사용자 추가
-        teamService.addUserToTeam(inviteCode, user.getId());
 
-        return new ResponseEntity<>("팀에 성공적으로 가입되었습니다.", HttpStatus.OK);
+
+        // 팀에 사용자 추가
+        try {
+            // 팀에 사용자 추가
+            teamService.addUserToTeam(inviteCode, user.getId());
+            return new ResponseEntity<>("팀에 성공적으로 가입되었습니다.", HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>("잘못된 초대 코드입니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/myteam")
