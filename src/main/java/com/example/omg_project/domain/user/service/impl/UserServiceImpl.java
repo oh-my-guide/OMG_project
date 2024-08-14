@@ -80,10 +80,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public void deleteUser(String username) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
+    public void deleteUser(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
-            userRepository.delete(userOptional.get());
+            User user = userOptional.get();
+            userRepository.delete(user);
         } else {
             throw new RuntimeException("삭제할 사용자가 존재하지 않습니다.");
         }

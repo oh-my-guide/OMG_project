@@ -195,9 +195,9 @@ public class UserApiController {
                                              @CookieValue(name = "refreshToken", required = false) String refreshToken,
                                              HttpServletResponse response,
                                              Authentication authentication) {
-        String username = authentication.getName();
+        //String username = authentication.getName();
         try {
-            userService.deleteUser(username);
+            userService.deleteUser(userId);
 
             // 로그아웃 로직
             if (accessToken != null) {
