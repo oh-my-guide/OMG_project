@@ -19,4 +19,5 @@ public interface TeamService {
 
     Team findByChatRoomId(Long chatRoomId);
 
+    Team findById(Long tripId);
 }
