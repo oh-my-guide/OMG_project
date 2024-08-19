@@ -33,6 +33,23 @@ const markerImages = {
 }
 
 /**
+ * 마커 이미지 색상과 장소명 앞 span 태그의 글자 색상 연관 짓기
+ * @param index
+ * @returns {string}
+ */
+function getColorCode(index) {
+    const colors = [
+        '#F78181',  // red
+        '#F7D358',  // yellow
+        '#82FA58',  // green
+        '#58FAF4',  // cyan
+        '#58ACFA',  // blue
+        '#9F81F7'   // purple
+    ];
+    return colors[index-1]; // colors는 0부터 시작하고 markerIndex는 1부터 시작하기 때문에 -1 해서 값 맞춰줌
+}
+
+/**
  * 키워드 검색을 요청하는 함수입니다
  * @returns {boolean} - 키워드가 유효하지 않으면 false
  */
@@ -124,12 +141,14 @@ function handleSelectBtnClick(event, place, placePosition) {
 
     // 장소의 고유 ID 생성 (ex. 몇일차-몇번째장소: 1-1, 1-2, 2-1, ..) 나중에 삭제 시 같은 장소 겹침 문제 해결 위해 고유 ID 지정
     const uniqueId = `${dayNum}-${selectedPlaces[dayNum].length + 1}`;
+    const markerImageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);    // 마커 이미지 색상이랑 맞추기 (1 ~ 6 순환)
+    const colorCode = getColorCode(markerImageIndex);
 
     const locations = document.createElement('div');
     locations.className = 'locations';
     locations.innerHTML = `
             <div class="placeNameContainer">
-                <span id="${uniqueId}">${selectedPlaces[dayNum].length + 1}</span>
+                <span id="${uniqueId}" style="color: ${colorCode};">${selectedPlaces[dayNum].length + 1}</span>
                 <input type="text" class="placeNameInput" name="placeName" value="${place.place_name}" readonly />
 <!--                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>-->
                 <button type="button" onclick="handleRemoveBtnClick(event, '${uniqueId}', ${placePosition.La}, ${placePosition.Ma})">삭제</button>
@@ -314,7 +333,7 @@ function getListItem(index, places) {
  * @returns {kakao.maps.Marker} - 생성된 마커 객체
  */
 function addSelectedMarker(position, idx, dayNum) {
-    // dayNum % 6 === 0 이면 6으로 매핑(dayNum이 1 또는 7이면 1번째 이미지, 6이면 6번째 이미지, 2 또는 8이면 2번째 이미지, ... 6 단위로 순환)
+    // dayNum % 6 === 0 이면 6으로 매핑(dayNum이 1 또는 7이면 1번째 이미지(red), 6이면 6번째 이미지(purple), 2 또는 8이면 2번째 이미지, ... 6 단위로 순환)
     const imageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);
     // const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
     const imageSrc = markerImages[imageIndex],
