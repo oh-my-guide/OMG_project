@@ -188,8 +188,9 @@ function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositi
             markers[dayNum].splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
         }
 
-        console.log('Selected Places:', selectedPlaces);
-        console.log('Markers:', markers);
+        console.log('handleRemoveBtnClick --- Selected Places:', selectedPlaces);
+        console.log('handleRemoveBtnClick --- Markers:', markers);
+        console.log('----------');
 
         // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 ID를 업데이트
         updatePlaceIndexes(dayNum);
@@ -222,8 +223,9 @@ function updatePlaceIndexes(dayNum) {
             spanElement.textContent = index + 1; // 새로운 번호 설정
         }
     });
-    console.log('Selected Places:', selectedPlaces);
-    console.log('Markers:', markers);
+    console.log('updatePlaceIndexes --- Selected Places:', selectedPlaces);
+    console.log('updatePlaceIndexes --- Markers:', markers);
+    console.log('----------');
 
 }
 
@@ -320,7 +322,8 @@ function addSelectedMarker(position, idx, dayNum) {
     marker.setMap(map);
     // markers.push(marker);
     markers[dayNum].push(marker);
-    console.log('markres: {}', markers);
+    console.log('addSelectedMarker --- markres: {}', markers);
+    console.log('----------');
 
     return marker;
 }
@@ -349,7 +352,8 @@ function addSavedPlacesMarker(latitude, longitude, idx, dayNum) {
     marker.setMap(map);
     markers[dayNum].push(marker);
     setBounds(new kakao.maps.LatLng(latitude, longitude));
-    console.log('markres: {}', markers);
+    console.log('addSavedPlacesMarker --- markers: {}', markers);
+    console.log('----------');
 
     return marker;
 }
