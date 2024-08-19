@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserEditDto {
+public class UserEditRequest {
 
     private String usernick; // 닉네임
     private String phoneNumber; // 연락처

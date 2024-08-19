@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Oauth2LoginDto {
+public class Oauth2LoginRequest {
 
     private String phoneNumber; // 연락처
     private LocalDate birthdate; // 생년월일
