@@ -1,9 +1,9 @@
 package com.example.omg_project.domain.user.controller;
 
 import com.example.omg_project.domain.role.entity.Role;
-import com.example.omg_project.domain.user.dto.request.UserLoginDto;
-import com.example.omg_project.domain.user.dto.response.UserLoginResponseDto;
-import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
+import com.example.omg_project.domain.user.dto.request.UserLoginRequest;
+import com.example.omg_project.domain.user.dto.response.UserLoginResponse;
+import com.example.omg_project.domain.user.dto.request.UserSignUpRequest;
 import com.example.omg_project.domain.user.entity.RandomNickname;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
@@ -20,16 +20,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.omg_project.global.jwt.util.JwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT;
@@ -50,7 +47,7 @@ public class UserApiController {
      * 로그인 요청 시 jwt 토큰 발급
      */
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid UserLoginDto userLoginDto,
+    public ResponseEntity login(@RequestBody @Valid UserLoginRequest userLoginDto,
                                 BindingResult bindingResult,
                                 HttpServletResponse response){
         log.info("로그인 요청이 들어왔습니다.");
@@ -100,7 +97,7 @@ public class UserApiController {
         response.addCookie(refreshTokenCookie);
 
         // 응답 값
-        UserLoginResponseDto loginResponseDto = UserLoginResponseDto.builder()
+        UserLoginResponse loginResponseDto = UserLoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .userId(user.get().getId())
@@ -168,7 +165,7 @@ public class UserApiController {
      * 회원가입
      */
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody UserSignUpDto userSignUpDto) {
+    public ResponseEntity<String> signup(@RequestBody UserSignUpRequest userSignUpDto) {
         try {
             userService.signUp(userSignUpDto);
             return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
@@ -193,9 +190,7 @@ public class UserApiController {
     public ResponseEntity<String> deleteUser(@PathVariable("userId") Long userId,
                                              @CookieValue(name = "accessToken", required = false) String accessToken,
                                              @CookieValue(name = "refreshToken", required = false) String refreshToken,
-                                             HttpServletResponse response,
-                                             Authentication authentication) {
-        //String username = authentication.getName();
+                                             HttpServletResponse response) {
         try {
             userService.deleteUser(userId);
 
