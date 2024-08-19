@@ -22,6 +22,16 @@ const ps = new kakao.maps.services.Places();
 // 키워드로 장소를 검색합니다
 // searchPlaces();
 
+// 마커 이미지가 순환되도록 매핑
+const markerImages = {
+    1: '/files/markers/marker_number_red.png',
+    2: '/files/markers/marker_number_yellow.png',
+    3: '/files/markers/marker_number_green.png',
+    4: '/files/markers/marker_number_cyan.png',
+    5: '/files/markers/marker_number_blue.png',
+    6: '/files/markers/marker_number_purple.png'
+}
+
 /**
  * 키워드 검색을 요청하는 함수입니다
  * @returns {boolean} - 키워드가 유효하지 않으면 false
@@ -137,7 +147,7 @@ function handleSelectBtnClick(event, place, placePosition) {
     // 지도에 마커 추가
     addSelectedMarker(placePosition, index, dayNum);
     // 마커 번호 재정렬
-    reorderMarkers(markers);
+    reorderMarkers(markers, dayNum);
 
     // 지도 범위 재설정
     setBounds(placePosition);
@@ -198,7 +208,7 @@ function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositi
 
             // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 ID를 업데이트
             updatePlaceIndexes(dayNum);
-            reorderMarkers(markers[dayNum]);    // 마커 번호 재정렬
+            reorderMarkers(markers[dayNum], dayNum);    // 마커 번호 재정렬
 
         // console.log('삭제 후 selectedPlaces[dayNum].length: ', selectedPlaces[dayNum].length);
 
@@ -304,7 +314,10 @@ function getListItem(index, places) {
  * @returns {kakao.maps.Marker} - 생성된 마커 객체
  */
 function addSelectedMarker(position, idx, dayNum) {
-    const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+    // dayNum % 6 === 0 이면 6으로 매핑(dayNum이 1 또는 7이면 1번째 이미지, 6이면 6번째 이미지, 2 또는 8이면 2번째 이미지, ... 6 단위로 순환)
+    const imageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);
+    // const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+    const imageSrc = markerImages[imageIndex],
         imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
         imgOptions = {
             spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
@@ -328,11 +341,14 @@ function addSelectedMarker(position, idx, dayNum) {
  * 제거 버튼 클릭 이벤트 발생 시 기존에 있던 마커 번호(마커 이미지)를 재정렬하는 함수
  * @param markers - 선택된 장소들의 마커 배열
  */
-function reorderMarkers(markers) {
+function reorderMarkers(markers, dayNum) {
     for (let i = 0; i < markers.length; i++) {
         const marker = markers[i];
 
-        const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        // dayNum % 6 === 0 이면 6으로 매핑(dayNum이 1 또는 7이면 1번째 이미지, 6이면 6번째 이미지, 2 또는 8이면 2번째 이미지, ... 6 단위로 순환)
+        const imageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);
+        // const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        const imageSrc = markerImages[imageIndex],
             imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
             imgOptions = {
                 spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
