@@ -80,9 +80,10 @@ public class ChatMessageProducer {
 
     // 주어진 채팅방 ID와 메시지를 받아서 해당 Kafka 토픽으로 메시지를 전송하는 메서드
     public void sendMessage(String roomId, String message) {
-        String topicName = "chat-room-" + roomId; // 채팅방 ID에 기반한 토픽 이름 생성
+        String topicName = "chat_topic"; // 채팅방 ID에 기반한 토픽 이름 생성
         createTopicIfNotExists(topicName); // 토픽이 존재하지 않으면 생성
         System.out.println("채팅방 ID: " + roomId + ", 토픽: " + topicName + ", 메시지: " + message);
+        message = roomId + ":" + message;
         kafkaTemplate.send(topicName, message); // 메시지를 해당 토픽으로 전송
     }
 }
