@@ -154,8 +154,9 @@
             markers[dayNum] = [];
         }
 
-        console.log('update --- selectedPlaces : {}', selectedPlaces);
-        console.log('update --- markers : {}', markers);
+        console.log('addTripDate --- selectedPlaces : {}', selectedPlaces);
+        console.log('addTripDate --- markers : {}', markers);
+        console.log('----------');
     }
 
     function addTripLocation(button) {
@@ -273,13 +274,15 @@
 
         // 장소의 고유 ID 생성 (ex. 몇일차-몇번째장소: 1-1, 1-2, 2-1, ..) 나중에 삭제 시 같은 장소 겹침 문제 해결 위해 고유 ID 지정
         const uniqueId = `${dayNum}-${placeIndex}`;
+        const markerImageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);    // 마커 이미지 색상이랑 맞추기 (1 ~ 6 순환)
+        const colorCode = getColorCode(markerImageIndex);
 
         return `
         <div class="trip-location" data-id="${tripLocationData.id || ''}">
           <div class="placeNameContainer">
-            <span id="${uniqueId}">${placeIndex}</span>
+            <span id="${uniqueId}" style="color: ${colorCode};">${placeIndex}</span>
             <input type="text" class="placeNameInput" placeholder="장소 이름" value="${tripLocationData.placeName || ''}">
-            <button type="button" onclick="handleRemoveBtnClick(event, '${uniqueId}', ${tripLocationData.latitude}, ${tripLocationData.longitude})">삭제</button>
+            <button type="button" onclick="handleRemoveBtnClick(event, '${uniqueId}', ${tripLocationData.longitude}, ${tripLocationData.latitude})">삭제</button>
           </div>
           <input type="hidden" class="latitudeInput" placeholder="위도" value="${tripLocationData.latitude || ''}">
           <input type="hidden" class="longitudeInput" placeholder="경도" value="${tripLocationData.longitude || ''}">
