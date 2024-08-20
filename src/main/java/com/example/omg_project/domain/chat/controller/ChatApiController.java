@@ -28,7 +28,7 @@ public class ChatApiController {
      * @return 채팅방의 메시지 목록(ChatMessageDTO 객체의 리스트)
      */
     @GetMapping("/rooms/{roomId}/messages")
-    public ResponseEntity<List<ChatMessageDTO>> getMessages(@PathVariable Long roomId) {
+    public ResponseEntity<List<ChatMessageDTO>> getMessages(@PathVariable("roomId") Long roomId) {
         List<ChatMessageDTO> messages = chatService.getMessagesByRoomId(roomId);
         return ResponseEntity.ok(messages);
     }

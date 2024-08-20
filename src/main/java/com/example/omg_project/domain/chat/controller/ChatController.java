@@ -34,7 +34,7 @@ public class ChatController {
      * @return 채팅방 화면을 반환하거나, 예외가 발생할 경우 홈 화면으로 리다이렉트
      */
     @GetMapping("/rooms/{roomId}")
-    public String getChatRoom(@PathVariable Long roomId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+    public String getChatRoom(@PathVariable("roomId") Long roomId, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         try {
             // 쿠키에서 accessToken 찾기
             String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
