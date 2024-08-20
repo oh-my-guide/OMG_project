@@ -1,6 +1,6 @@
 package com.example.omg_project.domain.user.controller;
 
-import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
+import com.example.omg_project.domain.user.dto.request.UserSignUpRequest;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
@@ -48,14 +48,13 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("user") UserSignUpDto userSignUpDto,
+    public String signup(@ModelAttribute("user") UserSignUpRequest userSignUpDto,
                          Model model) {
         try {
             userService.signUp(userSignUpDto);
-            model.addAttribute("success", "성공적으로 회원가입 되었습니다.");
             return "redirect:/signin";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            e.printStackTrace();
             return "/main/signupform";
         }
     }

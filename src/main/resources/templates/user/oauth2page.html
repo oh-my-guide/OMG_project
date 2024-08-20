@@ -14,10 +14,6 @@
     <h1>추가 정보 기입</h1>
     <form th:action="@{/oauthPage}" th:object="${user}" method="post">
 
-        <div th:if="${msg}" class="alert">
-            <p th:text="${msg}"></p>
-        </div>
-
         <label for="phoneNumber">연락처</label>
         <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="'-'을 제외하고 입력해주세요.'" required/>
 

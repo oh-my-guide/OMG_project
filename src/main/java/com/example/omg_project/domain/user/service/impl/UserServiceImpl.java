@@ -2,9 +2,10 @@ package com.example.omg_project.domain.user.service.impl;
 
 import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.role.repository.RoleRepository;
-import com.example.omg_project.domain.user.dto.request.Oauth2LoginDto;
-import com.example.omg_project.domain.user.dto.request.UserEditDto;
-import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
+import com.example.omg_project.domain.user.dto.request.Oauth2LoginRequest;
+import com.example.omg_project.domain.user.dto.request.UserEditRequest;
+import com.example.omg_project.domain.user.dto.request.UserPasswordChangeRequest;
+import com.example.omg_project.domain.user.dto.request.UserSignUpRequest;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import com.example.omg_project.domain.user.service.UserService;
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public void signUp(UserSignUpDto userSignUpDto) {
+    public void signUp(UserSignUpRequest userSignUpDto) {
         if (!userSignUpDto.getPassword().equals(userSignUpDto.getPasswordCheck())) {
             throw new RuntimeException("비밀번호가 다릅니다.");
         }
@@ -110,7 +111,7 @@ public class UserServiceImpl implements UserService {
      * 사용자 페이지 수정
      */
     @Override
-    public Optional<User> updateUser(String username, UserEditDto userEditDto) {
+    public Optional<User> updateUser(String username, UserEditRequest userEditDto) {
 
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
@@ -131,7 +132,7 @@ public class UserServiceImpl implements UserService {
      * Oauth2 로그인 시 추가 정보 입력
      */
     @Override
-    public Optional<User> updateOauth2(String username, Oauth2LoginDto oauth2LoginDto) {
+    public Optional<User> updateOauth2(String username, Oauth2LoginRequest oauth2LoginDto) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
             log.error("사용자 없습니다. :: {}", username);
@@ -148,32 +149,27 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 인증 정보 가져오기
-     */
-    @Override
-    public Optional<User> getAuthenticatedUser() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Object principal = authentication.getPrincipal();
-            String username = null;
-
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-            } else if (principal instanceof String) {
-                username = (String) principal;
-            }
-            return userRepository.findByUsername(username);
-        }catch (Exception e) {
-            log.info("로그인 사용자를 찾지 못했습니다.", e);
-            return Optional.empty();
-        }
-    }
-
-    /**
      * 모든 사용자 정보 가져오기
      */
     @Override
     public List<User> findAllUsers() {
         return userRepository.findAll();
+    }
+
+
+    /**
+     * 비밀번호 재설정
+     */
+    @Override
+    public boolean changePassword(String username, UserPasswordChangeRequest userPasswordChangeRequest) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (passwordEncoder.matches(userPasswordChangeRequest.getOldPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(userPasswordChangeRequest.getNewPassword()));
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 }

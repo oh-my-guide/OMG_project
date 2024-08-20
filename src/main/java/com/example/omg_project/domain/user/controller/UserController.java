@@ -1,7 +1,8 @@
 package com.example.omg_project.domain.user.controller;
 
-import com.example.omg_project.domain.user.dto.request.Oauth2LoginDto;
-import com.example.omg_project.domain.user.dto.request.UserEditDto;
+import com.example.omg_project.domain.user.dto.request.Oauth2LoginRequest;
+import com.example.omg_project.domain.user.dto.request.UserEditRequest;
+import com.example.omg_project.domain.user.dto.request.UserPasswordChangeRequest;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
@@ -34,14 +35,16 @@ public class UserController {
             String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
 
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
-            User user = userService.findByUsername(username).orElseThrow();
+            Optional<User> userOptional = userService.findByUsername(username);
 
+            User user = userOptional.get();
             model.addAttribute("user", user);
 
             return "user/mypage";
 
         } catch (RuntimeException e) {
-            System.out.println("에러 :: " + e.getMessage());
+            log.info("에러 :: " + e.getMessage());
+            e.printStackTrace();
             return "redirect:/signin";
         }
     }
@@ -53,16 +56,14 @@ public class UserController {
     public String addOauth2Form(Model model, HttpServletRequest request) {
 
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
-
         Optional<User> userOptional = userService.findByUsername(username);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
             // 처음 로그인 한 회원일 경우
-            if (user.getPhoneNumber().equals("01000000000")) {
+            if (user.getGender().equals("default")) {
                 model.addAttribute("user", user);
                 return "user/oauth2page";
             }
@@ -72,22 +73,16 @@ public class UserController {
     }
 
     @PostMapping("/oauthPage")
-    public String addOauth2(HttpServletRequest request, @ModelAttribute Oauth2LoginDto oauth2LoginDto, RedirectAttributes redirectAttributes) {
+    public String addOauth2(HttpServletRequest request, @ModelAttribute Oauth2LoginRequest oauth2LoginDto, RedirectAttributes redirectAttributes) {
 
         log.info("Received User: {}", oauth2LoginDto);
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
 
-
         try {
-            Optional<User> updatedUser = userService.updateOauth2(username, oauth2LoginDto);
-            if (updatedUser.isPresent()) {
-                redirectAttributes.addFlashAttribute("msg", "추가정보가 저장되었습니다.");
-            } else {
-                redirectAttributes.addFlashAttribute("msg", "추가정보 저장에 실패했습니다.");
-            }
+            userService.updateOauth2(username, oauth2LoginDto);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("msg", "추가정보 저장 중 오류 발생: " + e.getMessage());
+            log.info("추가정보 저장 중 오류 발생 :: " + e.getMessage());
             e.printStackTrace();
         }
         return "redirect:/oauthPage";
@@ -106,7 +101,6 @@ public class UserController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             model.addAttribute("user", user);
-            model.addAttribute("username", username);
 
             return "/user/mypageEdit";
         }
@@ -117,30 +111,60 @@ public class UserController {
      * 회원 정보 수정 처리
      */
     @PostMapping("/my/profile")
-    public String userEdit(HttpServletRequest request, @ModelAttribute UserEditDto userEditDto, RedirectAttributes redirectAttributes) {
+    public String userEdit(HttpServletRequest request, @ModelAttribute UserEditRequest userEditDto, RedirectAttributes redirectAttributes) {
 
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
 
         try {
-            Optional<User> updatedUser = userService.updateUser(username, userEditDto);
-            if (updatedUser.isPresent()) {
-                redirectAttributes.addFlashAttribute("msg", "회원정보가 수정되었습니다.");
-            } else {
-                redirectAttributes.addFlashAttribute("msg", "회원정보 수정에 실패했습니다.");
-            }
+            userService.updateUser(username, userEditDto);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("msg", "회원정보 수정 중 오류 발생: " + e.getMessage());
+            log.info("회원정보 수정 중 오류 발생 :: " + e.getMessage());
             e.printStackTrace();
         }
-        return "redirect:/my/profile";
+        return "redirect:/my";
     }
 
     /**
      * 비밀번호 재발급 페이지 이동
      */
-    @GetMapping("/my/change-password")
-    public String showChangePasswordForm() {
+    @GetMapping("/users/reset-user-password")
+    public String showResetPasswordForm() {
         return "/user/findPassword";
+    }
+
+    /**
+     * 비밀번호 재설정
+     */
+    @GetMapping("/my/change-password")
+    public String changePasswordForm(HttpServletRequest request, Model model) {
+        model.addAttribute("userPasswordChangeRequest", new UserPasswordChangeRequest());
+
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+
+        String username = jwtTokenizer.getUsernameFromToken(accessToken);
+        Optional<User> userOptional = userService.findByUsername(username);
+
+        User user = userOptional.get();
+        model.addAttribute("user", user);
+        return "user/change-Password";
+    }
+
+    @PostMapping("/my/change-password")
+    public String changePassword(HttpServletRequest request,
+                                 @ModelAttribute UserPasswordChangeRequest userPasswordChangeRequest,
+                                 RedirectAttributes redirectAttributes) {
+
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        String username = jwtTokenizer.getUsernameFromToken(accessToken);
+
+        boolean success = userService.changePassword(username, userPasswordChangeRequest);
+
+        if (success) {
+            return "redirect:/my";
+        } else {
+            redirectAttributes.addFlashAttribute("msg", "현재 비밀번호가 올바르지 않습니다.");
+            return "redirect:/my/change-password";
+        }
     }
 }

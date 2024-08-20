@@ -40,7 +40,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             Optional<User> user = userRepository.findByUsername(username);
 
             if (user.isEmpty()) {
-                System.out.println("유저기ㅏ 없어요");
+                log.info("사용자가 없습니다.");
                 throw new UsernameNotFoundException("User not found with username: " + username);
             }
             Long userId = user.get().getId();
@@ -49,13 +49,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             List<String> roles = customUserDetails.getRoles();
 
             log.info("Oauth2 로그인 성곻했습니다. ");
-            log.info("jwt 토큰 생성 :: userId: {}, username: {}, name: {}, roles: {}", userId, username, name, roles);
+            log.info("Oauth2 생성 :: userId: {}, username: {}, name: {}, roles: {}", userId, username, name, roles);
 
             String accessToken = jwtTokenizer.createAccessToken(userId, username, name, roles);
             String refreshToken = jwtTokenizer.createRefreshToken(userId, username, name, roles);
-
-            log.info("Access Token :: {}", accessToken);
-            log.info("Refresh Token :: {}", refreshToken);
 
             // 쿠키에 토큰 저장
             Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
@@ -80,11 +77,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
             refreshTokenService.addRefreshToken(refreshTokenEntity);
 
-            // 추가 정보가 없을 때만 oauthPage로 리다이렉트
-            if (user.get().getPhoneNumber().equals("01000000000")) {
+            if (user.get().getGender().equals("default")) {
                 response.sendRedirect("/oauthPage");
             } else {
-                response.sendRedirect("/my"); // 이미 추가 정보가 있을 경우 메인 페이지로 리다이렉트
+                response.sendRedirect("/my");
             }
 
         } catch (Exception e) {

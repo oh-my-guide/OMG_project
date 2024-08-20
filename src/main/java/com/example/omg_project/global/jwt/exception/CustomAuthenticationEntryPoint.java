@@ -31,36 +31,27 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     private void handlePageResponse(HttpServletRequest request, HttpServletResponse response, String exception) throws IOException {
-        String alertMessage = "로그인 해주세요";
-
         if (exception != null) {
             switch (exception) {
                 case "INVALID_TOKEN":
-                    alertMessage = "유효하지 않은 토큰입니다. 다시 로그인해주세요.";
+                    response.sendRedirect("/");
                     break;
                 case "EXPIRED_TOKEN":
-                    alertMessage = "토큰이 만료되었습니다. 다시 로그인해주세요.";
+                    response.sendRedirect("/");
                     break;
                 case "UNSUPPORTED_TOKEN":
-                    alertMessage = "지원되지 않는 토큰입니다. 다시 로그인해주세요.";
+                    response.sendRedirect("/");
                     break;
                 case "NOT_FOUND_TOKEN":
-                    alertMessage = "로그인 후 이용해주세요";
+                    response.sendRedirect("/");
                     break;
                 default:
-                    alertMessage = "알 수 없는 오류가 발생했습니다. 다시 시도해주세요.";
+                    response.sendRedirect("/");
                     break;
             }
+            return;
         }
-
-        // 알림창 표시 후 메인 페이지로 리다이렉트하는 자바스크립트 코드
-        String script = "<script type='text/javascript'>"
-                + "alert('" + alertMessage + "');"
-                + "window.location.href='/';"
-                + "</script>";
-
-        response.setContentType("text/html;charset=UTF-8");
-        response.getWriter().write(script);
+        response.sendRedirect("/");
     }
 
     private boolean isRestRequest(HttpServletRequest request) {

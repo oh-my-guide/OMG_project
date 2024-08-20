@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserSignUpDto {
+public class UserSignUpRequest {
 
     private Long id;
     private String username; //이메일 ==> id

@@ -86,7 +86,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 // 마이페이지에서 직접 설정할 필드들
                 .phoneNumber("01000000000")
                 .birthdate(LocalDate.from(LocalDateTime.now()))
-                .gender("여자")
+                .gender("default")
                 .registrationDate(LocalDateTime.now())
                 .usernick(oAuth2Response.getEmail())
                 .build();

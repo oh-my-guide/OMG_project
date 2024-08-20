@@ -17,6 +17,8 @@ $(document).ready(function() {
         if (!validateForm()) {
             alert('모든 필드를 올바르게 입력해주세요.');
             event.preventDefault(); // 폼 제출 막기
+        } else {
+            alert("추가 정보가 저장되었습니다.")
         }
     });
 });
