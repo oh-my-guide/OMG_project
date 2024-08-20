@@ -86,21 +86,22 @@
         <table>
             <thead>
             <tr>
-                <th>아이디</th>
+                <th>ID</th>
                 <th>이메일</th>
                 <th>닉네임</th>
                 <th>가입일</th>
-                <th>삭제</th>
+                <th>관리</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="user : ${users}">
-                <td th:text="${user.id}">Id</td>
+                <td th:text="${user.id}">ID</td>
                 <td th:text="${user.username}">이메일</td>
                 <td th:text="${user.usernick}">닉네임</td>
                 <td th:text="${user.registrationDate}">가입일</td>
                 <td>
-                    <button class="remove-button" data-user-id="${user.id}">사용자 탈퇴</button>
+                    <input type="hidden" id="userId" th:value="${user.id}"/>
+                    <button id="delete-account" class="text-link">탈퇴</button>
                 </td>
             </tr>
             </tbody>
@@ -108,4 +109,24 @@
     </div>
 </div>
 </body>
+<script>
+    $(document).ready(function() {
+        $('#delete-account').on('click', function(e) {
+            e.preventDefault();
+            if (confirm("정말로 회원을 탈퇴시키겠습니까?")) {
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/api/users/' + $('#userId').val(),
+                    success: function(response) {
+                        alert('성공적으로 회원 탈퇴 되었습니다.');
+                        window.location.href = '/admin/userboard';
+                    },
+                    error: function(error) {
+                        alert('회원 탈퇴에 실패했습니다.');
+                    }
+                });
+            }
+        });
+    });
+</script>
 </html>
