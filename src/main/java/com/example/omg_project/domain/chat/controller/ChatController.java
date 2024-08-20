@@ -22,7 +22,6 @@ public class ChatController {
     private final ChatService chatService;
     private final JwtTokenizer jwtTokenizer;
     private final UserService userService;
-    private final TeamService teamService;
 
     /** TODO
      * 채팅방 화면을 렌더링하는 엔드포인트
@@ -39,19 +38,18 @@ public class ChatController {
             // 쿠키에서 accessToken 찾기
             String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
 
-            // 사용자 및 채팅방 검증 로직 호출
-            // 유효한 accessToken과 채팅방 ID를 기반으로 사용자가 해당 채팅방에 참여하고 있는지 확인
-            chatService.validateUserInChatRoom(roomId, accessToken);
-
+            // accessToken을 통해 user 객채 찾기
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             User user = userService.findByUsername(username).orElseThrow();
-            String usernick = user.getUsernick();
+
+            // 사용자 및 채팅방 검증 로직 호출
+            // user객채와 채팅방 ID를 기반으로 사용자가 해당 채팅방에 참여하고 있는지 확인
+            chatService.validateUserInChatRoom(roomId, user);
 
             String tripName = chatService.findTripName(roomId);
 
-            // 검증에 성공하면, 모델에 roomId를 추가하고 채팅방 화면으로 이동
+            // 검증에 성공하면, 모델에 roomId, tripName, user를 추가하고 채팅방 화면으로 이동
             model.addAttribute("roomId", roomId);
-            model.addAttribute("usernick", usernick);
             model.addAttribute("tripName", tripName);
             model.addAttribute("user", user);
 
@@ -59,7 +57,6 @@ public class ChatController {
 
         } catch (RuntimeException e) {
             // 예외 발생 시, 에러 메시지를 전달하고 홈 화면으로 리다이렉트
-            System.out.println("에러 내용 :::::::::::" + e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/";  // 홈 화면으로 리다이렉트
         }
