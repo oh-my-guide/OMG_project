@@ -33,14 +33,13 @@ public class UserController {
     public String myPage(Model model, HttpServletRequest request) {
         try {
             String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-
-            String username = jwtTokenizer.getUsernameFromToken(accessToken);
-            Optional<User> userOptional = userService.findByUsername(username);
-
-            User user = userOptional.get();
-            model.addAttribute("user", user);
-
-            return "user/mypage";
+            if(accessToken != null){
+                String username = jwtTokenizer.getUsernameFromToken(accessToken);
+                User user = userService.findByUsername(username).orElse(null);
+                model.addAttribute("user", user);
+                return "user/mypage";
+            }
+            return "redirect:/";
 
         } catch (RuntimeException e) {
             log.info("에러 :: " + e.getMessage());
@@ -95,13 +94,10 @@ public class UserController {
     public String userEditForm(Model model, HttpServletRequest request) {
 
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        String username = jwtTokenizer.getUsernameFromToken(accessToken);
-
-        Optional<User> userOptional = userService.findByUsername(username);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElse(null);
             model.addAttribute("user", user);
-
             return "/user/mypageEdit";
         }
         return "redirect:/signin";
@@ -111,16 +107,20 @@ public class UserController {
      * 회원 정보 수정 처리
      */
     @PostMapping("/my/profile")
-    public String userEdit(HttpServletRequest request, @ModelAttribute UserEditRequest userEditDto, RedirectAttributes redirectAttributes) {
+    public String userEdit(HttpServletRequest request, @ModelAttribute UserEditRequest userEditDto, Model model) {
 
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        String username = jwtTokenizer.getUsernameFromToken(accessToken);
-
-        try {
-            userService.updateUser(username, userEditDto);
-        } catch (Exception e) {
-            log.info("회원정보 수정 중 오류 발생 :: " + e.getMessage());
-            e.printStackTrace();
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElse(null);
+            model.addAttribute("user", user);
+            try {
+                userService.updateUser(username, userEditDto);
+            } catch (Exception e) {
+                log.info("회원정보 수정 중 오류 발생 :: " + e.getMessage());
+                e.printStackTrace();
+            }
+            return "/user/mypageEdit";
         }
         return "redirect:/my";
     }
@@ -141,13 +141,15 @@ public class UserController {
         model.addAttribute("userPasswordChangeRequest", new UserPasswordChangeRequest());
 
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElse(null);
+            model.addAttribute("user", user);
 
-        String username = jwtTokenizer.getUsernameFromToken(accessToken);
-        Optional<User> userOptional = userService.findByUsername(username);
+            return "user/change-Password";
+        }
+        return "redirect:/my";
 
-        User user = userOptional.get();
-        model.addAttribute("user", user);
-        return "user/change-Password";
     }
 
     @PostMapping("/my/change-password")
@@ -156,15 +158,17 @@ public class UserController {
                                  RedirectAttributes redirectAttributes) {
 
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        String username = jwtTokenizer.getUsernameFromToken(accessToken);
-
-        boolean success = userService.changePassword(username, userPasswordChangeRequest);
-
-        if (success) {
-            return "redirect:/my";
-        } else {
-            redirectAttributes.addFlashAttribute("msg", "현재 비밀번호가 올바르지 않습니다.");
-            return "redirect:/my/change-password";
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            boolean success = userService.changePassword(username, userPasswordChangeRequest);
+            if (success) {
+                redirectAttributes.addFlashAttribute("msg", "비밀번호가 변경되었습니다.");
+                return "redirect:/my/change-password";
+            } else {
+                redirectAttributes.addFlashAttribute("msg", "현재 비밀번호가 올바르지 않습니다.");
+                return "redirect:/my/change-password";
+            }
         }
+        return "redirect:/my";
     }
 }
