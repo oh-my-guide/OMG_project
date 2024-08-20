@@ -28,7 +28,7 @@ public class TripApiController {
 
     //여행 일정 생성
     @PostMapping
-    public ResponseEntity<?> createTrip(@RequestBody CreateTripDTO createTripDTO, HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> createTrip(@RequestBody CreateTripDTO createTripDTO, HttpServletRequest request) {
         try {
             // 쿠키에서 JWT 토큰 가져오기
             String jwtToken = null;
@@ -44,12 +44,6 @@ public class TripApiController {
             if (jwtToken == null) {
                 throw new RuntimeException("JWT 토큰이 없습니다.");
             }
-
-            System.out.println("Received JWT Token: " + jwtToken);
-
-            // JWT 토큰 파싱하여 사용자 정보 추출
-            Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
-            claims.getSubject();
 
             // 여행 일정 생성
             tripService.createTrip(createTripDTO, jwtToken);
