@@ -299,6 +299,7 @@
 
     <!-- 여행 일정 담기 버튼 추가 -->
     <button class="add-wishlists-button" id="addWishlistsButton">찜하기</button>
+    <button class="add-wishlists-button" onclick="copyTripToUser()">내 일정으로 담기</button>
 
     <!-- 좋아요 버튼 추가 -->
     <div class="like-section">
@@ -830,6 +831,29 @@
             postComment(content, secret);
         });
     });
+
+    function copyTripToUser() {
+        fetch(`/api/trips/${postTripId}/copy`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'same-origin'  // 쿠키가 포함된 요청을 보낼 수 있도록 설정
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('일정 담기에 성공했습니다!');
+                    window.location.href = `/trip/update/${data.tripId}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('일정 담기 중 오류가 발생했습니다.');
+            });
+    }
 </script>
 </body>
 </html>
