@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -167,18 +164,24 @@ public class TripServiceImpl implements TripService {
     @Override
     @Transactional
     public UpdateTripDTO updateTrip(Long id, UpdateTripDTO updateTripDTO) {
+        log.info("Starting updateTrip with id: {}", id);
+
         Optional<Trip> tripOptional = tripRepository.findById(id);
         if (tripOptional.isPresent()) {
             Trip trip = tripOptional.get();
+            log.info("Found Trip: {}", trip);
+
             trip.setTripName(updateTripDTO.getTripName());
             trip.setStartDate(updateTripDTO.getStartDate());
             trip.setEndDate(updateTripDTO.getEndDate());
+            log.info("Updated Trip basic info: {}", trip);
 
             // 기존 TripDates 및 TripLocations 업데이트 로직
             Map<Long, TripDate> existingTripDates = new HashMap<>();
             for (TripDate tripDate : trip.getTripDates()) {
                 existingTripDates.put(tripDate.getId(), tripDate);
             }
+            log.info("Existing TripDates loaded: {}", existingTripDates.keySet());
 
             for (UpdateTripDTO.TripDateDTO tripDateDTO : updateTripDTO.getTripDates()) {
                 TripDate tripDate;
@@ -186,17 +189,21 @@ public class TripServiceImpl implements TripService {
                     tripDate = existingTripDates.get(tripDateDTO.getId());
                     tripDate.setTripDate(tripDateDTO.getTripDate());
                     existingTripDates.remove(tripDateDTO.getId());
+                    log.info("Updated existing TripDate: {}", tripDate);
                 } else {
                     tripDate = new TripDate();
                     tripDate.setTripDate(tripDateDTO.getTripDate());
                     tripDate.setTrip(trip);
+                    tripDate.setTripLocations(new ArrayList<>());
                     trip.getTripDates().add(tripDate);
+                    log.info("Created new TripDate: {}", tripDate);
                 }
 
                 Map<Long, TripLocation> existingTripLocations = new HashMap<>();
                 for (TripLocation tripLocation : tripDate.getTripLocations()) {
                     existingTripLocations.put(tripLocation.getId(), tripLocation);
                 }
+                log.info("Existing TripLocations for TripDate {}: {}", tripDate.getId(), existingTripLocations.keySet());
 
                 for (UpdateTripDTO.TripLocationDTO tripLocationDTO : tripDateDTO.getTripLocations()) {
                     TripLocation tripLocation;
@@ -206,6 +213,7 @@ public class TripServiceImpl implements TripService {
                         tripLocation.setLatitude(tripLocationDTO.getLatitude());
                         tripLocation.setLongitude(tripLocationDTO.getLongitude());
                         existingTripLocations.remove(tripLocationDTO.getId());
+                        log.info("Updated existing TripLocation: {}", tripLocation);
                     } else {
                         tripLocation = new TripLocation();
                         tripLocation.setPlaceName(tripLocationDTO.getPlaceName());
@@ -213,6 +221,7 @@ public class TripServiceImpl implements TripService {
                         tripLocation.setLongitude(tripLocationDTO.getLongitude());
                         tripLocation.setTripDate(tripDate);
                         tripDate.getTripLocations().add(tripLocation);
+                        log.info("Created new TripLocation: {}", tripLocation);
                     }
                 }
 
@@ -220,6 +229,7 @@ public class TripServiceImpl implements TripService {
                 for (TripLocation tripLocation : existingTripLocations.values()) {
                     tripDate.getTripLocations().remove(tripLocation);
                     tripLocationRepository.delete(tripLocation);
+                    log.info("Deleted TripLocation: {}", tripLocation);
                 }
             }
 
@@ -227,11 +237,14 @@ public class TripServiceImpl implements TripService {
             for (TripDate tripDate : existingTripDates.values()) {
                 trip.getTripDates().remove(tripDate);
                 tripDateRepository.delete(tripDate);
+                log.info("Deleted TripDate: {}", tripDate);
             }
 
             tripRepository.save(trip);
+            log.info("Trip saved successfully: {}", trip);
             return updateTripDTO;
         } else {
+            log.warn("Trip not found with id: {}", id);
             return null;
         }
     }
