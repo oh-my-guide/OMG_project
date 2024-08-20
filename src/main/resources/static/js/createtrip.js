@@ -24,6 +24,7 @@ const ps = new kakao.maps.services.Places();
 
 // 선을 구성하는 좌표 배열입니다. 이 좌표들을 이어서 선을 표시합니다.
 let linePath = {};
+
 // 폴리라인(선) 객체 배열
 let polyline = {};
 

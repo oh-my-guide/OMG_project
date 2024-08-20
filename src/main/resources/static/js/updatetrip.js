@@ -22,6 +22,12 @@ const ps = new kakao.maps.services.Places();
 // 키워드로 장소를 검색합니다
 // searchPlaces();
 
+// 선을 구성하는 좌표 배열입니다. 이 좌표들을 이어서 선을 표시합니다.
+let linePath = {};
+
+// 폴리라인(선) 객체 배열
+let polyline = {};
+
 // 마커 이미지가 순환되도록 매핑
 const markerImages = {
     1: '/files/markers/marker_number_red.png',
@@ -169,6 +175,62 @@ function handleSelectBtnClick(event, place, placePosition) {
 
     // 지도 범위 재설정
     setBounds(placePosition);
+
+    // 지도에 선 표시
+    drawLinePath(dayNum, placePosition);
+}
+
+/**
+ * 장소 추가 시 지도에 선 그리기
+ * @param dayNum - 여행 일차
+ * @param placePosition - kakao.maps.LatLng 객체 (위도, 경도 위치 정보)
+ */
+function drawLinePath(dayNum, placePosition) {
+    // linePath[dayNum]이 존재하지 않으면 빈 배열로 초기화
+    if (!linePath[dayNum]) {
+        linePath[dayNum] = [];
+    }
+    // 좌표 추가
+    linePath[dayNum].push(placePosition);
+
+    // 선 색상 지정
+    const markerImageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);    // 마커 이미지 색상이랑 맞추기 (1 ~ 6 순환)
+    const colorCode = getColorCode(markerImageIndex);
+
+    // 이미 그려진 선이 있으면 지도에서 제거 (제거 안 하면 선이 겹쳐서 그려짐)
+    if (polyline[dayNum]) {
+        polyline[dayNum].setMap(null);
+    }
+
+    // 지도에 표시할 선을 생성합니다
+    polyline[dayNum] = new kakao.maps.Polyline({
+        path: linePath[dayNum], // 선을 구성하는 좌표배열 입니다
+        strokeWeight: 4, // 선의 두께 입니다
+        strokeColor: colorCode, // 선의 색깔입니다
+        strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        strokeStyle: 'dash' // 선의 스타일입니다
+    });
+
+    // 지도에 선을 표시합니다
+    polyline[dayNum].setMap(map);
+}
+
+/**
+ * 장소 제거 시 지도에 선 알맞게 다시 그리기
+ * @param dayNum
+ */
+function redrawLinePath(dayNum) {
+    // 경로가 비어있으면 폴리라인 삭제
+    if (linePath[dayNum].length === 0) {
+        polyline[dayNum].setMap(null);
+        delete polyline[dayNum];
+    } else {
+        polyline[dayNum].setMap(null);
+        polyline[dayNum].setPath(linePath[dayNum]);
+
+        // 지도에 선을 표시합니다
+        polyline[dayNum].setMap(map);
+    }
 }
 
 /**
@@ -217,13 +279,26 @@ function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositi
             markers[dayNum].splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
         }
 
+        // linePath에서 해당하는 위치 좌표 제거
+        const pathIndex = linePath[dayNum].findIndex(position => {
+            return Math.abs(position.La - placePositionLa) < tolerance &&
+                Math.abs(position.Ma - placePositionMa) < tolerance;
+        });
+
+        if (pathIndex !== -1) {   // 해당 장소 위치 좌표가 존재한다면
+            linePath[dayNum].splice(pathIndex, 1); // 배열에서 해당 좌표 제거. 인덱스부터 1개의 요소 삭제
+        }
+
         console.log('handleRemoveBtnClick --- Selected Places:', selectedPlaces);
         console.log('handleRemoveBtnClick --- Markers:', markers);
         console.log('----------');
 
         // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 ID를 업데이트
         updatePlaceIndexes(dayNum);
-        reorderMarkers(markers[dayNum], dayNum);    // 마커 번호 재정렬
+        // 마커 번호 재정렬
+        reorderMarkers(markers[dayNum], dayNum);
+        // 장소 지웠으니 선 다시 그리기
+        redrawLinePath(dayNum);
 
         // console.log('삭제 후 selectedPlaces[dayNum].length: ', selectedPlaces[dayNum].length);
 
@@ -361,7 +436,7 @@ function addSelectedMarker(position, idx, dayNum) {
 }
 
 /**
- * 저장된 장소의 마커를 지도에 표시하기
+ * 이미 추가되어있던 장소의 마커를 지도에 표시하기
  * @param latitude
  * @param longitude
  * @param idx
