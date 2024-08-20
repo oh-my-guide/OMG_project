@@ -22,7 +22,7 @@ public class BadWordServiceImpl implements BadWordService {
         for (BadWord badWord : badWords) {
             // 정규 표현식을 사용하여 비속어 필터링
             if(message.contains(badWord.getWord())) {
-                message = message.replaceAll(badWord.getWord(), "***");
+                message = message.replaceAll(badWord.getWord(), "삐약삐약");
             }
         }
         return message;
