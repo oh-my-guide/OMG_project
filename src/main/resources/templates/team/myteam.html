@@ -119,6 +119,7 @@
             }
 
             const teams = await response.json();
+            teams.sort((a, b) => a.id - b.id);
 
             const teamListElement = document.getElementById('teamList');
             teamListElement.innerHTML = '';  // 기존 목록을 지우고 새로 작성
