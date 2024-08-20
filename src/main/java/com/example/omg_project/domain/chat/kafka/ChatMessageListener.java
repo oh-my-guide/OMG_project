@@ -29,13 +29,11 @@ import java.util.logging.Logger;
 @RequiredArgsConstructor
 public class ChatMessageListener {
 
-    // 의존성 주입을 통해 각종 리포지토리와 서비스 인스턴스를 가져옴
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final BadWordService badWordService;
 
-    // 로깅을 위한 Logger 인스턴스 생성
     private static final Logger logger = Logger.getLogger(ChatMessageListener.class.getName());
 
     /**
