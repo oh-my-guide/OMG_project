@@ -2,8 +2,8 @@ package com.example.omg_project.global.config;
 
 import com.example.omg_project.global.jwt.exception.CustomAuthenticationEntryPoint;
 import com.example.omg_project.global.jwt.filter.JWTFilter;
-import com.example.omg_project.global.jwt.service.JwtBlacklistService;
-import com.example.omg_project.global.jwt.service.RefreshTokenService;
+import com.example.omg_project.global.jwt.service.RedisBlackTokenService;
+import com.example.omg_project.global.jwt.service.RedisRefreshTokenService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import com.example.omg_project.global.oauth2.handle.CustomSuccessHandler;
 import com.example.omg_project.global.oauth2.service.CustomOauth2UserService;
@@ -30,8 +30,8 @@ import java.util.List;
 public class SecurityConfig {
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-    private final JwtBlacklistService jwtBlacklistService;
-    private final RefreshTokenService refreshTokenService;
+    private final RedisBlackTokenService redisBlackTokenService;
+    private final RedisRefreshTokenService redisRefreshTokenService;
     private final JwtTokenizer jwtTokenizer;
     private final CustomOauth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
@@ -67,14 +67,13 @@ public class SecurityConfig {
                         .requestMatchers(adminAllowPage).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JWTFilter(jwtTokenizer, jwtBlacklistService, refreshTokenService), UsernamePasswordAuthenticationFilter.class) // JWT 필터 사용
+                .addFilterBefore(new JWTFilter(jwtTokenizer, redisBlackTokenService, redisRefreshTokenService), UsernamePasswordAuthenticationFilter.class) // JWT 필터 사용
                 .formLogin(form -> form.disable()) // 로그인 폼 비활성화
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 Stateless 설정(서버가 클라이언트 상태 저장x)
                 .csrf(csrf -> csrf.disable()) // cors 허용
                 .httpBasic(httpBasic -> httpBasic.disable()) // http 기본 인증(헤더) 비활성화
                 .cors(cors -> cors.configurationSource(configurationSource()))
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthenticationEntryPoint)
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/signin")
