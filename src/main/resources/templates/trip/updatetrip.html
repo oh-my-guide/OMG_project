@@ -374,16 +374,26 @@
                 tripLocations: tripDateData.tripLocations || []
             });
 
+            // Update the Day number for each tripDate
+            const tripDateElement = document.querySelector(`.trip-date:nth-child(${dayNum}) .dayCountLabel`);
+            if (tripDateElement) {
+                tripDateElement.textContent = `Day ${dayNum}`;
+            }
+
             newDateIndex++;
         }
 
         // 만약 새로운 날짜 범위가 기존 날짜보다 짧다면, 남는 날짜의 장소들을 마지막 날로 합칩니다.
+        // 남는 장소가 있을 경우 마지막 날에 합치기
         if (newDateIndex < existingTripData.length) {
-            const lastTripLocations = existingTripData.slice(newDateIndex).flatMap(data => data.tripLocations);
+            const remainingLocations = existingTripData.slice(newDateIndex).flatMap(data => data.tripLocations);
             const lastDayElement = newTripDatesContainer.querySelector('.trip-date:last-child .trip-locations');
-            lastDayElement.innerHTML = lastTripLocations.map((loc, index) => createTripLocationHtml(loc, newDateIndex, index + 1)).join('');
+            remainingLocations.forEach((loc, index) => {
+                lastDayElement.innerHTML += createTripLocationHtml(loc, newDateIndex + 1, index + 1);
+            });
         }
     }
+
 
     // 날짜 변경 이벤트 리스너 추가
     document.getElementById('startDate').addEventListener('change', updateTripDates);
