@@ -89,6 +89,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 .gender("default")
                 .registrationDate(LocalDateTime.now())
                 .usernick(oAuth2Response.getEmail())
+                .status("ACTIVE")
                 .build();
         userRepository.save(newUser);
 
