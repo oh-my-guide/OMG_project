@@ -44,7 +44,7 @@ public class Trip {
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     private List<TripDate> tripDates;
 
-    @OneToOne(mappedBy = "trip", cascade = CascadeType.REMOVE)  // 관련 JoinPost 삭제
+    @OneToOne(mappedBy = "trip", cascade = CascadeType.REMOVE)
     private JoinPost joinPost;
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.REMOVE, orphanRemoval = true)
