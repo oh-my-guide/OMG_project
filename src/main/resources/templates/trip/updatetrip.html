@@ -19,10 +19,10 @@
             <input type="text" id="tripName" name="tripName">
 
             <label for="startDate">여행 시작일</label>
-            <input type="date" id="startDate" name="startDate" disabled>
+            <input type="date" id="startDate" name="startDate">
 
             <label for="endDate">여행 종료일</label>
-            <input type="date" id="endDate" name="endDate" disabled>
+            <input type="date" id="endDate" name="endDate">
 
             <h2>세부 일정</h2>
             <div id="tripDatesContainer">
@@ -335,6 +335,60 @@
     document.getElementById('closeBtn').addEventListener('click', function() {
         $('#menu_wrap').hide();
     });
+
+    // 날짜 변경 시 일정을 조정하는 함수 추가
+    function updateTripDates() {
+        const startDate = new Date(document.getElementById('startDate').value);
+        const endDate = new Date(document.getElementById('endDate').value);
+
+        if (isNaN(startDate) || isNaN(endDate) || startDate > endDate) {
+            alert('유효한 날짜 범위를 선택하세요.');
+            return;
+        }
+
+        const existingTripDates = document.querySelectorAll('.trip-date');
+        const existingTripData = Array.from(existingTripDates).map((dateElement, index) => {
+            const tripLocations = Array.from(dateElement.querySelectorAll('.trip-location')).map(locationElement => ({
+                placeName: locationElement.querySelector('.placeNameInput').value,
+                latitude: parseFloat(locationElement.querySelector('.latitudeInput').value),
+                longitude: parseFloat(locationElement.querySelector('.longitudeInput').value)
+            }));
+
+            return {
+                tripDate: dateElement.querySelector('.tripDateInput').value,
+                tripLocations
+            };
+        });
+
+        const newTripDatesContainer = document.getElementById('tripDatesContainer');
+        newTripDatesContainer.innerHTML = '';  // 기존 날짜들을 비움
+
+        let newDateIndex = 0;
+        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+            const tripDateData = existingTripData[newDateIndex] || {};
+            const dayNum = newDateIndex + 1;
+
+            // 기존 addTripDate 함수 호출
+            addTripDate({
+                tripDate: date.toISOString().split('T')[0],
+                tripLocations: tripDateData.tripLocations || []
+            });
+
+            newDateIndex++;
+        }
+
+        // 만약 새로운 날짜 범위가 기존 날짜보다 짧다면, 남는 날짜의 장소들을 마지막 날로 합칩니다.
+        if (newDateIndex < existingTripData.length) {
+            const lastTripLocations = existingTripData.slice(newDateIndex).flatMap(data => data.tripLocations);
+            const lastDayElement = newTripDatesContainer.querySelector('.trip-date:last-child .trip-locations');
+            lastDayElement.innerHTML = lastTripLocations.map((loc, index) => createTripLocationHtml(loc, newDateIndex, index + 1)).join('');
+        }
+    }
+
+    // 날짜 변경 이벤트 리스너 추가
+    document.getElementById('startDate').addEventListener('change', updateTripDates);
+    document.getElementById('endDate').addEventListener('change', updateTripDates);
+
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>

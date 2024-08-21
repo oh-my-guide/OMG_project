@@ -114,14 +114,11 @@
 
     document.getElementById('citySelect').addEventListener('change', function () {
         const cityName = this.value;
-        const encodedCityName = encodeURIComponent(cityName);
-
-        fetch(`/api/cities/name/${encodedCityName}`)
+        fetch(`/api/cities/name/${cityName}`)
             .then(response => response.json())
             .then(city => {
                 if (city) {
                     document.getElementById('cityId').value = city.id;
-                    console.log(`City selected: ${city.name} with id ${city.id}`);
                 } else {
                     alert('City not found in database.');
                     console.error('City not found in database.');
