@@ -1,6 +1,7 @@
 package com.example.omg_project.domain.joinpost.service;
 
 import com.example.omg_project.domain.joinpost.dto.JoinPostCommentDto;
+import com.example.omg_project.domain.reviewpost.entity.ReviewPostComment;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ public interface JoinPostCommentService {
     JoinPostCommentDto.Response updateComment(Long commentId,JoinPostCommentDto.Request commentRequest);
     // 일행 댓글 삭제
     void deleteComment(Long commentId);
+    void deleteByUserId(Long userId);
 }
