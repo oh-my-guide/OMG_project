@@ -20,6 +20,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     Optional<Team> findByTripId(Long tripId);
 
     // 팀의 리더를 특정 사용자로 설정된 팀을 찾는 메서드
-    Optional<Team> findByLeaderId(Long leaderId);
+    List<Team> findByLeaderId(Long leaderId);
     Optional<Team> findByChatRoomId(Long chatRoomId);
 }
