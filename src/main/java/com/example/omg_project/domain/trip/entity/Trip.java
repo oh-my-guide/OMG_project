@@ -1,5 +1,7 @@
 package com.example.omg_project.domain.trip.entity;
 
+import com.example.omg_project.domain.joinpost.entity.JoinPost;
+import com.example.omg_project.domain.reviewpost.entity.ReviewPost;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,4 +43,11 @@ public class Trip {
 
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL)
     private List<TripDate> tripDates;
+
+    @OneToOne(mappedBy = "trip", cascade = CascadeType.REMOVE)  // 관련 JoinPost 삭제
+    private JoinPost joinPost;
+
+    @OneToMany(mappedBy = "trip", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ReviewPost> reviewPosts;
+
 }
