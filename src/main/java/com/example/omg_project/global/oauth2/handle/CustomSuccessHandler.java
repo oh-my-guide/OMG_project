@@ -2,8 +2,7 @@ package com.example.omg_project.global.oauth2.handle;
 
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
-import com.example.omg_project.global.jwt.entity.RefreshToken;
-import com.example.omg_project.global.jwt.service.RefreshTokenService;
+import com.example.omg_project.global.jwt.service.RedisRefreshTokenService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import com.example.omg_project.global.oauth2.dto.CustomOAuth2User;
 import jakarta.servlet.ServletException;
@@ -18,7 +17,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +26,7 @@ import java.util.Optional;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenizer jwtTokenizer;
-    private final RefreshTokenService refreshTokenService;
+    private final RedisRefreshTokenService redisRefreshTokenService;
     private final UserRepository userRepository;
 
     @Override
@@ -68,14 +66,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             response.addCookie(accessTokenCookie);
             response.addCookie(refreshTokenCookie);
 
-            // 리프레시 토큰 DB 저장
-            Date date = new Date(System.currentTimeMillis() + jwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT);
-            RefreshToken refreshTokenEntity = new RefreshToken();
-            refreshTokenEntity.setValue(refreshToken);
-            refreshTokenEntity.setUserId(userId);
-            refreshTokenEntity.setExpiration(date.toString());
-
-            refreshTokenService.addRefreshToken(refreshTokenEntity);
+            redisRefreshTokenService.addRefreshToken(refreshToken, jwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT);
 
             if (user.get().getGender().equals("default")) {
                 response.sendRedirect("/oauthPage");

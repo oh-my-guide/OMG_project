@@ -72,6 +72,9 @@ dependencies {
 
     // validation
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 tasks.named('test') {

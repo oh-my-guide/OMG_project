@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>관리자 대시보드</title>
+    <title>관리자 대시보드 - 여행 후기 게시글</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="/css/header.css">
     <style>
@@ -75,33 +75,31 @@
             background-color: #6ea8dc;
         }
     </style>
-
 </head>
 <body>
 <div class="container">
     <div th:replace="fragments/header :: headerFragment"></div>
     <a th:href="@{/}">홈</a>
     <div class="main-content">
-        <h2>OMG 사용자 목록</h2>
+        <h2>여행 후기 게시글 목록</h2>
         <table>
             <thead>
             <tr>
                 <th>ID</th>
-                <th>이메일</th>
-                <th>닉네임</th>
-                <th>가입일</th>
+                <th>작성자</th>
+                <th>제목</th>
+                <th>작성일</th>
                 <th>관리</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="user : ${users}">
-                <td th:text="${user.id}">ID</td>
-                <td th:text="${user.username}">이메일</td>
-                <td th:text="${user.usernick}">닉네임</td>
-                <td th:text="${user.registrationDate}">가입일</td>
+            <tr th:each="review : ${reviews}">
+                <td th:text="${review.id}">ID</td>
+                <td th:text="${review.usernick}">작성자</td>
+                <td th:text="${review.title}">제목</td>
+                <td th:text="${review.createdAt}">작성일</td>
                 <td>
-                    <input type="hidden" id="userId" th:value="${user.id}"/>
-                    <button id="delete-account" class="text-link">탈퇴</button>
+                    <button class="remove-button" data-review-id="${review.id}">삭제</button>
                 </td>
             </tr>
             </tbody>
@@ -109,24 +107,4 @@
     </div>
 </div>
 </body>
-<script>
-    $(document).ready(function() {
-        $('#delete-account').on('click', function(e) {
-            e.preventDefault();
-            if (confirm("정말로 회원을 탈퇴시키겠습니까?")) {
-                $.ajax({
-                    type: 'DELETE',
-                    url: '/api/users/' + $('#userId').val(),
-                    success: function(response) {
-                        alert('성공적으로 회원 탈퇴 되었습니다.');
-                        window.location.href = '/admin/userboard';
-                    },
-                    error: function(error) {
-                        alert('회원 탈퇴에 실패했습니다.');
-                    }
-                });
-            }
-        });
-    });
-</script>
 </html>
