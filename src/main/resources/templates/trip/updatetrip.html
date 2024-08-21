@@ -139,6 +139,8 @@
             markers[dayNum] = [];
             tripDateData.tripLocations.forEach((loc) => {
                 addSavedPlacesMarker(loc.latitude, loc.longitude, markers[dayNum].length, dayNum);
+                // 폴리라인 그리기
+                drawLinePath(dayNum, new kakao.maps.LatLng(loc.latitude, loc.longitude));
             });
 
         } else {

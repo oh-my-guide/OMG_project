@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>OMG 고객센터</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 60px;
+            border-radius: 10px;
+        }
+
+        .main-content {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-buttons {
+            margin-bottom: 20px;
+        }
+
+        .top-button {
+            padding: 10px 20px;
+            background-color: #8FC6FF;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .top-button:hover {
+            background-color: #7ab3e0;
+        }
+
+        .question {
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .answer {
+            display: none; /* 초기에는 답변 숨김 */
+            margin-left: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="/css/header.css">
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/header :: headerFragment"></div>
+
+    <div class="header">
+        <h1>고객센터</h1>
+        <p>어려움이나 궁금한 점이 있으신가요?</p>
+        <p>전화: 1234-5678</p>
+        <p>예약 취소 문의: 오전 9시 ~ 오후 5시</p>
+    </div>
+
+    <div class="main-content">
+        <h2>자주 묻는 질문</h2>
+        <div class="top-buttons">
+            <button class="top-button" data-category="top7">TOP7</button>
+            <button class="top-button" data-category="usage">이용문의</button>
+            <button class="top-button" data-category="coupons">쿠폰/포인트</button>
+            <button class="top-button" data-category="payment">결제/영수증</button>
+            <button class="top-button" data-category="chat">채팅 관련</button>
+        </div>
+
+        <div class="faq" id="faqContainer">
+            <!-- TOP7 -->
+            <div class="question top7 hidden">
+                <h3>[리뷰] 등록한 리뷰를 수정/삭제 하고 싶어요</h3>
+                <div class="answer">
+                    <p>등록한 리뷰는 웹 상단 내 정보 > 내 여행 후기에서 직접 수정/삭제가 가능합니다.</p>
+                </div>
+            </div>
+
+            <!-- 이용문의 -->
+            <div class="question usage hidden">
+                <h3>[회원정보] 회원탈퇴는 어떻게 하나요?</h3>
+                <div class="answer">
+                    <p>회원탈퇴는 아래 방법을 통해 가능하며, 반드시 주의사항을 확인 후 진행해 주시기 바랍니다. <br/>
+                        [일반회원] <br/>
+                        - OMG 웹 > 내 정보 > 내정보 관리 > 회원탈퇴 <br/>
+                        *주의사항 <br/>
+                        · 회원탈퇴 시 계정 정보는 복구가 불가합니다. <br/>
+                        · 등록된 리뷰는 자동으로 삭제되지 않습니다. 삭제를 원하실 경우 탈퇴 전 개별적으로 삭제해 주시기 바랍니다.</p>
+                </div>
+            </div>
+            <div class="question usage hidden">
+                <h3>[회원정보] 비밀번호를 잊었어요.</h3>
+                <div class="answer">
+                    <p>[비밀번호 찾기]
+                        ※ 이메일주소 가입만 해당 <br/>
+                        1. 로그인 > 비밀번호 찾기 <br/>
+                        2. 가입 시 등록한 이메일 주소 입력 <br/>
+                        3. 이메일 주소로 발급된 새로운 비밀번호로 로그인 진행 <br/>
+                        4. 로그인 후 새로운 비밀번호 재설정 필수 <br/>
+                        <br/>
+                        위 방법으로도 이용에 불편을 겪으실 경우 OMG 고객센터로 문의해주시길 바랍니다.</p>
+                </div>
+            </div>
+
+            <!-- 채팅 관련 -->
+            <div class="question chat hidden">
+                <h3>[채팅] 채팅을 어떻게 시작하나요?</h3>
+                <div class="answer">
+                    <p>채팅은 일정에 참여를 하게 되면 시작할 수 있습니다.</p>
+                </div>
+            </div>
+            <div class="question chat hidden">
+                <h3>[채팅] 채팅이 제대로 작동하지 않아요.</h3>
+                <div class="answer">
+                    <p>채팅이 작동하지 않을 경우, 브라우저의 캐시를 지우고 페이지를 새로고침 해보세요. 문제가 계속되면 OMG 고객센터로 문의해주시기 바랍니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = document.querySelectorAll('.question');
+
+    questions.forEach(question => {
+        question.addEventListener('click', () => {
+            const answer = question.querySelector('.answer');
+            answer.style.display = (answer.style.display === 'block') ? 'none' : 'block'; // 답변 토글
+        });
+    });
+
+    document.querySelectorAll('.top-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            const questions = document.querySelectorAll('.question');
+
+            questions.forEach(question => {
+                if (question.classList.contains(category)) {
+                    question.classList.remove('hidden');
+                } else {
+                    question.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('faqContainer').style.display = 'block';
+        });
+    });
+</script>
+</body>
+</html>

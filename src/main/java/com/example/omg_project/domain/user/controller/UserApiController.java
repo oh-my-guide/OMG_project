@@ -2,15 +2,13 @@ package com.example.omg_project.domain.user.controller;
 
 import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.user.dto.request.UserLoginRequest;
-import com.example.omg_project.domain.user.dto.response.UserLoginResponse;
 import com.example.omg_project.domain.user.dto.request.UserSignUpRequest;
+import com.example.omg_project.domain.user.dto.response.UserLoginResponse;
 import com.example.omg_project.domain.user.entity.RandomNickname;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
-import com.example.omg_project.global.jwt.entity.JwtBlacklist;
-import com.example.omg_project.global.jwt.entity.RefreshToken;
-import com.example.omg_project.global.jwt.service.JwtBlacklistService;
-import com.example.omg_project.global.jwt.service.RefreshTokenService;
+import com.example.omg_project.global.jwt.service.RedisBlackTokenService;
+import com.example.omg_project.global.jwt.service.RedisRefreshTokenService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
@@ -26,7 +24,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.omg_project.global.jwt.util.JwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT;
@@ -40,8 +40,8 @@ public class UserApiController {
     private final JwtTokenizer jwtTokenizer;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenService refreshTokenService;
-    private final JwtBlacklistService jwtBlackListService;
+    private final RedisRefreshTokenService redisRefreshTokenService;
+    private final RedisBlackTokenService redisBlackTokenService;
 
     /**
      * 로그인 요청 시 jwt 토큰 발급
@@ -51,7 +51,7 @@ public class UserApiController {
                                 BindingResult bindingResult,
                                 HttpServletResponse response){
         log.info("로그인 요청이 들어왔습니다.");
-        log.info("아이디    :: {}", userLoginDto.getUsername());
+        log.info("아이디 :: {}", userLoginDto.getUsername());
         log.info("비밀번호 :: {}", userLoginDto.getPassword());
 
         if(bindingResult.hasErrors()){ // 필드 에러 확인
@@ -67,20 +67,14 @@ public class UserApiController {
 
         List<String> roles = user.get().getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
-        refreshTokenService.deleteRefreshToken(String.valueOf(user.get().getId()));
+        redisRefreshTokenService.deleteRefreshToken(String.valueOf(user.get().getId()));
 
         // 토큰 발급
         String accessToken = jwtTokenizer.createAccessToken(user.get().getId(), user.get().getUsername(), user.get().getName(),  roles);
         String refreshToken = jwtTokenizer.createRefreshToken(user.get().getId(), user.get().getUsername(), user.get().getName(), roles);
 
-        // 리프레시 토큰 디비 저장
-        Date date = new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRE_COUNT);
-        RefreshToken refreshTokenEntity = new RefreshToken();
-        refreshTokenEntity.setValue(refreshToken);
-        refreshTokenEntity.setUserId(user.get().getId());
-        refreshTokenEntity.setExpiration(date.toString());
-
-        refreshTokenService.addRefreshToken(refreshTokenEntity);
+        // 레디스 토큰 저장
+        redisRefreshTokenService.addRefreshToken(refreshToken, jwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT);
 
         // 토큰 쿠키 저장
         Cookie accessTokenCookie = new Cookie("accessToken",accessToken);
@@ -136,11 +130,12 @@ public class UserApiController {
 
         log.info("accessToken 만료시간 :: {}" , expirationTime);
 
-        JwtBlacklist blacklist = new JwtBlacklist(jwt, expirationTime);
-        jwtBlackListService.save(blacklist);
+        // 블랙리스트에 추가
+        redisBlackTokenService.addBlacklistedToken(accessToken, expirationTime.getTime() - System.currentTimeMillis());
 
         SecurityContextHolder.clearContext();
 
+        // 쿠키 삭제
         Cookie accessCookie = new Cookie("accessToken", null);
         accessCookie.setPath("/");
         accessCookie.setMaxAge(0);
@@ -151,12 +146,15 @@ public class UserApiController {
         refresCcookie.setMaxAge(0);
         response.addCookie(refresCcookie);
 
-        // tokens 데이터 삭제
-        refreshTokenService.deleteRefreshToken(refreshToken);
+        // 레디스에서 리프레시 토큰 삭제
+        if (refreshToken != null) {
+            redisRefreshTokenService.deleteRefreshToken(refreshToken);
+        }
 
         try {
             response.sendRedirect("/");
         } catch (IOException e) {
+            log.error("로그아웃 후 리디렉션 중 오류 발생", e);
             e.printStackTrace();
         }
     }
@@ -206,9 +204,8 @@ public class UserApiController {
                         .getBody()
                         .getExpiration();
 
-                // 블랙리스트에 토큰 저장
-                JwtBlacklist blacklist = new JwtBlacklist(jwt, expirationTime);
-                jwtBlackListService.save(blacklist);
+                // 레디스 토큰 저장
+                redisBlackTokenService.addBlacklistedToken(accessToken, expirationTime.getTime() - System.currentTimeMillis());
             }
 
             // SecurityContext를 클리어하여 현재 세션을 무효화
@@ -226,9 +223,9 @@ public class UserApiController {
             refreshCookie.setMaxAge(0);
             response.addCookie(refreshCookie);
 
-            // 로그아웃 전 db에 저장되어있는 refreshToken 삭제
+            // 로그아웃 전 레디스에 저장되어있는 refreshToken 삭제
             if (refreshToken != null) {
-                refreshTokenService.deleteRefreshToken(refreshToken);
+                redisRefreshTokenService.deleteRefreshToken(refreshToken);
             }
             return ResponseEntity.ok("회원 탈퇴 성공 !!");
         } catch (Exception e) {

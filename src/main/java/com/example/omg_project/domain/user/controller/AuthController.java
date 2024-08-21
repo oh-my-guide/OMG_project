@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Optional;
+
 /**
  * 로그인, 회원가입, 비로그인 페이지
  */
@@ -71,7 +73,15 @@ public class AuthController {
      * 서비스 소개 페이지
      */
     @GetMapping("/service")
-    public String showServiceInfo(){
+    public String showServiceInfo(HttpServletRequest request, Model model){
+
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElse(null);
+            model.addAttribute("user", user);
+        }
+
         return "/main/service";
     }
 }
