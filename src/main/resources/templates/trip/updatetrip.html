@@ -147,6 +147,8 @@
             tripDateData.tripLocations.forEach((loc) => {
                 // 카카오 API 기본 markers와 같게 구현하기 위해 addSavedPlacesMarker를 통해 카카오 API marker 객체로 생성
                 addSavedPlacesMarker(loc.latitude, loc.longitude, markers[dayNum].length, dayNum);
+                // 폴리라인 그리기
+                drawLinePath(dayNum, new kakao.maps.LatLng(loc.latitude, loc.longitude));
             });
 
         } else {    // tripDateData의 tripLocations이 존재하지 않는다면 해당 날짜에는 장소와 마커가 없으니 빈 배열로 초기화
