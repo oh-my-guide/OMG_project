@@ -38,7 +38,7 @@ public class JoinPostComment {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "joinPostComment", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "joinPostComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<JoinPostReply> joinPostReplies;
 
     // 엔티티가 영속화되기 전에 실행되는 메서드

@@ -13,4 +13,5 @@ public interface ReviewPostReplyService {
     ReviewPostReplyDto.Response updateReply(Long replyId, ReviewPostReplyDto.Request replyRequest);
     // 후기 대댓글 삭제
     void deleteReply(Long replyId);
+    void deleteByUserId(Long userId);
 }

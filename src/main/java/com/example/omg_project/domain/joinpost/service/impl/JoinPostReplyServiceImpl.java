@@ -62,4 +62,11 @@ public class JoinPostReplyServiceImpl implements JoinPostReplyService {
     public void deleteReply(Long replyId) {
         joinPostReplyRepository.deleteById(replyId);
     }
+
+    @Override
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        List<JoinPostReply> joinPostReplies = joinPostReplyRepository.findByUserId(userId);
+        joinPostReplyRepository.deleteAll(joinPostReplies);
+    }
 }

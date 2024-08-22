@@ -47,6 +47,9 @@ public class User {
     @Column(nullable = false)
     private String gender; // 성별
 
+    @Column(nullable = false)
+    private String status = "ACTIVE"; // 기본값 ACTIVE
+
     private String filename; // 이미지 파일 이름
 
     private String filepath; // 이미지 파일 경로
