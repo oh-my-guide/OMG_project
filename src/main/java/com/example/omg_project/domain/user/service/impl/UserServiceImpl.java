@@ -1,5 +1,12 @@
 package com.example.omg_project.domain.user.service.impl;
 
+import com.example.omg_project.domain.joinpost.entity.JoinPostComment;
+import com.example.omg_project.domain.joinpost.service.JoinPostCommentService;
+import com.example.omg_project.domain.joinpost.service.JoinPostReplyService;
+import com.example.omg_project.domain.joinpost.service.impl.JoinPostReplyServiceImpl;
+import com.example.omg_project.domain.reviewpost.entity.ReviewPostComment;
+import com.example.omg_project.domain.reviewpost.service.ReviewPostCommentService;
+import com.example.omg_project.domain.reviewpost.service.ReviewPostReplyService;
 import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.role.repository.RoleRepository;
 import com.example.omg_project.domain.trip.entity.Trip;
@@ -37,6 +44,10 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final TripServiceImpl tripServiceImpl;
     private final TripRepository tripRepository;
+    private final ReviewPostCommentService reviewPostCommentService;
+    private final ReviewPostReplyService reviewPostReplyService;
+    private final JoinPostCommentService joinPostCommentService;
+    private final JoinPostReplyService joinPostReplyService;
 
     /**
      * 회원가입 메서드
@@ -103,6 +114,13 @@ public class UserServiceImpl implements UserService {
             for (Trip trip : trips) {
                 tripServiceImpl.deleteTrip(trip.getId());
             }
+
+            // 작성한 댓글과 대댓글 삭제
+            joinPostCommentService.deleteByUserId(user.getId());
+            joinPostReplyService.deleteByUserId(user.getId());
+            reviewPostCommentService.deleteByUserId(user.getId());
+            reviewPostReplyService.deleteByUserId(user.getId());
+
             userRepository.save(user);
 
             //userRepository.delete(user);

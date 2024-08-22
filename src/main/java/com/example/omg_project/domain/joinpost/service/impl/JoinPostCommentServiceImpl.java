@@ -6,6 +6,7 @@ import com.example.omg_project.domain.joinpost.entity.JoinPostComment;
 import com.example.omg_project.domain.joinpost.repository.JoinPostCommentRepository;
 import com.example.omg_project.domain.joinpost.repository.JoinPostRepository;
 import com.example.omg_project.domain.joinpost.service.JoinPostCommentService;
+import com.example.omg_project.domain.reviewpost.entity.ReviewPostComment;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -63,5 +64,10 @@ public class JoinPostCommentServiceImpl implements JoinPostCommentService {
         joinPostCommentRepository.deleteById(commentId);
     }
 
-
+    @Override
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        List<JoinPostComment> joinPostComments = joinPostCommentRepository.findByUserId(userId);
+        joinPostCommentRepository.deleteAll(joinPostComments);
+    }
 }

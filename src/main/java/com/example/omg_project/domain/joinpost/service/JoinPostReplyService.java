@@ -13,4 +13,5 @@ public interface JoinPostReplyService {
     JoinPostReplyDto.Response updateReply(Long replyId, JoinPostReplyDto.Request replyRequest);
     // 일행 모집 대댓글 삭제
     void deleteReply(Long replyId);
+    void deleteByUserId(Long userId);
 }

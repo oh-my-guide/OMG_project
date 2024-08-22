@@ -1,5 +1,6 @@
 package com.example.omg_project.domain.reviewpost.service.impl;
 
+import com.example.omg_project.domain.joinpost.entity.JoinPostReply;
 import com.example.omg_project.domain.reviewpost.dto.ReviewPostReplyDto;
 import com.example.omg_project.domain.reviewpost.entity.ReviewPostComment;
 import com.example.omg_project.domain.reviewpost.entity.ReviewPostReply;
@@ -61,5 +62,12 @@ public class ReviewPostReplyServiceImpl implements ReviewPostReplyService {
     @Transactional
     public void deleteReply(Long replyId) {
         reviewPostReplyRepository.deleteById(replyId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        List<ReviewPostReply> reviewPostReplies = reviewPostReplyRepository.findByUserId(userId);
+        reviewPostReplyRepository.deleteAll(reviewPostReplies);
     }
 }

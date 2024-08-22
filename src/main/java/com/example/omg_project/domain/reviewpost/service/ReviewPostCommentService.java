@@ -13,4 +13,5 @@ public interface ReviewPostCommentService {
     ReviewPostCommentDto.Response updateComment(Long commentId,ReviewPostCommentDto.Request commentRequest);
     // 후기 댓글 삭제
     void deleteComment(Long commentId);
+    void deleteByUserId(Long userId);
 }
