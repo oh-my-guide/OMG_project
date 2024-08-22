@@ -12,7 +12,7 @@ public interface JoinPostService {
     // 특정 사용자의 게시글 전체 조회
     List<JoinPostDto.Response> findJoinPostsByUserId(Long userId);
     // 지역별 게시글 전체 조회
-    List<JoinPostDto.Response> findJoinPostsByCity(String region);
+    List<JoinPostDto.Response> findJoinPostsByCity(String city);
     // 일행 게시글 상세 조회
     JoinPostDto.Response findJoinPostById(Long id);
     // 일행 게시글 수정
