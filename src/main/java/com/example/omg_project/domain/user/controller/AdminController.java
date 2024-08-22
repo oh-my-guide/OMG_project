@@ -56,9 +56,22 @@ public class AdminController {
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) {
         try {
             userService.deleteUser(userId);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/posts/{postId}")
+    @ResponseBody
+    public ResponseEntity<Void> deleteReviewPost(@PathVariable("postId") Long postId) {
+        try {
+            reviewPostService.deleteReviewPost(postId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

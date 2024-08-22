@@ -106,5 +106,28 @@
         </table>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('.remove-button').on('click', function() {
+            if (confirm("정말로 이 게시글을 삭제하시겠습니까?")) {
+                const postId = $(this).data('review-id');
+                const button = $(this);
+
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/admin/posts/' + postId,
+                    success: function(response) {
+                        alert('게시글이 성공적으로 삭제되었습니다.');
+                        button.closest('tr').remove();
+                    },
+                    error: function(error) {
+                        alert('게시글 삭제에 실패했습니다.');
+                    }
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

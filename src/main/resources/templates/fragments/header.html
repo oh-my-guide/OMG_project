@@ -22,15 +22,6 @@
             <th:block th:if="${user == null}">
                 <a href="/signin" class="login-btn">로그인</a>
             </th:block>
-            <!--
-            <th:block th:if="${user != null}">
-                <div class="username" id="username" onclick="toggleDropdown()" th:text="${user.usernick}">사용자이름</div>
-                <div class="dropdown" id="dropdown-menu">
-                    <a href="/my">내 정보</a>
-                    <a href="/api/users/logout">로그아웃</a>
-                    <a href="/faq">고객센터</a>
-                </div>
-            </th:block>-->
             <th:block th:if="${user != null}">
                 <!-- 일반 사용자 또는 관리자 구분 -->
                 <div class="username" id="username" onclick="toggleDropdown()" th:text="${user.usernick}">사용자이름</div>
