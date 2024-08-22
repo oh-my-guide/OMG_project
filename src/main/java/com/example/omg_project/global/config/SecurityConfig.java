@@ -49,8 +49,10 @@ public class SecurityConfig {
             "/api/users/randomNickname", // 랜덤 닉네임 생성
             "/api/users/reset-password", "/api/users/verify-temporary-password", "/users/reset-user-password", // 임시 비밀번호 발급
             "/service",     // 프로젝트 소개 글
-            "/reviewPost/", // 여행 후기 게시글 목록
-            "/joinPost/"    // 일행 모집 게시글 목록
+            "/reviewPost/**", // 여행 후기 게시글 목록
+            "/joinPost/**",    // 일행 모집 게시글 목록
+            "/api/weather",  // 날씨 API
+            "/faq"          // 고객센터
     };
 
     // 관리자 페이지

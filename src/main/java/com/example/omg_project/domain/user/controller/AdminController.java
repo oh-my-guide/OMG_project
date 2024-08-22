@@ -6,6 +6,8 @@ import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +28,7 @@ public class AdminController {
 
         model.addAttribute("users", userService.findAllUsers());
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        if(accessToken != null){
+        if (accessToken != null) {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             User user = userService.findByUsername(username).orElse(null);
             model.addAttribute("user", user);
@@ -38,7 +40,7 @@ public class AdminController {
     public String adminPageAllReviewForm(Model model, HttpServletRequest request) {
         model.addAttribute("reviews", reviewPostService.findAllReviewPost());
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        if(accessToken != null){
+        if (accessToken != null) {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             User user = userService.findByUsername(username).orElse(null);
             model.addAttribute("user", user);
@@ -46,15 +48,17 @@ public class AdminController {
         return "user/admin-all-review";
     }
 
-    @GetMapping("/faq")
-    public String adminPageAllFaqForm(Model model, HttpServletRequest request) {
-        model.addAttribute("faqs", reviewPostService.findAllReviewPost());
-        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        if(accessToken != null){
-            String username = jwtTokenizer.getUsernameFromToken(accessToken);
-            User user = userService.findByUsername(username).orElse(null);
-            model.addAttribute("user", user);
+    /**
+     * 회원 정지
+     */
+    @DeleteMapping("/admin/{userId}")
+    @ResponseBody
+    public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) {
+        try {
+            userService.deleteUser(userId);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return "/main/faq";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
