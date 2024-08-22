@@ -33,11 +33,16 @@ public class JoinPostApiController {
     }
 
     /**
-     * 일행 게시글 전체 조회
+     * 일행 게시글 전체 조회 또는 지역별 조회
      */
     @GetMapping
-    public ResponseEntity<List<JoinPostDto.Response>> getAllJoinPosts() {
-        List<JoinPostDto.Response> joinPosts = joinPostService.findAllJoinPost();
+    public ResponseEntity<List<JoinPostDto.Response>> getAllJoinPosts(@RequestParam(required = false) String city) {
+        List<JoinPostDto.Response> joinPosts;
+        if (city != null && !city.isEmpty()) {
+            joinPosts = joinPostService.findJoinPostsByCity(city);
+        } else {
+            joinPosts = joinPostService.findAllJoinPost();
+        }
         return ResponseEntity.ok(joinPosts);
     }
 

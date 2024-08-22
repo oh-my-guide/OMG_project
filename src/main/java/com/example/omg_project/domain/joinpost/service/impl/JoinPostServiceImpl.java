@@ -55,6 +55,11 @@ public class JoinPostServiceImpl implements JoinPostService {
     }
 
     @Override
+    public List<JoinPostDto.Response> findJoinPostsByCity(String city) {
+        return joinPostRepository.findByTripCityName(city).stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public JoinPostDto.Response findJoinPostById(Long id) {
         JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
@@ -84,5 +89,6 @@ public class JoinPostServiceImpl implements JoinPostService {
     public boolean existsJoinPostByTripId(Long tripId) {
         return joinPostRepository.existsJoinPostByTripId(tripId);
     }
+
 
 }
