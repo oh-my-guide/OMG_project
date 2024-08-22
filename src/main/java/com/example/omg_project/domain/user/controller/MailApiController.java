@@ -3,17 +3,14 @@ package com.example.omg_project.domain.user.controller;
 import com.example.omg_project.domain.user.dto.request.MailRequest;
 import com.example.omg_project.domain.user.dto.request.PasswordVerificationRequest;
 import com.example.omg_project.domain.user.dto.request.MailVerificationRequest;
-import com.example.omg_project.domain.user.dto.request.UserPasswordChangeRequest;
 import com.example.omg_project.domain.user.service.MailService;
 import com.example.omg_project.domain.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,9 +35,13 @@ public class MailApiController {
      * 인증번호 검증 메소드
      */
     @PostMapping("/api/users/verify-code")
-    public String verifyCode(@RequestBody MailVerificationRequest verificationRequest) {
+    public ResponseEntity<String> verifyCode(@RequestBody MailVerificationRequest verificationRequest) {
         boolean isVerified = mailService.verifyCode(verificationRequest.getMail(), verificationRequest.getCode());
-        return isVerified ? "Verified" : "Verification failed";
+        if (isVerified) {
+            return ResponseEntity.ok("Verified");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed");
+        }
     }
 
     /**
@@ -81,6 +82,10 @@ public class MailApiController {
     @PostMapping("/api/users/verify-temporary-password")
     public ResponseEntity<String> verifyTemporaryPassword(@RequestBody PasswordVerificationRequest request) {
         boolean isVerified = mailService.verifyTemporaryPassword(request.getMail(), request.getTempPassword());
-        return isVerified ? ResponseEntity.ok("Verified") : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed");
+        if (isVerified) {
+            return ResponseEntity.ok("Verified");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed");
+        }
     }
 }

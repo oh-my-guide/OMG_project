@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -26,15 +27,17 @@ public class MailServiceImpl implements MailService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
-    private static final String senderEmail = "OMG@gmail.com";
+    private static final String senderEmail = "ch9800113@gmail.com";
     private static final Map<String, Integer> verificationCodes = new HashMap<>();
+    // private static final Map<String, String> verificationCodes = new HashMap<>();
 
     /**
      * 인증 코드 자동 생성 메서드
      */
-    public static void createNumber(String email){
-        int number = new Random().nextInt(900000) + 100000; // 100000-999999 사이의 숫자 생성
-        verificationCodes.put(email, number);
+    private static void createNumber(String email){
+        SecureRandom random = new SecureRandom();
+        int num = random.nextInt(1000000);
+        verificationCodes.put(email, num);
     }
 
     /**
@@ -86,9 +89,12 @@ public class MailServiceImpl implements MailService {
         int length = 8;
         StringBuilder sb = new StringBuilder(length);
         Random random = new Random();
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
         for (int i = 0; i < length; i++) {
-            sb.append((char) (random.nextInt(10) + '0'));
+            sb.append(characters.charAt(random.nextInt(characters.length())));
         }
+
         return sb.toString();
     }
 
@@ -103,7 +109,7 @@ public class MailServiceImpl implements MailService {
             helper.setFrom(senderEmail);
             helper.setTo(mail);
             helper.setSubject("OMG 임시 비밀번호");
-            String body = "<h2>OMG에 오신걸 환영합니다!</h2><p>아래의 임시 비밀번호를 사용하세요.</p><h1>" + tempPassword + "</h1><h3>반드시 비밀번호를 재설정하세요.</h3>";
+            String body = "<h2>OMG에 오신걸 환영합니다!</h2><p>아래의 임시 비밀번호를 사용하세요.</p><h1>" + tempPassword + "</h1><h3>로그인 후 반드시 비밀번호를 재설정하세요.</h3>";
             helper.setText(body, true);
             javaMailSender.send(message);
         } catch (MessagingException e) {

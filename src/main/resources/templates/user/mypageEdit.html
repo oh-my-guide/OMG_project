@@ -19,8 +19,7 @@
             </div>
         </div>
         <div class="form-container">
-            <form th:action="@{/my/profile}" th:object="${user}" method="post">
-
+            <form id="profile-edit-form" th:action="@{/my/profile}" th:object="${user}" method="post">
                 <div class="form-group">
                     <label for="name">이름</label>
                     <input type="text" id="name" name="name" th:field="*{name}" readonly/>
@@ -52,6 +51,29 @@
 
 <script>
     $(document).ready(function() {
+        $('#profile-edit-form').on('submit', function(e) {
+            e.preventDefault();
+
+            const userData = {
+                usernick: $('#usernick').val(),
+                phoneNumber: $('#phoneNumber').val()
+            };
+
+            $.ajax({
+                type: 'PUT',
+                url: '/api/users/profile',
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                success: function(response) {
+                    alert(response);
+                    window.location.href = '/my/profile';
+                },
+                error: function(error) {
+                    alert('회원정보 수정 중 오류가 발생했습니다.');
+                }
+            });
+        });
+
         $('#delete-account').on('click', function(e) {
             e.preventDefault();
             if (confirm("정말로 탈퇴 하시겠습니까?")) {

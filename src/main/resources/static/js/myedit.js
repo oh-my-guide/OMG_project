@@ -30,8 +30,6 @@ $(document).ready(function() {
         if (!validateForm()) {
             alert('모든 필드를 올바르게 입력해주세요.');
             event.preventDefault(); // 폼 제출 막기
-        } else {
-            alert("회원 수정이 완료되었습니다.")
         }
     });
 
