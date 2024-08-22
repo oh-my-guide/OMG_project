@@ -256,6 +256,8 @@
 <div th:replace="fragments/header :: headerFragment"></div>
 <div class="container">
     <h1 class="post-title" th:text="${post.title}"></h1>
+    <!-- postId를 숨겨진 입력 필드에 포함 -->
+    <input type="hidden" id="postId" th:value="${post.id}"/>
     <div class="post-meta">
         <div class="post-meta-left">
             <span class="post-author" th:text="${post.usernick}"></span>
@@ -280,7 +282,7 @@
         </div>
     </div>
 
-    <div class="post-content" th:text="${post.content}"></div>
+    <div class="post-content" th:utext="${post.content}"></div>
 
     <!-- 좋아요 버튼 추가 -->
     <div class="like-section">
@@ -289,7 +291,6 @@
         </button>
         <span id="likeCount">0</span>
     </div>
-
 
     <!-- userId를 숨겨진 입력 필드에 포함 -->
     <input type="hidden" id="userId" th:value="${user.getId()}"/>
@@ -319,7 +320,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const postId = [[${post.id}]];
+    const postId = $('#postId').val();
     const userId = $('#userId').val();
     const postUserId = $('#postUserId').val();
     const postTripId = $('#postTripId').val();
