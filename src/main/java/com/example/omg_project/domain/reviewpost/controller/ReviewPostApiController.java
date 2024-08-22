@@ -33,11 +33,16 @@ public class ReviewPostApiController {
     }
 
     /**
-     * 후기 게시글 전체 조회
+     * 후기 게시글 전체 조회 또는 지역별 조회
      */
     @GetMapping
-    public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts() {
-        List<ReviewPostDto.Response> reviewPosts = reviewPostService.findAllReviewPost();
+    public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts(@RequestParam(required = false) String city) {
+        List<ReviewPostDto.Response> reviewPosts;
+        if (city != null && !city.isEmpty()) {
+            reviewPosts = reviewPostService.findReviewPostsByCity(city);
+        } else {
+            reviewPosts = reviewPostService.findAllReviewPost();
+        }
         return ResponseEntity.ok(reviewPosts);
     }
 
