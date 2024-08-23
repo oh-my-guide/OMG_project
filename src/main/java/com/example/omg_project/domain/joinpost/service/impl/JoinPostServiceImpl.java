@@ -56,7 +56,7 @@ public class JoinPostServiceImpl implements JoinPostService {
 
     @Override
     public List<JoinPostDto.Response> findJoinPostsByCity(String city) {
-        return joinPostRepository.findByTripCityName(city).stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
+        return joinPostRepository.findByTrip_CityName(city).stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
     @Override

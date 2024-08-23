@@ -56,7 +56,7 @@ public class ReviewPostServiceImpl implements ReviewPostService {
 
     @Override
     public List<ReviewPostDto.Response> findReviewPostsByCity(String city) {
-        return reviewPostRepository.findByTripCityName(city).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+        return reviewPostRepository.findByTrip_CityName(city).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
     @Override
