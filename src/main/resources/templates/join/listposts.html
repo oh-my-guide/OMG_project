@@ -11,22 +11,25 @@
             padding: 20px;
             background-color: #fff;
         }
+
         h1 {
-            color: #8fc6ff; /* 글씨 색상 */
-            padding: 10px 20px; /* 테두리와 텍스트 사이의 여백 */
+            color: #8fc6ff;
+            padding: 10px 20px;
             text-align: center;
             font-size: 20px;
-            margin: 70px auto 0; /* 위쪽 여백 70px, 좌우 중앙 정렬, 아래 여백 0 */
-            background-color: #fff; /* 배경 흰색 */
-            border: 2px solid #8fc6ff; /* 글씨와 동일한 색상으로 테두리 설정 */
-            border-radius: 25px; /* 둥근 테두리 설정 */
-            display: block; /* 블록 요소로 설정 */
-            width: fit-content; /* 콘텐츠에 맞게 너비 설정 */
+            margin: 70px auto 0;
+            background-color: #fff;
+            border: 2px solid #8fc6ff;
+            border-radius: 25px;
+            display: block;
+            width: fit-content;
         }
+
         #postList {
             max-width: 800px;
             margin: 0 auto;
         }
+
         .post-item {
             display: flex;
             justify-content: space-between;
@@ -38,9 +41,11 @@
             margin-bottom: 10px;
             transition: background-color 0.3s;
         }
+
         .post-item:hover {
             background-color: #f1f1f1;
         }
+
         .post-title {
             font-size: 20px;
             font-weight: 600;
@@ -49,29 +54,19 @@
             flex: 1;
             transition: color 0.3s;
         }
+
         .post-title:hover {
             color: #0056b3;
         }
+
         .post-meta {
             text-align: right;
             font-size: 14px;
             color: #999;
         }
+
         .post-user, .post-date {
             margin: 0;
-        }
-
-        #postListHeader {
-            max-width: 800px;
-            margin: 20px auto 20px auto; /* 좌우 공백 맞추고 아래쪽 여백 추가 */
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        #filterContainer {
-            display: flex;
-            gap: 10px;
         }
 
         #createPostButton {
@@ -83,14 +78,36 @@
             cursor: pointer;
             transition: background-color 0.3s;
             font-size: medium;
+            align-self: flex-end;
         }
 
         #createPostButton:hover {
             background-color: #6ba0d6;
         }
 
+        #postListHeader {
+            max-width: 800px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        #controlsContainer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        #filterContainer {
+            display: flex;
+            gap: 10px;
+            align-self: flex-start;
+        }
+
         select {
-            padding: 5px 25px 5px 5px;
+            padding: 5px;
             border: 1px solid #8fc6ff;
             border-radius: 8px;
             background-color: #fff;
@@ -98,11 +115,12 @@
             font-size: 14px;
             cursor: pointer;
             transition: border-color 0.3s, box-shadow 0.3s;
-            appearance: none; /* 기본 드롭다운 화살표 숨기기 */
+            appearance: none;
             background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><polygon points="0,0 10,0 5,7" fill="%238fc6ff"/></svg>');
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 10px;
+            width: 145px;
         }
 
         select:hover, select:focus {
@@ -111,6 +129,52 @@
             outline: none;
         }
 
+        #searchContainer {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        #searchOption, #searchInput, #searchButton {
+            width: 68px;
+            padding: 5px;
+            border: 1px solid #8fc6ff;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #999;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #searchInput {
+            width: 150px;
+            padding: 5px;
+            border: 1px solid #8fc6ff;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #999; /* 텍스트 색상 */
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* placeholder 텍스트 색상 설정 */
+        #searchInput::placeholder {
+            color: #999; /* placeholder 텍스트 색상 */
+            opacity: 1; /* 브라우저에 따라 opacity가 적용될 수 있음 */
+        }
+
+        #searchButton {
+            width: 50px;
+            background-color: white;
+            color: #8fc6ff;
+            transition: background-color 0.3s;
+        }
+
+        #searchButton:hover {
+            border-color: #6ba0d6;
+            box-shadow: 0 0 5px rgba(107, 160, 214, 0.5);
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -118,27 +182,39 @@
 <h1>일행 모집 게시판</h1>
 
 <div id="postListHeader">
-    <div id="filterContainer">
-        <select id="regionSelect" onchange="updateCities()">
-            <option value="">도시를 선택해주세요</option>
-            <option value="특별시/광역시">특별시/광역시</option>
-            <option value="강원도">강원도</option>
-            <option value="경기도">경기도</option>
-            <option value="경상남도">경상남도</option>
-            <option value="경상북도">경상북도</option>
-            <option value="충청남도">충청남도</option>
-            <option value="충청북도">충청북도</option>
-            <option value="전라남도">전라남도</option>
-            <option value="전라북도">전라북도</option>
-            <option value="제주특별자치도">제주도</option>
-        </select>
-
-        <select id="citySelect" onchange="filterPosts()">
-            <option value="">지역을 선택해주세요</option>
-        </select>
-    </div>
-
     <button id="createPostButton" onclick="location.href='/joinPost/createPost'">글 작성</button>
+
+    <div id="controlsContainer">
+        <div id="filterContainer">
+            <select id="regionSelect" onchange="updateCities()">
+                <option value="">도시를 선택해주세요</option>
+                <option value="특별시/광역시">특별시/광역시</option>
+                <option value="강원도">강원도</option>
+                <option value="경기도">경기도</option>
+                <option value="경상남도">경상남도</option>
+                <option value="경상북도">경상북도</option>
+                <option value="충청남도">충청남도</option>
+                <option value="충청북도">충청북도</option>
+                <option value="전라남도">전라남도</option>
+                <option value="전라북도">전라북도</option>
+                <option value="제주특별자치도">제주도</option>
+            </select>
+
+            <select id="citySelect" onchange="filterPosts()">
+                <option value="">지역을 선택해주세요</option>
+            </select>
+        </div>
+
+        <div id="searchContainer">
+            <select id="searchOption">
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="usernick">글쓴이</option>
+            </select>
+            <input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+            <button id="searchButton" onclick="searchPosts()">검색</button>
+        </div>
+    </div>
 </div>
 
 <div id="postList"></div>
@@ -172,12 +248,9 @@
                 option.textContent = cityName;
                 citySelect.appendChild(option);
             });
+        } else {
+            loadPosts();
         }
-
-        // 지역을 변경할 때 citySelect를 초기화하고 전체 게시글을 조회하도록 함
-        citySelect.value = "";
-        filterPosts();
-
     }
 
     // 도시 선택에 따른 게시글 필터링 기능
@@ -215,6 +288,43 @@
                 .catch(error => console.error('Error:', error));
         }
     }
+
+    function searchPosts() {
+        const searchOption = document.getElementById('searchOption').value;
+        const keyword = document.getElementById('searchInput').value;
+
+        fetch(`/api/joinPosts/search?searchOption=${encodeURIComponent(searchOption)}&keyword=${encodeURIComponent(keyword)}`)
+            .then(response => response.json())
+            .then(posts => {
+                const postList = document.getElementById('postList');
+                postList.innerHTML = '';
+
+                if (posts.length === 0) {
+                    postList.innerHTML = '<p style="color: #999">검색 결과가 없습니다.</p>';
+                } else {
+                    posts.forEach(post => {
+                        const postItem = document.createElement('div');
+                        postItem.className = 'post-item';
+                        postItem.innerHTML = `
+                        <a href="/joinPost/${post.id}" class="post-title">${post.title}</a>
+                        <div class="post-meta">
+                            <p class="post-user">${post.usernick}</p>
+                            <p class="post-date">${post.formattedCreatedAt}</p>
+                        </div>
+                    `;
+                        postList.appendChild(postItem);
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // 검색창에서 엔터 키를 눌렀을 때도 검색이 실행되도록 설정
+    document.getElementById('searchInput').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            searchPosts();
+        }
+    });
 
     // 초기 로드 시 전체 게시글을 로드
     function loadPosts() {

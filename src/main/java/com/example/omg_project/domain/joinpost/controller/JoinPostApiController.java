@@ -56,6 +56,15 @@ public class JoinPostApiController {
     }
 
     /**
+     * 게시글 검색
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<JoinPostDto.Response>> searchJoinPosts(@RequestParam String searchOption, @RequestParam String keyword) {
+        List<JoinPostDto.Response> searchResults = joinPostService.searchJoinPosts(searchOption, keyword);
+        return ResponseEntity.ok(searchResults);
+    }
+
+    /**
      * 일행 게시글 수정
      */
     @PutMapping("/{postId}")

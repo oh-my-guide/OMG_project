@@ -56,6 +56,15 @@ public class ReviewPostApiController {
     }
 
     /**
+     * 게시글 검색
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<ReviewPostDto.Response>> searchReviewPosts(@RequestParam String searchOption, @RequestParam String keyword) {
+        List<ReviewPostDto.Response> searchResults = reviewPostService.searchReviewPosts(searchOption, keyword);
+        return ResponseEntity.ok(searchResults);
+    }
+
+    /**
      * 후기 게시글 수정
      */
     @PutMapping("/{postId}")

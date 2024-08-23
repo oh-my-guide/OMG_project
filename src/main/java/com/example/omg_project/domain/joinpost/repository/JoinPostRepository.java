@@ -12,4 +12,8 @@ public interface JoinPostRepository extends JpaRepository<JoinPost, Long> {
     List<JoinPost> findJoinPostByUserId(Long userId);
     // 지역별 전체 게시글 조회
     List<JoinPost> findByTrip_CityName(String cityName);
+    // 검색 기능 추가: 개별 필드별 검색
+    List<JoinPost> findByTitleContaining(String title);
+    List<JoinPost> findByContentContaining(String content);
+    List<JoinPost> findByUser_UsernickContaining(String usernick);
 }

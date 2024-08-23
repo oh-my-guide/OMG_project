@@ -61,6 +61,30 @@ public class JoinPostServiceImpl implements JoinPostService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<JoinPostDto.Response> searchJoinPosts(String searchOption, String keyword) {
+        List<JoinPost> results;
+
+        // 검색 옵션에 따라 조회
+        switch (searchOption) {
+            case "title":
+                results = joinPostRepository.findByTitleContaining(keyword);
+                break;
+            case "content":
+                results = joinPostRepository.findByContentContaining(keyword);
+                break;
+            case "usernick":
+                results = joinPostRepository.findByUser_UsernickContaining(keyword);
+                break;
+            default:
+                throw new IllegalArgumentException("검색 옵션이 유효하지 않습니다.");
+        }
+
+        return results.stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+
+    @Override
+    @Transactional(readOnly = true)
     public JoinPostDto.Response findJoinPostById(Long id) {
         JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
         return JoinPostDto.Response.fromEntity(joinPost);

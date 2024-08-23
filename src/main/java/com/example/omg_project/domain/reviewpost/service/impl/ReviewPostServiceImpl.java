@@ -60,6 +60,28 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     }
 
     @Override
+    public List<ReviewPostDto.Response> searchReviewPosts(String searchOption, String keyword) {
+        List<ReviewPost> results;
+
+        // 검색 옵션에 따라 조회
+        switch (searchOption) {
+            case "title":
+                results = reviewPostRepository.findByTitleContaining(keyword);
+                break;
+            case "content":
+                results = reviewPostRepository.findByContentContaining(keyword);
+                break;
+            case "usernick":
+                results = reviewPostRepository.findByUser_UsernickContaining(keyword);
+                break;
+            default:
+                throw new IllegalArgumentException("검색 옵션이 유효하지 않습니다.");
+        }
+
+        return results.stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public ReviewPostDto.Response findReviewPostById(Long id) {
         ReviewPost reviewPost = reviewPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
