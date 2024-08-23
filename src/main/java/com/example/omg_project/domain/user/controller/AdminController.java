@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class AdminController {
     /**
      * 모든 사용자 조회
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/userboard")
     public String adminPageAllUserForm(Model model, HttpServletRequest request) {
 
@@ -36,6 +38,7 @@ public class AdminController {
         return "user/admin-all-user";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/reviewboard")
     public String adminPageAllReviewForm(Model model, HttpServletRequest request) {
         model.addAttribute("reviews", reviewPostService.findAllReviewPost());
@@ -51,6 +54,7 @@ public class AdminController {
     /**
      * 회원 정지
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/{userId}")
     @ResponseBody
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) {
@@ -63,6 +67,10 @@ public class AdminController {
         }
     }
 
+    /**
+     * 게시글 정지
+     */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/posts/{postId}")
     @ResponseBody
     public ResponseEntity<Void> deleteReviewPost(@PathVariable("postId") Long postId) {
