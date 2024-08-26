@@ -24,50 +24,56 @@
             display: flex;
             justify-content: center;
             margin-top: 80px;
+            padding: 0 10px; /* 페이지 좌우 여백 추가 */
         }
         .container {
-            width: 1200px;
-            max-width: 1200px;
+            width: 100%;
+            max-width: 1600px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
+            flex-wrap: wrap; /* 화면 크기에 따라 내용이 줄바꿈되도록 설정 */
         }
         .left-content {
-            width: 35%;
+            flex: 1 1 35%;
+            max-width: 44%;
             text-align: left;
+            margin-right: 20px; /* 왼쪽 콘텐츠와 캘린더 간의 간격 */
         }
         .title {
-            font-size: 48px;
+            font-size: 40px; /* 타이틀 크기 조정 */
             font-weight: bold;
             color: #000;
-            margin-top: 100px;
+            margin-top: 20px;
             margin-bottom: 20px;
         }
         .title .highlight {
             color: #8fc6ff;
         }
         .button-container {
-            margin-bottom: 40px;
+            margin-bottom: 20px; /* 버튼 간격 조정 */
         }
         .button {
             background-color: #8fc6ff;
             color: white;
-            padding: 20px 40px;
+            padding: 15px 30px;
             text-align: center;
             text-decoration: none;
-            font-size: 32px;
+            font-size: 24px; /* 버튼 글자 크기 조정 */
             border-radius: 8px;
             display: inline-block;
         }
         .weather {
             display: flex;
-            justify-content: flex-start;
-            margin-top: 160px;
+            flex-wrap: nowrap;
+            margin-top: 40px;
         }
         .weather-item {
-            margin-right: 20px;
-            font-size: 18px;
+            margin-right: 16px;
+            font-size: 12px; /* 14 */
             text-align: center;
+            flex: 0 0 auto;
+            width: 80px;
         }
         .weather-item .day {
             font-size: 20px;
@@ -84,7 +90,6 @@
             width: 100%;
             height: 700px;
         }
-
         /* 캘린더 스타일링 */
         .fc {
             font-family: Arial, sans-serif;
@@ -146,6 +151,13 @@
             padding: 5px;
             border-radius: 5px;
         }
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+        }
+        .weather-section {
+            margin-top: 250px;
+        }
     </style>
 </head>
 <body>
@@ -159,36 +171,10 @@
             <div class="button-container">
                 <a href="/trip/select" class="button">OMG 시작하기</a>
             </div>
-            <div class="weather">
-                <div class="weather-item">
-                    <div class="day">목</div>
-                    <div class="temp">26° 35°</div>
-                    <div>0% 20%</div>
-                </div>
-                <div class="weather-item">
-                    <div class="day">금</div>
-                    <div class="temp">27° 33°</div>
-                    <div>30% 40%</div>
-                </div>
-                <div class="weather-item">
-                    <div class="day">토</div>
-                    <div class="temp">27° 33°</div>
-                    <div>40% 40%</div>
-                </div>
-                <div class="weather-item">
-                    <div class="day">일</div>
-                    <div class="temp">27° 33°</div>
-                    <div>40% 40%</div>
-                </div>
-                <div class="weather-item">
-                    <div class="day">월</div>
-                    <div class="temp">26° 32°</div>
-                    <div>40% 40%</div>
-                </div>
-                <div class="weather-item">
-                    <div class="day">화</div>
-                    <div class="temp">26° 33°</div>
-                    <div>40% 40%</div>
+            <div class="weather-section">
+                 <div>
+                    <h3>이번 주 날씨</h3>
+                    <div class="weather" id="weather-container"></div>
                 </div>
             </div>
         </div>
@@ -209,7 +195,7 @@
                 left: 'title',
                 right: 'prev,next today'
             },
-            events: function(fetchInfo, successCallback, failureCallback) {
+            events: function (fetchInfo, successCallback, failureCallback) {
                 fetch('/api/events')
                     .then(response => response.json())
                     .then(data => successCallback(data))
@@ -217,9 +203,130 @@
                         console.error('Error fetching events:', error);
                         failureCallback(error);
                     });
+            },
+            // 위도와 경도를 가져와서 보여주기
+            eventClick: function(info) {
+                console.log(info.event.extendedProps); // 여기서 이벤트 데이터 확인
+                const latitude = info.event.extendedProps.latitude;
+                const longitude = info.event.extendedProps.longitude;
+
+                if (latitude && longitude) {
+                    fetchWeatherByCoords(latitude, longitude);
+                } else {
+                    console.error('위도 또는 경도 값이 없습니다.');
+                }
             }
+
         });
         calendar.render();
+
+<!-- 날씨 API 불러오기 -->
+        const weatherContainer = document.getElementById('weather-container');
+        const currentWeather = document.getElementById('current-weather');
+        const currentDateEl = document.getElementById('current-date');
+
+        // 위치 이름으로 날씨 불러오기
+        function fetchWeather(location) {
+            fetch(`/api/weather?location=${encodeURIComponent(location)}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayWeather(data);
+                })
+                .catch(error => console.error('날씨 정보를 가져오지 못했습니다:', error));
+        }
+
+        // 위도와 경도로 날씨 불러오기
+        function fetchWeatherByCoords(lat, lon) {
+            fetch(`/api/weather/coords?lat=${lat}&lon=${lon}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayWeather(data);
+                    updateCurrentDate();  // 현재 날짜를 업데이트하는 함수 호출
+                })
+                .catch(error => console.error('날씨 정보를 가져오지 못했습니다:', error));
+        }
+
+        function updateCurrentDate() {
+            const today = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = today.toLocaleDateString('ko-KR', options);
+            currentDateEl.innerHTML = `<div>${formattedDate}</div>`;
+        }
+
+        function displayWeather(data) {
+            if (!data || !data.list || data.list.length === 0) {
+                console.error('유효한 날씨 데이터가 없습니다.');
+                return;
+            }
+            // 날짜별로 날씨 정보를 집계
+            const weatherMap = {};
+            data.list.forEach(item => {
+                const date = new Date(item.dt * 1000);
+                const weekdayOptions = { weekday: 'short' };
+                const dateOptions = { month: 'numeric', day: 'numeric' };
+                const weekday = date.toLocaleDateString('ko-KR', weekdayOptions);
+                const formattedDate = date.toLocaleDateString('ko-KR', dateOptions);
+
+                if (!weatherMap[formattedDate]) {
+                    weatherMap[formattedDate] = {
+                        tempSum: 0,
+                        count: 0,
+                        weatherDescription: item.weather[0].description,
+                        iconCode: item.weather[0].icon,
+                        weekday: weekday
+                    };
+                }
+                weatherMap[formattedDate].tempSum += item.main.temp;
+                weatherMap[formattedDate].count += 1;
+            });
+
+            const weatherItems = Object.keys(weatherMap).map(date => {
+                const weatherInfo = weatherMap[date];
+                const averageTemp = (weatherInfo.tempSum / weatherInfo.count).toFixed(1);
+                const iconUrl = `http://openweathermap.org/img/wn/${weatherInfo.iconCode}@2x.png`;
+
+                return `
+                    <div class="weather-item">
+                        <div class="day">${weatherInfo.weekday}</div>
+                        <div class="date">${date}</div>
+                        <div class="temp">${averageTemp}°C</div>
+                        <img src="${iconUrl}" alt="날씨 아이콘" class="weather-icon"/>
+                        <div>${weatherInfo.weatherDescription}</div>
+                    </div>
+                `;
+            }).join('');
+
+            weatherContainer.innerHTML = weatherItems;
+
+            const today = new Date();
+            const options = {year: 'numeric', month: 'long', day: 'numeric'};
+            const formattedDate = today.toLocaleDateString('ko-KR', options);
+
+            const currentItem = data.list[0];
+            currentWeather.innerHTML = `
+                <div class="current-temp">${currentItem.main.temp.toFixed(1)}°C</div>
+                <img src="http://openweathermap.org/img/wn/${currentItem.weather[0].icon}@2x.png" alt="날씨 아이콘" class="weather-icon"/>
+                <div class="current-description">${currentItem.weather[0].description}</div>
+            `;
+            currentDateEl.innerHTML = `<div>${formattedDate}</div>`;
+        }
+
+        fetchWeather('Seoul'); // 제일먼저 보이는 기본값 서울
+
+        // 엔터 쳐도 입력 가능하도록
+        document.getElementById('location-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.getElementById('search-button').click();
+            }
+        });
+    });
+</script>
+<!-- 상담 채널 톡-->
+<script>
+    (function(){var w=window;if(w.ChannelIO){return w.console.error("ChannelIO script included twice.");}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(args){ch.q.push(args);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x);}}if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}})();
+
+    ChannelIO('boot', {
+        "pluginKey": "e790423c-0d86-4e17-bab1-e08a8ce5d40a"
     });
 </script>
 </body>
