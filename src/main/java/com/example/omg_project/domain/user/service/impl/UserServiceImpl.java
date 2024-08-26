@@ -28,6 +28,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -214,5 +216,27 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void updateProfileImage(String username, String imageUrl) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            // imageUrl에서 파일 이름 추출
+            URL url = null;
+            try {
+                url = new URL(imageUrl);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            String filename = url.getPath().substring(url.getPath().lastIndexOf("/") + 1);
+
+            user.setFilename(filename);
+            user.setFilepath(imageUrl);
+
+            userRepository.save(user);
+        }
     }
 }
