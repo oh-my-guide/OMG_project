@@ -129,6 +129,10 @@
             outline: none;
         }
 
+        #sortOption {
+            width: 70px;
+        }
+
         #searchContainer {
             display: flex;
             gap: 5px;
@@ -185,6 +189,10 @@
 
     <div id="controlsContainer">
         <div id="filterContainer">
+            <select id="sortOption" onchange="loadPosts()">
+                <option value="latest">최신순</option>
+                <option value="views">인기순</option>
+            </select>
             <select id="regionSelect" onchange="updateCities()">
                 <option value="">도시를 선택해주세요</option>
                 <option value="특별시/광역시">특별시/광역시</option>
@@ -255,38 +263,44 @@
     // 도시 선택에 따른 게시글 필터링 기능
     function filterPosts() {
         const cityName = document.getElementById('citySelect').value;
+        const sortOption = document.getElementById('sortOption').value;
 
-        if (!cityName) {
-            loadPosts(); // 도시 선택이 없으면 전체 게시글 조회
-        } else {
-            fetch(`/api/reviewPosts?city=${encodeURIComponent(cityName)}`)
-                .then(response => response.json())
-                .then(posts => {
-                    const postList = document.getElementById('postList');
-                    postList.innerHTML = '';
-
-                    if (posts.length === 0) {
-                        postList.innerHTML = '<p style="color: #999">선택한 지역의 게시글이 없습니다.</p>';
-                    } else {
-                        posts.forEach(post => {
-                            const postItem = document.createElement('div');
-                            postItem.className = 'post-item';
-                            postItem.innerHTML = `
-                                <a href="/reviewPost/${post.id}" class="post-title">${post.title}</a>
-                                <div class="post-meta">
-                                    <p class="post-user">${post.usernick}</p>
-                                    <p class="post-date">${post.formattedCreatedAt}</p>
-                                </div>
-                            `;
-                            postList.appendChild(postItem);
-                        });
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
+        loadPosts(cityName, sortOption);
     }
 
-    // 검색 기능
+    // 정렬 옵션이 변경될 때 게시글을 다시 로드하는 함수
+    function loadPosts(cityName, sortOption) {
+        cityName = cityName || document.getElementById('citySelect').value || '';
+        sortOption = sortOption || document.getElementById('sortOption').value;
+
+        let url = `/api/reviewPosts?sort=${sortOption}`;
+
+        if (cityName) {
+            url += `&city=${encodeURIComponent(cityName)}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(posts => {
+                const postList = document.getElementById('postList');
+                postList.innerHTML = '';
+
+                posts.forEach(post => {
+                    const postItem = document.createElement('div');
+                    postItem.className = 'post-item';
+                    postItem.innerHTML = `
+                        <a href="/reviewPost/${post.id}" class="post-title">${post.title}</a>
+                        <div class="post-meta">
+                            <p class="post-user">${post.usernick}</p>
+                            <p class="post-date">${post.formattedCreatedAt}</p>
+                        </div>
+                    `;
+                    postList.appendChild(postItem);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     function searchPosts() {
         const searchOption = document.getElementById('searchOption').value;
         const keyword = document.getElementById('searchInput').value;
@@ -317,38 +331,12 @@
             .catch(error => console.error('Error:', error));
     }
 
-    // 검색창에서 엔터 키를 눌렀을 때도 검색이 실행되도록 설정
     document.getElementById('searchInput').addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             searchPosts();
         }
     });
 
-    // 초기 로드 시 전체 게시글을 로드
-    function loadPosts() {
-        fetch('/api/reviewPosts')
-            .then(response => response.json())
-            .then(posts => {
-                const postList = document.getElementById('postList');
-                postList.innerHTML = '';
-
-                posts.forEach(post => {
-                    const postItem = document.createElement('div');
-                    postItem.className = 'post-item';
-                    postItem.innerHTML = `
-                        <a href="/reviewPost/${post.id}" class="post-title">${post.title}</a>
-                        <div class="post-meta">
-                            <p class="post-user">${post.usernick}</p>
-                            <p class="post-date">${post.formattedCreatedAt}</p>
-                        </div>
-                    `;
-                    postList.appendChild(postItem);
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    // 페이지 로드 시 전체 게시글 로드
     loadPosts();
 </script>
 </body>

@@ -129,6 +129,10 @@
             outline: none;
         }
 
+        #sortOption {
+            width: 70px;
+        }
+
         #searchContainer {
             display: flex;
             gap: 5px;
@@ -186,6 +190,10 @@
 
     <div id="controlsContainer">
         <div id="filterContainer">
+            <select id="sortOption" onchange="loadPosts()">
+                <option value="latest">최신순</option>
+                <option value="views">인기순</option>
+            </select>
             <select id="regionSelect" onchange="updateCities()">
                 <option value="">도시를 선택해주세요</option>
                 <option value="특별시/광역시">특별시/광역시</option>
@@ -256,37 +264,46 @@
     // 도시 선택에 따른 게시글 필터링 기능
     function filterPosts() {
         const cityName = document.getElementById('citySelect').value;
+        const sortOption = document.getElementById('sortOption').value;
 
-        if (!cityName) {
-            // 도시를 선택하지 않았을 경우 전체 게시글 조회
-            loadPosts();
-        } else {
-            // 특정 도시가 선택된 경우 해당 도시의 게시글만 조회
-            fetch(`/api/joinPosts?city=${encodeURIComponent(cityName)}`)
-                .then(response => response.json())
-                .then(posts => {
-                    const postList = document.getElementById('postList');
-                    postList.innerHTML = '';
+        loadPosts(cityName, sortOption);
+    }
 
-                    if (posts.length === 0) {
-                        postList.innerHTML = '<p style="color: #999">선택한 지역의 게시글이 없습니다.</p>';
-                    } else {
-                        posts.forEach(post => {
-                            const postItem = document.createElement('div');
-                            postItem.className = 'post-item';
-                            postItem.innerHTML = `
-                            <a href="/joinPost/${post.id}" class="post-title">${post.title}</a>
-                            <div class="post-meta">
-                                <p class="post-user">${post.usernick}</p>
-                                <p class="post-date">${post.formattedCreatedAt}</p>
-                            </div>
-                        `;
-                            postList.appendChild(postItem);
-                        });
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+    // 정렬 옵션이 변경될 때 게시글을 다시 로드하는 함수
+    function loadPosts(cityName, sortOption) {
+        // cityName이 undefined일 경우 빈 문자열로 설정
+        cityName = cityName || document.getElementById('citySelect').value || '';
+        // sortOption이 undefined일 경우 현재 선택된 정렬 옵션으로 설정
+        sortOption = sortOption || document.getElementById('sortOption').value;
+
+        console.log("도시: " + cityName + ", 정렬: " + sortOption);  // 디버깅용 출력
+
+        let url = `/api/joinPosts?sort=${sortOption}`;
+
+        if (cityName) {
+            url += `&city=${encodeURIComponent(cityName)}`;
         }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(posts => {
+                const postList = document.getElementById('postList');
+                postList.innerHTML = '';
+
+                posts.forEach(post => {
+                    const postItem = document.createElement('div');
+                    postItem.className = 'post-item';
+                    postItem.innerHTML = `
+                <a href="/joinPost/${post.id}" class="post-title">${post.title}</a>
+                <div class="post-meta">
+                    <p class="post-user">${post.usernick}</p>
+                    <p class="post-date">${post.formattedCreatedAt}</p>
+                </div>
+            `;
+                    postList.appendChild(postItem);
+                });
+            })
+            .catch(error => console.error('Error:', error));
     }
 
     function searchPosts() {
@@ -306,12 +323,12 @@
                         const postItem = document.createElement('div');
                         postItem.className = 'post-item';
                         postItem.innerHTML = `
-                        <a href="/joinPost/${post.id}" class="post-title">${post.title}</a>
-                        <div class="post-meta">
-                            <p class="post-user">${post.usernick}</p>
-                            <p class="post-date">${post.formattedCreatedAt}</p>
-                        </div>
-                    `;
+                <a href="/joinPost/${post.id}" class="post-title">${post.title}</a>
+                <div class="post-meta">
+                    <p class="post-user">${post.usernick}</p>
+                    <p class="post-date">${post.formattedCreatedAt}</p>
+                </div>
+            `;
                         postList.appendChild(postItem);
                     });
                 }
@@ -319,36 +336,12 @@
             .catch(error => console.error('Error:', error));
     }
 
-    // 검색창에서 엔터 키를 눌렀을 때도 검색이 실행되도록 설정
+    // 검색창에서 엔터 키를 눌렀을 때 검색이 실행되도록 설정
     document.getElementById('searchInput').addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             searchPosts();
         }
     });
-
-    // 초기 로드 시 전체 게시글을 로드
-    function loadPosts() {
-        fetch('/api/joinPosts')
-            .then(response => response.json())
-            .then(posts => {
-                const postList = document.getElementById('postList');
-                postList.innerHTML = '';
-
-                posts.forEach(post => {
-                    const postItem = document.createElement('div');
-                    postItem.className = 'post-item';
-                    postItem.innerHTML = `
-                        <a href="/joinPost/${post.id}" class="post-title">${post.title}</a>
-                        <div class="post-meta">
-                            <p class="post-user">${post.usernick}</p>
-                            <p class="post-date">${post.formattedCreatedAt}</p>
-                        </div>
-                    `;
-                    postList.appendChild(postItem);
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
 
     // 페이지 로드 시 전체 게시글 로드
     loadPosts();

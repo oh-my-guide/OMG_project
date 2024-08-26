@@ -9,6 +9,7 @@ import com.example.omg_project.domain.trip.repository.TripRepository;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,8 +44,16 @@ public class JoinPostServiceImpl implements JoinPostService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<JoinPostDto.Response> findAllJoinPost() {
-        return joinPostRepository.findAll().stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
+    public List<JoinPostDto.Response> findAllJoinPost(String sort) {
+        Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
+        if ("views".equals(sort)) {
+            sorting = Sort.by(Sort.Direction.DESC, "views"); // 인기순 정렬
+        }
+
+        return joinPostRepository.findAll(sorting)
+                .stream()
+                .map(JoinPostDto.Response::fromEntity)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -55,10 +64,18 @@ public class JoinPostServiceImpl implements JoinPostService {
     }
 
     @Override
-    public List<JoinPostDto.Response> findJoinPostsByCity(String city) {
-        return joinPostRepository.findByTrip_CityName(city).stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
-    }
+    @Transactional(readOnly = true)
+    public List<JoinPostDto.Response> findJoinPostsByCity(String city, String sort) {
+        Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
+        if ("views".equals(sort)) {
+            sorting = Sort.by(Sort.Direction.DESC, "views"); // 인기순 정렬
+        }
 
+        return joinPostRepository.findByTrip_CityName(city, sorting)
+                .stream()
+                .map(JoinPostDto.Response::fromEntity)
+                .collect(Collectors.toList());
+    }
     @Override
     @Transactional(readOnly = true)
     public List<JoinPostDto.Response> searchJoinPosts(String searchOption, String keyword) {
@@ -82,7 +99,6 @@ public class JoinPostServiceImpl implements JoinPostService {
         return results.stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public JoinPostDto.Response findJoinPostById(Long id) {
@@ -93,8 +109,7 @@ public class JoinPostServiceImpl implements JoinPostService {
     @Override
     @Transactional
     public JoinPostDto.Response updateJoinPost(Long id, JoinPostDto.Request joinPostRequest) {
-        JoinPost originPost = joinPostRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        JoinPost originPost = joinPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
 
         // 엔티티 메서드를 통해 업데이트
         originPost.updateContent(joinPostRequest.getTitle(), joinPostRequest.getContent());
@@ -114,5 +129,11 @@ public class JoinPostServiceImpl implements JoinPostService {
         return joinPostRepository.existsJoinPostByTripId(tripId);
     }
 
+    @Override
+    @Transactional
+    public void incrementViews(Long id) {
+        JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        joinPost.incrementViews();
+    }
 
 }

@@ -24,7 +24,7 @@ public class ReviewPostApiController {
     }
 
     /**
-     * 후기 게시글 단건 조회
+     * 후기 게시글 상세 조회
      */
     @GetMapping("/{postId}")
     public ResponseEntity<ReviewPostDto.Response> getReviewPostById(@PathVariable(name = "postId") Long id) {
@@ -36,12 +36,13 @@ public class ReviewPostApiController {
      * 후기 게시글 전체 조회 또는 지역별 조회
      */
     @GetMapping
-    public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts(@RequestParam(required = false) String city) {
+    public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts(@RequestParam(required = false) String city,
+                                                                          @RequestParam(required = false) String sort) {
         List<ReviewPostDto.Response> reviewPosts;
         if (city != null && !city.isEmpty()) {
-            reviewPosts = reviewPostService.findReviewPostsByCity(city);
+            reviewPosts = reviewPostService.findReviewPostsByCity(city, sort);
         } else {
-            reviewPosts = reviewPostService.findAllReviewPost();
+            reviewPosts = reviewPostService.findAllReviewPost(sort);
         }
         return ResponseEntity.ok(reviewPosts);
     }

@@ -9,6 +9,7 @@ import com.example.omg_project.domain.trip.repository.TripRepository;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,9 +43,18 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ReviewPostDto.Response> findAllReviewPost() {
         return reviewPostRepository.findAll().stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReviewPostDto.Response> findAllReviewPost(String sort) {
+        Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
+        if ("views".equals(sort)) {
+            sorting = Sort.by(Sort.Direction.DESC, "views"); // 인기순 정렬
+        }
+        return reviewPostRepository.findAll(sorting).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -55,8 +65,12 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     }
 
     @Override
-    public List<ReviewPostDto.Response> findReviewPostsByCity(String city) {
-        return reviewPostRepository.findByTrip_CityName(city).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+    public List<ReviewPostDto.Response> findReviewPostsByCity(String city, String sort) {
+        Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
+        if ("views".equals(sort)) {
+            sorting = Sort.by(Sort.Direction.DESC, "views"); // 인기순 정렬
+        }
+        return reviewPostRepository.findByTrip_CityName(city, sorting).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -104,5 +118,14 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     @Transactional
     public void deleteReviewPost(Long id) {
         reviewPostRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void incrementViews(Long id) {
+        ReviewPost reviewPost = reviewPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        System.out.println("임플 전" + reviewPost.getViews());
+        reviewPost.incrementViews();
+        System.out.println("임플 후" + reviewPost.getViews());
     }
 }
