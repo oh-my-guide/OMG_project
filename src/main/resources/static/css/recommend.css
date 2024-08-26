@@ -1,0 +1,166 @@
+/* 추천 창 스타일 */
+.filter_wrap {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    width: 280px;
+    height: calc(100% - 90px); /* 아래쪽에 여유 공간을 주기 위해 높이 조정 */
+    padding: 10px 20px 20px 20px;
+    margin: 0px 10px 10px 10px; /* 아래쪽 마진 추가 */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px 0 0 10px;
+    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+/* 창 접기 버튼 */
+.toggleButton {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 60px;
+    height: 30px;
+    background-color: #8fc6ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    z-index: 10000;
+}
+
+/* 제목 스타일 */
+#filterTitle {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 20px 20px;
+    background-color: #fff;
+}
+
+#filterContent {
+    display: block;
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+    overflow-y: auto; /* 콘텐츠 전체를 스크롤 가능하게 설정 */
+    height: 100%;
+}
+
+#filterButtons {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    gap: 5px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+#filterButtons button {
+    padding: 4px 8px;
+    background-color: #8fc6ff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+#filterButtons button:hover {
+    background-color: #89BDF5;
+}
+
+#filteredPlacesListContainer {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 20px; /* 추가 패딩으로 마지막 글씨가 잘리지 않도록 */
+    margin-bottom: 10px;
+    border-top: 1px solid #ddd;
+}
+
+#filteredPlacesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#filteredPlacesList li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%; /* 리스트 아이템이 부모 컨테이너를 채우도록 설정 */
+}
+#filteredPlacesList .place-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+}
+#filteredPlacesList .place-contact {
+    display: flex;
+    gap: 10px;
+}
+
+#filteredPlacesList .place-contact p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.4;
+}
+
+#filteredPlacesList img {
+    max-width: 100px;
+    height: auto;
+    margin-right: 10px;
+    border-radius: 4px;
+}
+
+#filteredPlacesList h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+#filteredPlacesList p {
+    margin: 0;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+#filteredPlacesList p strong {
+    color: #333;
+    font-weight: bold;
+}
+
+#filteredPlacesList .no-data {
+    font-size: 16px;
+    color: #888;
+    text-align: center;
+}
+
+.filter_wrap.hidden {
+    right: -300px;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+

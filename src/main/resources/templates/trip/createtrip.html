@@ -6,54 +6,10 @@
     <title>여행 일정 생성</title>
     <link rel="stylesheet" href="/css/trip.css">
     <link rel="stylesheet" href="/css/map.css">
+    <link rel="stylesheet" href="/css/recommend.css">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .container {
-            display: flex;
-        }
-        .form_wrap {
-            width: 30%;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        .map_wrap {
-            width: 70%;
-            padding: 10px;
-            box-sizing: border-box;
-            position: relative;
-        }
-        #map {
-            width: 100%;
-            height: 400px;
-            background-color: #f0f0f0;
-        }
-        #menu_wrap {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 300px;
-            background: white;
-            border: 1px solid #ddd;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-            z-index: 2;
-            display: none; /* 기본적으로 숨김 */
-        }
-        .filter_wrap {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 300px;
-            background: white;
-            border: 1px solid #ddd;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-            z-index: 3; /* 지도가 아래에 오도록 설정 */
-            display: block; /* 필터 창 기본적으로 보이도록 설정 */
-        }
-        #filterButtons button {
-            margin: 5px 0;
-            width: 100%;
-        }
-    </style>
+
 </head>
 <body>
 <div class="container">
@@ -124,19 +80,25 @@
         </div>
 
         <!-- 필터링 버튼 및 결과 창 -->
+        <button id="toggleButton" class="toggleButton">접기</button> <!-- 접기/펼치기 버튼을 창 밖으로 이동 -->
         <div class="filter_wrap" id="filter_wrap">
-            <div id="filterButtons">
-                <button type="button" onclick="filterPlaces(12)">관광지</button>
-                <button type="button" onclick="filterPlaces(14)">문화시설</button>
-                <button type="button" onclick="filterPlaces(15)">축제공연행사</button>
-                <button type="button" onclick="filterPlaces(25)">여행코스</button>
-                <button type="button" onclick="filterPlaces(28)">레포츠</button>
-                <button type="button" onclick="filterPlaces(32)">숙박</button>
-                <button type="button" onclick="filterPlaces(38)">쇼핑</button>
-                <button type="button" onclick="filterPlaces(39)">음식점</button>
+            <h3 id="filterTitle">여행 명소 추천</h3> <!-- 제목 추가 -->
+            <div id="filterContent">
+                <div id="filterButtons">
+                    <button type="button" onclick="filterPlaces(12)">관광지</button>
+                    <button type="button" onclick="filterPlaces(39)">식당</button>
+                    <button type="button" onclick="filterPlaces(32)">숙박</button>
+                    <button type="button" onclick="filterPlaces(14)">문화시설</button>
+                    <button type="button" onclick="filterPlaces(15)">축제/행사</button>
+                    <button type="button" onclick="filterPlaces(28)">레포츠</button>
+                    <button type="button" onclick="filterPlaces(38)">쇼핑</button>
+                </div>
+                <br>
+                <hr>
+                <div id="filteredPlacesListContainer">
+                    <ul id="filteredPlacesList"></ul>
+                </div>
             </div>
-            <hr>
-            <ul id="filteredPlacesList"></ul>
         </div>
     </div>
 </div>
@@ -235,11 +197,13 @@
 
             const itemEl = document.createElement('li');
             itemEl.innerHTML = `
-            <img src="${imageUrl}" alt="${place.title}" style="width:100px; height:auto;">
-            <h3>${place.title}</h3>
-            <p><strong>전화번호:</strong> ${phone}</p>
-            <p><strong>주소:</strong> ${address1}</p>
-        `;
+            <img src="${imageUrl}" alt="${place.title}">
+            <div class="place-info">
+                <h3>${place.title}</h3>
+                <p><strong>전화번호:</strong> ${phone}</p>
+                <p><strong>주소:</strong> ${address1}</p>
+            </div>
+            `;
             listEl.appendChild(itemEl);
         });
     }
@@ -382,9 +346,23 @@
     document.getElementById('closeBtn').addEventListener('click', function() {
         $('#menu_wrap').hide();
     });
+
+    document.getElementById('toggleButton').addEventListener('click', function() {
+        const filterWrap = document.getElementById('filter_wrap');
+        const toggleButton = document.getElementById('toggleButton');
+
+        if (filterWrap.classList.contains('hidden')) {
+            filterWrap.classList.remove('hidden');
+            toggleButton.textContent = '접기';
+        } else {
+            filterWrap.classList.add('hidden');
+            toggleButton.textContent = '열기';
+        }
+    });
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
 <script src="/js/createtrip.js"></script>
 </body>
 </html>
+
