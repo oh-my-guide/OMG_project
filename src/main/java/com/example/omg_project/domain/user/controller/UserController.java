@@ -120,7 +120,8 @@ public class UserController {
             model.addAttribute("user", user);
             try {
                 userService.updateUser(username, userEditDto);
-                if (!profileImage.isEmpty()) {
+                // 프로필 이미지 파일을 선택했을 경우
+                if (profileImage != null && !profileImage.isEmpty()) {
                     String imageUrl = imageService.upload(profileImage);
                     userService.updateProfileImage(username, imageUrl);
                 }

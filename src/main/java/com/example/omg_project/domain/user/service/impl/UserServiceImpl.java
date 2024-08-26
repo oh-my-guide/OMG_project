@@ -19,6 +19,7 @@ import com.example.omg_project.domain.user.dto.request.UserSignUpRequest;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -50,6 +51,7 @@ public class UserServiceImpl implements UserService {
     private final ReviewPostReplyService reviewPostReplyService;
     private final JoinPostCommentService joinPostCommentService;
     private final JoinPostReplyService joinPostReplyService;
+    private final ImageService imageService;
 
     /**
      * 회원가입 메서드
@@ -224,6 +226,12 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
+            // 기존 프로필 이미지가 존재하면 S3에서 기존 이미지 삭제
+            String oldProfileImageUrl = user.getFilepath();
+            if (oldProfileImageUrl != null && !oldProfileImageUrl.isEmpty()) {
+                imageService.deleteImageFromS3(oldProfileImageUrl);
+            }
+
             // imageUrl에서 파일 이름 추출
             URL url = null;
             try {
@@ -231,8 +239,9 @@ public class UserServiceImpl implements UserService {
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
-            String filename = url.getPath().substring(url.getPath().lastIndexOf("/") + 1);
 
+            // 새로운 이미지 S3에 업로드
+            String filename = url.getPath().substring(url.getPath().lastIndexOf("/") + 1);
             user.setFilename(filename);
             user.setFilepath(imageUrl);
 
