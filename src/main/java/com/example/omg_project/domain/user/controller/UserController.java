@@ -5,15 +5,15 @@ import com.example.omg_project.domain.user.dto.request.UserEditRequest;
 import com.example.omg_project.domain.user.dto.request.UserPasswordChangeRequest;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.image.service.ImageService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
@@ -25,6 +25,7 @@ public class UserController {
 
     private final UserService userService;
     private final JwtTokenizer jwtTokenizer;
+    private final ImageService imageService;
 
     /**
      * 모든 로그인 회원의 마이페이지
@@ -107,7 +108,10 @@ public class UserController {
      * 회원 정보 수정 처리
      */
     @PostMapping("/my/profile")
-    public String userEdit(HttpServletRequest request, @ModelAttribute UserEditRequest userEditDto, Model model) {
+    public String userEdit(HttpServletRequest request,
+                           @ModelAttribute UserEditRequest userEditDto,
+                           @RequestParam("profileImage") MultipartFile profileImage,
+                           Model model) {
 
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         if(accessToken != null){
@@ -116,6 +120,10 @@ public class UserController {
             model.addAttribute("user", user);
             try {
                 userService.updateUser(username, userEditDto);
+                if (!profileImage.isEmpty()) {
+                    String imageUrl = imageService.upload(profileImage);
+                    userService.updateProfileImage(username, imageUrl);
+                }
             } catch (Exception e) {
                 log.info("회원정보 수정 중 오류 발생 :: " + e.getMessage());
                 e.printStackTrace();
