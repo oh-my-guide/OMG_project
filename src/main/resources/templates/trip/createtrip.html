@@ -152,7 +152,7 @@
         }
 
         // 기본 설정
-        const serviceKey = "bR6YX%2Fkp0Y%2Bvm31sUAayaUZjxmI7dVH0PTsTtlb90Ae9abKUTxIFBc7X4u1wnHnDUuk8uYekiXhdYgb5iyiw5w%3D%3D";  // 발급받은 서비스 키를 사용하세요
+        const serviceKey = "bR6YX%2Fkp0Y%2Bvm31sUAayaUZjxmI7dVH0PTsTtlb90Ae9abKUTxIFBc7X4u1wnHnDUuk8uYekiXhdYgb5iyiw5w%3D%3D";
         const numOfRows = 10;  // 한 페이지에 표시할 결과 수
         const pageNo = 1;  // 페이지 번호
         const MobileOS = "ETC";  // 운영체제 정보
@@ -181,6 +181,7 @@
             });
     }
 
+    // 결과 화면에 띄우기
     function displayFilteredPlaces(places) {
         const listEl = document.getElementById('filteredPlacesList');
         listEl.innerHTML = '';
@@ -192,8 +193,8 @@
 
         places.forEach(place => {
             const imageUrl = place.firstimage || 'https://via.placeholder.com/100';  // 기본 이미지 사용
-            const phone = place.tel || '전화번호 없음';
-            const address1 = place.addr1 || '주소 없음';
+            const phone = place.tel || 'x';
+            const address1 = place.addr1 || 'x';
 
             const itemEl = document.createElement('li');
             itemEl.innerHTML = `
@@ -347,6 +348,7 @@
         $('#menu_wrap').hide();
     });
 
+    //여행 명소 추천 창 접었다 열기 토글
     document.getElementById('toggleButton').addEventListener('click', function() {
         const filterWrap = document.getElementById('filter_wrap');
         const toggleButton = document.getElementById('toggleButton');
@@ -357,6 +359,17 @@
         } else {
             filterWrap.classList.add('hidden');
             toggleButton.textContent = '열기';
+        }
+    });
+
+    //도시 선택 시 바로 관광지 화면에 띄우기
+    document.getElementById('citySelect').addEventListener('change', function() {
+        selectedCityName = this.value;  // 도시 선택 시 selectedCityName에 값 저장
+        console.log('Selected city:', selectedCityName);
+
+        if (selectedCityName) {
+            // 도시가 선택되면 관광지 필터를 자동으로 적용
+            filterPlaces(12); // 관광지 id -> 12
         }
     });
 </script>
