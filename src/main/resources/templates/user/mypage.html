@@ -17,7 +17,7 @@
 
     <div class="main-content">
         <div class="user-info">
-            <img src="/files/user.png" alt="Profile Picture">
+            <img th:src="@{${user.filepath != null ? user.filepath : '/files/user.png'}}" alt="프로필 사진">
             <p><span th:text="${user.usernick}"></span>님</p>
             <a href="/my/profile" class="link-button">내정보 관리</a>
             <a href="/team/myteam" class="link-button team-button">나의 팀</a>

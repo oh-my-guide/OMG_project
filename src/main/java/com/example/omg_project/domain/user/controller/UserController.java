@@ -5,6 +5,7 @@ import com.example.omg_project.domain.user.dto.request.UserEditRequest;
 import com.example.omg_project.domain.user.dto.request.UserPasswordChangeRequest;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.image.service.ImageService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
@@ -25,6 +27,7 @@ public class UserController {
 
     private final UserService userService;
     private final JwtTokenizer jwtTokenizer;
+    private final ImageService imageService;
 
     /**
      * 모든 로그인 회원의 마이페이지
@@ -107,12 +110,17 @@ public class UserController {
      */
     @PutMapping("/api/users/profile")
     @ResponseBody
-    public ResponseEntity<String> updateUserProfile(HttpServletRequest request, @RequestBody UserEditRequest userEditDto) {
+    public ResponseEntity<String> updateUserProfile(HttpServletRequest request, @RequestBody UserEditRequest userEditDto, @RequestParam("profileImage") MultipartFile profileImage) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         if (accessToken != null) {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             try {
                 userService.updateUser(username, userEditDto);
+                // 프로필 이미지 파일을 선택했을 경우
+                if (profileImage != null && !profileImage.isEmpty()) {
+                    String imageUrl = imageService.upload(profileImage);
+                    userService.updateProfileImage(username, imageUrl);
+                }
                 return ResponseEntity.ok("회원정보가 수정되었습니다.");
             } catch (Exception e) {
                 e.printStackTrace();

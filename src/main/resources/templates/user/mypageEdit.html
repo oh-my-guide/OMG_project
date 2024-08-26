@@ -15,11 +15,15 @@
     <div class="main-content">
         <div class="profile-container">
             <div class="profile-pic">
-                <img src="/files/user.png" alt="프로필 사진">
+                <img id="profileImageEditPreview" th:src="@{${user.filepath != null ? user.filepath : '/files/user.png'}}" alt="프로필 사진">
             </div>
         </div>
         <div class="form-container">
-            <form id="profile-edit-form" th:action="@{/my/profile}" th:object="${user}" method="post">
+            <form id="profile-edit-form" th:action="@{/my/profile}" th:object="${user}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="profileImage">프로필 사진</label>
+                    <input type="file" id="profileImage" name="profileImage" />
+                </div>
                 <div class="form-group">
                     <label for="name">이름</label>
                     <input type="text" id="name" name="name" th:field="*{name}" readonly/>
@@ -51,6 +55,19 @@
 
 <script>
     $(document).ready(function() {
+        $('#profileImage').on('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#profileImageEditPreview').attr('src', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    $(document).ready(function() {
         $('#profile-edit-form').on('submit', function(e) {
             e.preventDefault();
 
@@ -73,7 +90,7 @@
                 }
             });
         });
-
+      
         $('#delete-account').on('click', function(e) {
             e.preventDefault();
             if (confirm("정말로 탈퇴 하시겠습니까?")) {
