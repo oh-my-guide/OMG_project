@@ -2,6 +2,7 @@ package com.example.omg_project.global.image.service.impl;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
@@ -17,6 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -124,5 +129,37 @@ public class ImageServiceImpl implements ImageService {
         }
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();
+    }
+
+    /**
+     * S3에서 이미지를 삭제
+     * @param imageUrl 삭제할 이미지의 S3 URL
+     * @throws CustomException 이미지 삭제 실패 시
+     */
+    @Override
+    public void deleteImageFromS3(String imageUrl) {
+        String key = getKeyFromImageUrl(imageUrl);
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.IO_EXCEPTION_ON_IMAGE_DELETE);
+        }
+    }
+
+    /**
+     * 이미지 주소에서 S3 버킷 내의 파일 키를 추출
+     * @param imageUrl 이미지의 S3 URL
+     * @return S3 버킷 내 파일 키
+     * @throws CustomException URL 파싱 또는 디코딩 오류 시
+     */
+    @Override
+    public String getKeyFromImageUrl(String imageUrl) {
+        try {
+            URL url = new URL(imageUrl);
+            String decodingKey = URLDecoder.decode(url.getPath(), "UTF-8");
+            return decodingKey.substring(1);    // 맨 앞의 '/' 를 제거
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
+            throw new CustomException(ErrorCode.IO_EXCEPTION_ON_IMAGE_DELETE);
+        }
     }
 }

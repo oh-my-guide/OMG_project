@@ -9,4 +9,6 @@ public interface ImageService {
     String uploadImage(MultipartFile image);
     void validateImageFileExtention(String filename);
     String uploadImageToS3(MultipartFile image) throws IOException;
+    void deleteImageFromS3(String imageUrl);
+    String getKeyFromImageUrl(String imageUrl);
 }
