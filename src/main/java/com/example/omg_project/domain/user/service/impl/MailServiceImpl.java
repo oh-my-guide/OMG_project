@@ -29,7 +29,6 @@ public class MailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
     private static final String senderEmail = "ch9800113@gmail.com";
     private static final Map<String, Integer> verificationCodes = new HashMap<>();
-    // private static final Map<String, String> verificationCodes = new HashMap<>();
 
     /**
      * 인증 코드 자동 생성 메서드
