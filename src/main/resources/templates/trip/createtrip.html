@@ -6,7 +6,10 @@
     <title>여행 일정 생성</title>
     <link rel="stylesheet" href="/css/trip.css">
     <link rel="stylesheet" href="/css/map.css">
+    <link rel="stylesheet" href="/css/recommend.css">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 <body>
 <div class="container">
@@ -68,32 +71,62 @@
                     <button type="button" id="closeBtn">창 닫기</button>
                 </div>
             </div>
+
             <hr>
             <!-- 장소 목록을 표시할 리스트 -->
             <ul id="placesList"></ul>
             <!-- 페이지네이션을 표시 -->
             <div id="pagination"></div>
         </div>
+
+        <!-- 필터링 버튼 및 결과 창 -->
+        <button id="toggleButton" class="toggleButton">접기</button> <!-- 접기/펼치기 버튼을 창 밖으로 이동 -->
+        <div class="filter_wrap" id="filter_wrap">
+            <h3 id="filterTitle">여행 명소 추천</h3> <!-- 제목 추가 -->
+            <div id="filterContent">
+                <div id="filterButtons">
+                    <button type="button" onclick="filterPlaces(12)">관광지</button>
+                    <button type="button" onclick="filterPlaces(39)">식당</button>
+                    <button type="button" onclick="filterPlaces(32)">숙박</button>
+                    <button type="button" onclick="filterPlaces(14)">문화시설</button>
+                    <button type="button" onclick="filterPlaces(15)">축제/행사</button>
+                    <button type="button" onclick="filterPlaces(28)">레포츠</button>
+                    <button type="button" onclick="filterPlaces(38)">쇼핑</button>
+                </div>
+                <br>
+                <hr>
+                <div id="filteredPlacesListContainer">
+                    <ul id="filteredPlacesList"></ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     const regions = {
-        "특별시/광역시": ["서울특별시", "부산광역시", "대구광역시", "인천광역시", "광주광역시", "대전광역시", "울산광역시", "세종특별자치시"],
-        "강원도": ["춘천시", "원주시", "강릉시", "동해시", "태백시", "속초시", "삼척시", "홍천군", "횡성군", "평창군", "정선군", "영월군"],
-        "경기도": ["수원시", "고양시", "용인시", "성남시", "부천시", "남양주시", "안산시", "안양시", "평택시", "의정부시", "군포시", "오산시", "시흥시", "하남시", "의왕시", "양주시", "파주시", "광명시", "구리시", "여주시"],
-        "경상남도": ["창원시", "김해시", "진주시", "양산시", "거제시", "통영시", "사천시", "밀양시", "함안군", "거창군", "창녕군", "산청군", "의령군", "고성군", "하동군", "합천군"],
-        "경상북도": ["포항시", "경주시", "구미시", "김천시", "안동시", "영주시", "상주시", "문경시", "경산시", "영천시", "청송군", "영양군", "봉화군", "울릉군", "예천군", "성주군", "군위군", "의성군"],
-        "충청남도": ["천안시", "아산시", "서산시", "논산시", "보령시", "계룡시", "당진시", "금산군", "부여군", "서천군", "홍성군", "예산군", "청양군", "태안군"],
-        "충청북도": ["청주시", "충주시", "제천시", "보은군", "옥천군", "영동군"],
-        "전라남도": ["여수시", "순천시", "목포시", "나주시", "광양시", "담양군", "곡성군", "구례군", "고흥군", "보성군", "장흥군", "강진군", "해남군", "완도군", "진도군", "신안군", "무안군", "영암군"],
-        "전라북도": ["전주시", "군산시", "익산시", "남원시", "정읍시", "김제시", "완주군", "진안군", "무주군", "장수군", "고창군", "임실군", "순창군"],
-        "제주특별자치도": ["제주시", "서귀포시"]
+        "특별시/광역시": ["서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종"],
+        "강원도": ["춘천", "원주", "강릉", "동해", "태백", "속초", "삼척", "홍천", "횡성", "평창", "정선", "영월"],
+        "경기도": ["수원", "고양", "용인", "성남", "부천", "남양주", "안산", "안양", "평택", "의정부", "군포", "오산", "시흥", "하남", "의왕", "양주", "파주", "광명", "구리", "여주"],
+        "경상남도": ["창원", "김해", "진주", "양산", "거제", "통영", "사천", "밀양", "함안", "거창", "창녕", "산청", "의령", "고성", "하동", "합천"],
+        "경상북도": ["포항", "경주", "구미", "김천", "안동", "영주", "상주", "문경", "경산", "영천", "청송", "영양", "봉화", "울릉", "예천", "성주", "군위", "의성"],
+        "충청남도": ["천안", "아산", "서산", "논산", "보령", "계룡", "당진", "금산", "부여", "서천", "홍성", "예산", "청양", "태안"],
+        "충청북도": ["청주", "충주", "제천", "보은", "옥천", "영동"],
+        "전라남도": ["여수", "순천", "목포", "나주", "광양", "담양", "곡성", "구례", "고흥", "보성", "장흥", "강진", "해남", "완도", "진도", "신안", "무안", "영암"],
+        "전라북도": ["전주", "군산", "익산", "남원", "정읍", "김제", "완주", "진안", "무주", "장수", "고창", "임실", "순창"],
+        "제주특별자치도": ["제주", "서귀포"]
     };
 
     let markers = {};
     let selectedDateDiv = null;
     let selectedPlaces = {};
+    let selectedCityName = '';  // 전역 변수로 selectedCityName 정의
+
+    // 도시 선택 시 선택된 도시 이름 저장
+    document.getElementById('citySelect').addEventListener('change', function() {
+        selectedCityName = this.value;  // 도시 선택 시 selectedCityName에 값 저장
+        console.log('Selected city:', selectedCityName);
+    });
 
     function updateCities() {
         const regionSelect = document.getElementById('regionSelect');
@@ -114,11 +147,13 @@
 
     document.getElementById('citySelect').addEventListener('change', function () {
         const cityName = this.value;
+
         fetch(`/api/cities/name/${cityName}`)
             .then(response => response.json())
             .then(city => {
                 if (city) {
                     document.getElementById('cityId').value = city.id;
+                    console.log(`City selected: ${city.name} with id ${city.id}`);
                 } else {
                     alert('City not found in database.');
                     console.error('City not found in database.');
@@ -126,6 +161,70 @@
             })
             .catch(error => console.error('Error fetching city by name:', error));
     });
+
+    function filterPlaces(contentTypeId) {
+        if (!selectedCityName) {
+            alert('먼저 도시를 선택하세요.');
+            return;
+        }
+
+        // 기본 설정
+        const serviceKey = "bR6YX%2Fkp0Y%2Bvm31sUAayaUZjxmI7dVH0PTsTtlb90Ae9abKUTxIFBc7X4u1wnHnDUuk8uYekiXhdYgb5iyiw5w%3D%3D";
+        const numOfRows = 10;  // 한 페이지에 표시할 결과 수
+        const pageNo = 1;  // 페이지 번호
+        const MobileOS = "WIN";  // 운영체제 정보
+        const MobileApp = "MyTourApp";  // 애플리케이션 이름
+
+        // API 호출 URL 구성
+        const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=${serviceKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=A&keyword=${encodeURIComponent(selectedCityName)}&contentTypeId=${contentTypeId}&numOfRows=${numOfRows}&pageNo=${pageNo}`;
+
+        // API 호출 URL을 콘솔에 출력
+        console.log('API 호출 URL:', apiUrl);
+
+        // API 호출
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('API 응답 데이터:', data);
+                if (data.response && data.response.body && data.response.body.items) {
+                    displayFilteredPlaces(data.response.body.items.item);
+                } else {
+                    alert('검색 결과가 없습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert('데이터를 불러오는데 실패했습니다.');
+            });
+    }
+
+    // 결과 화면에 띄우기
+    function displayFilteredPlaces(places) {
+        const listEl = document.getElementById('filteredPlacesList');
+        listEl.innerHTML = '';
+
+        if (!places || places.length === 0) {
+            listEl.innerHTML = '<li>검색 결과가 없습니다.</li>';
+            return;
+        }
+
+        places.forEach(place => {
+            const imageUrl = place.firstimage || 'https://via.placeholder.com/100';  // 기본 이미지 사용
+            const phone = place.tel || 'x';
+            const address1 = place.addr1 || 'x';
+
+            const itemEl = document.createElement('li');
+            itemEl.innerHTML = `
+            <img src="${imageUrl}" alt="${place.title}">
+            <div class="place-info">
+                <h3>${place.title}</h3>
+                <p><strong>전화번호:</strong> ${phone}</p>
+                <p><strong>주소:</strong> ${address1}</p>
+            </div>
+            `;
+            listEl.appendChild(itemEl);
+        });
+    }
 
     document.getElementById('tripForm').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -206,7 +305,6 @@
                             <span> ${date.toISOString().split('T')[0]}</span>
                         </div>
                         <div class="dayContent">
-<!--                            <label for="tripDate">날짜:</label>-->
                             <input type="hidden" name="tripDate" value="${date.toISOString().split('T')[0]}" required readonly><br>
                         </div>
                         <div class="dayLocation">
@@ -266,11 +364,38 @@
     document.getElementById('closeBtn').addEventListener('click', function() {
         $('#menu_wrap').hide();
     });
+
+    //여행 명소 추천 창 접었다 열기 토글
+    document.getElementById('toggleButton').addEventListener('click', function() {
+        const filterWrap = document.getElementById('filter_wrap');
+        const toggleButton = document.getElementById('toggleButton');
+
+        if (filterWrap.classList.contains('hidden')) {
+            filterWrap.classList.remove('hidden');
+            toggleButton.textContent = '접기';
+        } else {
+            filterWrap.classList.add('hidden');
+            toggleButton.textContent = '열기';
+        }
+    });
+
+    document.getElementById('citySelect').addEventListener('change', function() {
+        selectedCityName = this.value;  // 도시 선택 시 selectedCityName에 값 저장
+        console.log('Selected city:', selectedCityName);
+
+        // cityId를 hidden input에 설정
+        document.getElementById('cityId').value = this.options[this.selectedIndex].value;
+
+        if (selectedCityName) {
+            // 도시가 선택되면 관광지 필터를 자동으로 적용
+            filterPlaces(12); // 관광지 id -> 12
+        }
+    });
+
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
 <script src="/js/createtrip.js"></script>
 </body>
 </html>
-
 
