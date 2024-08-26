@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="form-container">
-            <form th:action="@{/my/profile}" th:object="${user}" method="post" enctype="multipart/form-data">
+            <form id="profile-edit-form" th:action="@{/my/profile}" th:object="${user}" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="profileImage">프로필 사진</label>
                     <input type="file" id="profileImage" name="profileImage" />
@@ -68,6 +68,29 @@
     });
 
     $(document).ready(function() {
+        $('#profile-edit-form').on('submit', function(e) {
+            e.preventDefault();
+
+            const userData = {
+                usernick: $('#usernick').val(),
+                phoneNumber: $('#phoneNumber').val()
+            };
+
+            $.ajax({
+                type: 'PUT',
+                url: '/api/users/profile',
+                contentType: 'application/json',
+                data: JSON.stringify(userData),
+                success: function(response) {
+                    alert(response);
+                    window.location.href = '/my/profile';
+                },
+                error: function(error) {
+                    alert('회원정보 수정 중 오류가 발생했습니다.');
+                }
+            });
+        });
+      
         $('#delete-account').on('click', function(e) {
             e.preventDefault();
             if (confirm("정말로 탈퇴 하시겠습니까?")) {

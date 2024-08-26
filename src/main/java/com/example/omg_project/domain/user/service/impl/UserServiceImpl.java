@@ -1,10 +1,7 @@
 package com.example.omg_project.domain.user.service.impl;
 
-import com.example.omg_project.domain.joinpost.entity.JoinPostComment;
 import com.example.omg_project.domain.joinpost.service.JoinPostCommentService;
 import com.example.omg_project.domain.joinpost.service.JoinPostReplyService;
-import com.example.omg_project.domain.joinpost.service.impl.JoinPostReplyServiceImpl;
-import com.example.omg_project.domain.reviewpost.entity.ReviewPostComment;
 import com.example.omg_project.domain.reviewpost.service.ReviewPostCommentService;
 import com.example.omg_project.domain.reviewpost.service.ReviewPostReplyService;
 import com.example.omg_project.domain.role.entity.Role;
@@ -22,9 +19,6 @@ import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.global.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,15 +53,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void signUp(UserSignUpRequest userSignUpDto) {
-//        if (!userSignUpDto.getPassword().equals(userSignUpDto.getPasswordCheck())) {
-//            throw new RuntimeException("비밀번호가 다릅니다.");
-//        }
-//        if (userRepository.existsByUsername(userSignUpDto.getUsername())) {
-//            throw new RuntimeException("이메일이 존재합니다.");
-//        }
-//        if (userRepository.existsByUsernick(userSignUpDto.getUsernick())) {
-//            throw new RuntimeException("닉네임이 존재합니다.");
-//        }
 
         Role role = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("User 역할이 없습니다."));
@@ -127,7 +112,6 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(user);
 
-            //userRepository.delete(user);
         } else {
             throw new RuntimeException("삭제할 사용자가 존재하지 않습니다.");
         }

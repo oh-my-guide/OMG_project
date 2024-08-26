@@ -10,6 +10,8 @@ import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -82,7 +84,6 @@ public class UserController {
         try {
             userService.updateOauth2(username, oauth2LoginDto);
         } catch (Exception e) {
-            log.info("추가정보 저장 중 오류 발생 :: " + e.getMessage());
             e.printStackTrace();
         }
         return "redirect:/oauthPage";
@@ -107,17 +108,12 @@ public class UserController {
     /**
      * 회원 정보 수정 처리
      */
-    @PostMapping("/my/profile")
-    public String userEdit(HttpServletRequest request,
-                           @ModelAttribute UserEditRequest userEditDto,
-                           @RequestParam("profileImage") MultipartFile profileImage,
-                           Model model) {
-
+    @PutMapping("/api/users/profile")
+    @ResponseBody
+    public ResponseEntity<String> updateUserProfile(HttpServletRequest request, @RequestBody UserEditRequest userEditDto, @RequestParam("profileImage") MultipartFile profileImage) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        if(accessToken != null){
+        if (accessToken != null) {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
-            User user = userService.findByUsername(username).orElse(null);
-            model.addAttribute("user", user);
             try {
                 userService.updateUser(username, userEditDto);
                 // 프로필 이미지 파일을 선택했을 경우
@@ -125,13 +121,13 @@ public class UserController {
                     String imageUrl = imageService.upload(profileImage);
                     userService.updateProfileImage(username, imageUrl);
                 }
+                return ResponseEntity.ok("회원정보가 수정되었습니다.");
             } catch (Exception e) {
-                log.info("회원정보 수정 중 오류 발생 :: " + e.getMessage());
                 e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원정보 수정 중 오류가 발생했습니다.");
             }
-            return "/user/mypageEdit";
         }
-        return "redirect:/my";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     /**
@@ -161,23 +157,21 @@ public class UserController {
 
     }
 
-    @PostMapping("/my/change-password")
-    public String changePassword(HttpServletRequest request,
-                                 @ModelAttribute UserPasswordChangeRequest userPasswordChangeRequest,
-                                 RedirectAttributes redirectAttributes) {
-
+    @PutMapping("/api/users/change-password")
+    @ResponseBody
+    public ResponseEntity<String> changePassword(HttpServletRequest request,
+                                                 @RequestBody UserPasswordChangeRequest userPasswordChangeRequest) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        if(accessToken != null){
+        if (accessToken != null) {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             boolean success = userService.changePassword(username, userPasswordChangeRequest);
             if (success) {
-                redirectAttributes.addFlashAttribute("msg", "비밀번호가 변경되었습니다.");
-                return "redirect:/my/change-password";
+                return ResponseEntity.ok("비밀번호가 변경되었습니다.");
             } else {
-                redirectAttributes.addFlashAttribute("msg", "현재 비밀번호가 올바르지 않습니다.");
-                return "redirect:/my/change-password";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("현재 비밀번호가 올바르지 않습니다.");
             }
         }
-        return "redirect:/my";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
 }

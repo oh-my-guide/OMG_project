@@ -74,6 +74,32 @@
         .chat-button:hover, .remove-button:hover {
             background-color: #6ea8dc;
         }
+        .text-link {
+            background: none;
+            border: none;
+            color: #f44336;
+            text-decoration: underline;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 20px;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .text-link:active,
+        .text-link:focus {
+            color: #d32f2f;
+            background-color: transparent;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .text-link:hover {
+            background-color: transparent;
+            color: #d32f2f;
+            transform: scale(1.02);
+        }
     </style>
 
 </head>
@@ -88,8 +114,8 @@
             <tr>
                 <th>ID</th>
                 <th>이메일</th>
-                <th>닉네임</th>
                 <th>가입일</th>
+                <th>상태</th>
                 <th>관리</th>
             </tr>
             </thead>
@@ -97,11 +123,11 @@
             <tr th:each="user : ${users}">
                 <td th:text="${user.id}">ID</td>
                 <td th:text="${user.username}">이메일</td>
-                <td th:text="${user.usernick}">닉네임</td>
                 <td th:text="${user.registrationDate}">가입일</td>
+                <td th:text="${user.status}">상태</td>
                 <td>
-                    <input type="hidden" id="userId" th:value="${user.id}"/>
-                    <button id="delete-account" class="text-link">탈퇴</button>
+                    <input type="hidden" class="userId" th:value="${user.id}"/>
+                    <button class="delete-account remove-button">계정정지</button>
                 </td>
             </tr>
             </tbody>
@@ -110,23 +136,22 @@
 </div>
 </body>
 <script>
-    $(document).ready(function() {
-        $('#delete-account').on('click', function(e) {
-            e.preventDefault();
-            if (confirm("정말로 회원을 탈퇴시키겠습니까?")) {
-                $.ajax({
-                    type: 'DELETE',
-                    url: '/api/users/' + $('#userId').val(),
-                    success: function(response) {
-                        alert('성공적으로 회원 탈퇴 되었습니다.');
-                        window.location.href = '/admin/userboard';
-                    },
-                    error: function(error) {
-                        alert('회원 탈퇴에 실패했습니다.');
-                    }
-                });
-            }
-        });
+    $(document).on('click', '.delete-account', function(e) {
+        e.preventDefault();
+        const userId = $(this).closest('tr').find('.userId').val();
+        if (confirm("정말로 회원을 정지시키겠습니까?")) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/admin/' + userId,
+                success: function(response) {
+                    alert('성공적으로 회원 정지 되었습니다.');
+                    window.location.href = '/admin/userboard';
+                },
+                error: function(error) {
+                    alert('회원 정지에 실패했습니다.');
+                }
+            });
+        }
     });
 </script>
 </html>

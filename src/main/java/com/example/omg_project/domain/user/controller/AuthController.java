@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.Optional;
-
 /**
  * 로그인, 회원가입, 비로그인 페이지
  */
@@ -50,8 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("user") UserSignUpRequest userSignUpDto,
-                         Model model) {
+    public String signup(@ModelAttribute("user") UserSignUpRequest userSignUpDto) {
         try {
             userService.signUp(userSignUpDto);
             return "redirect:/signin";
@@ -83,5 +80,19 @@ public class AuthController {
         }
 
         return "/main/service";
+    }
+
+    /**
+     * 고객센터 페이지
+     */
+    @GetMapping("/faq")
+    public String adminPageAllFaqForm(Model model, HttpServletRequest request) {
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElse(null);
+            model.addAttribute("user", user);
+        }
+        return "/main/faq";
     }
 }

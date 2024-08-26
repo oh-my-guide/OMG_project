@@ -23,41 +23,49 @@
                 <a href="/signin" class="login-btn">로그인</a>
             </th:block>
             <th:block th:if="${user != null}">
-                <div class="username" id="username" onclick="toggleDropdown()" th:text="${user.usernick}">사용자이름</div>
-                <div class="dropdown" id="dropdown-menu">
-                    <a href="/my">내 정보</a>
-                    <a href="/api/users/logout">로그아웃</a>
-                </div>
+                 <div class="username" id="username" onclick="toggleDropdown()" th:text="${user.usernick}">사용자이름</div>
+                   <div class="dropdown" id="dropdown-menu">
+                       <th:block th:if="${user.usernick == 'OMGAdmin'}">
+                           <a href="/admin/userboard">사용자 관리</a>
+                           <a href="/admin/reviewboard">게시글 관리</a>
+                           <a href="#">공지사항 관리</a>
+                       </th:block>
+                       <th:block th:if="${user.usernick != 'OMGAdmin'}">
+                           <a href="/my">내 정보</a>
+                           <a href="/faq">고객센터</a>
+                       </th:block>
+                       <a href="/api/users/logout">로그아웃</a>
+                   </div>
             </th:block>
-        </div>
-    </div>
-    <script>
-        function toggleDropdown() {
-            var dropdownMenu = document.getElementById('dropdown-menu');
-            var isMenuVisible = dropdownMenu.style.display === 'block';
+         </div>
+     </div>
+     <script>
+         function toggleDropdown() {
+             var dropdownMenu = document.getElementById('dropdown-menu');
+             var isMenuVisible = dropdownMenu.style.display === 'block';
 
-            // 드롭다운 메뉴 보이기/숨기기
-            dropdownMenu.style.display = isMenuVisible ? 'none' : 'block';
+             // 드롭다운 메뉴 보이기/숨기기
+             dropdownMenu.style.display = isMenuVisible ? 'none' : 'block';
 
-            // 드롭다운 메뉴가 화면 밖으로 넘어가지 않도록 설정
-            var rect = dropdownMenu.getBoundingClientRect();
-            if (rect.right > window.innerWidth) {
-                dropdownMenu.style.transform = 'translateX(-50px)'; // 조정 필요시
-            } else {
-                dropdownMenu.style.transform = 'translateX(-20px)'; // 원래 위치
-            }
+             // 드롭다운 메뉴가 화면 밖으로 넘어가지 않도록 설정
+             var rect = dropdownMenu.getBoundingClientRect();
+             if (rect.right > window.innerWidth) {
+                 dropdownMenu.style.transform = 'translateX(-50px)'; // 조정 필요시
+             } else {
+                 dropdownMenu.style.transform = 'translateX(-20px)'; // 원래 위치
+             }
 
-            // 클릭 시 다른 부분 클릭 시 드롭다운 숨기기
-            function handleClickOutside(event) {
-                if (!dropdownMenu.contains(event.target) && !event.target.closest('#username')) {
-                    dropdownMenu.style.display = 'none';
-                    document.removeEventListener('click', handleClickOutside);
-                }
-            }
+             // 클릭 시 다른 부분 클릭 시 드롭다운 숨기기
+             function handleClickOutside(event) {
+                 if (!dropdownMenu.contains(event.target) && !event.target.closest('#username')) {
+                     dropdownMenu.style.display = 'none';
+                     document.removeEventListener('click', handleClickOutside);
+                 }
+             }
 
-            document.addEventListener('click', handleClickOutside);
-        }
-    </script>
-</div>
-</body>
-</html>
+             document.addEventListener('click', handleClickOutside);
+         }
+     </script>
+ </div>
+ </body>
+ </html>
