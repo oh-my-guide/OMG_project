@@ -79,6 +79,7 @@
             font-size: 20px;
             font-weight: bold;
         }
+
         .weather-item .temp {
             font-size: 18px;
             color: #f00;
@@ -90,6 +91,7 @@
             width: 100%;
             height: 700px;
         }
+
         /* 캘린더 스타일링 */
         .fc {
             font-family: Arial, sans-serif;
@@ -155,8 +157,32 @@
             width: 50px;
             height: 50px;
         }
+        .search-container {
+            margin: 40px 0;
+        }
+        .search-input {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #8fc6ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .search-button:hover {
+            background-color: #6da8e2;
+        }
         .weather-section {
-            margin-top: 250px;
+            margin-top: 200px;
         }
     </style>
 </head>
@@ -172,7 +198,14 @@
                 <a href="/trip/select" class="button">OMG 시작하기</a>
             </div>
             <div class="weather-section">
-                 <div>
+                 <div class="search-container" style="display: none;">
+                     <input type="text" id="location-input" class="search-input"  style="display: none;"placeholder="지역 입력">
+                     <button id="search-button" class="search-button" style="display: none;">검색</button>
+                 </div>
+                <div>
+                     <h3 style="display: none;">현재 날씨</h3>
+                     <div id="current-weather" style="display: none;"></div>
+                     <div id="current-date" style="display: none;"></div>
                     <h3>이번 주 날씨</h3>
                     <div class="weather" id="weather-container"></div>
                 </div>
@@ -220,7 +253,7 @@
         });
         calendar.render();
 
-<!-- 날씨 API 불러오기 -->
+        <!-- 날씨 API 불러오기 -->
         const weatherContainer = document.getElementById('weather-container');
         const currentWeather = document.getElementById('current-weather');
         const currentDateEl = document.getElementById('current-date');
@@ -312,6 +345,16 @@
         }
 
         fetchWeather('Seoul'); // 제일먼저 보이는 기본값 서울
+
+        // 검색 버튼
+        document.getElementById('search-button').addEventListener('click', function () {
+            const locationInput = document.getElementById('location-input').value;
+            if (locationInput) {
+                fetchWeather(locationInput);
+            } else {
+                alert('지역 이름을 입력하세요.');
+            }
+        });
 
         // 엔터 쳐도 입력 가능하도록
         document.getElementById('location-input').addEventListener('keypress', function (e) {
