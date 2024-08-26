@@ -54,6 +54,8 @@
 </div>
 
 <script>
+
+    // 프로필 이미지 선택 시 이미지 미리보기
     $(document).ready(function() {
         $('#profileImage').on('change', function(event) {
             const file = event.target.files[0];
@@ -71,21 +73,37 @@
         $('#profile-edit-form').on('submit', function(e) {
             e.preventDefault();
 
-            const userData = {
+            // FormData 객체 생성
+            const formData = new FormData();
+
+            // userEditDto 객체를 생성하고 필드 값을 추가
+            const userEditDto = {
                 usernick: $('#usernick').val(),
                 phoneNumber: $('#phoneNumber').val()
             };
 
+            // userEditDto를 JSON 문자열로 변환하여 FormData에 추가
+            formData.append('userEditDto',
+                new Blob([JSON.stringify(userEditDto)],
+                    {type: "application/json"}));
+
+            // 프로필 이미지 파일을 FormData에 추가
+            const profileImage = $('#profileImage')[0].files[0];
+            if (profileImage) {
+                formData.append('profileImage', profileImage);
+            }
+
             $.ajax({
                 type: 'PUT',
                 url: '/api/users/profile',
-                contentType: 'application/json',
-                data: JSON.stringify(userData),
+                data: formData,
+                contentType: false, // 파일 전송 시 반드시 false로 설정
+                processData: false, // jQuery가 데이터를 처리하지 않도록 설정
                 success: function(response) {
                     alert(response);
                     window.location.href = '/my/profile';
                 },
-                error: function(error) {
+                error: function(jqXHR, textStatus, errorThrown) {
                     alert('회원정보 수정 중 오류가 발생했습니다.');
                 }
             });
