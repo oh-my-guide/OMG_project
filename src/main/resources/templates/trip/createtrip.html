@@ -145,6 +145,23 @@
         }
     }
 
+    document.getElementById('citySelect').addEventListener('change', function () {
+        const cityName = this.value;
+
+        fetch(`/api/cities/name/${cityName}`)
+            .then(response => response.json())
+            .then(city => {
+                if (city) {
+                    document.getElementById('cityId').value = city.id;
+                    console.log(`City selected: ${city.name} with id ${city.id}`);
+                } else {
+                    alert('City not found in database.');
+                    console.error('City not found in database.');
+                }
+            })
+            .catch(error => console.error('Error fetching city by name:', error));
+    });
+
     function filterPlaces(contentTypeId) {
         if (!selectedCityName) {
             alert('먼저 도시를 선택하세요.');
@@ -155,7 +172,7 @@
         const serviceKey = "bR6YX%2Fkp0Y%2Bvm31sUAayaUZjxmI7dVH0PTsTtlb90Ae9abKUTxIFBc7X4u1wnHnDUuk8uYekiXhdYgb5iyiw5w%3D%3D";
         const numOfRows = 10;  // 한 페이지에 표시할 결과 수
         const pageNo = 1;  // 페이지 번호
-        const MobileOS = "ETC";  // 운영체제 정보
+        const MobileOS = "WIN";  // 운영체제 정보
         const MobileApp = "MyTourApp";  // 애플리케이션 이름
 
         // API 호출 URL 구성
@@ -362,16 +379,19 @@
         }
     });
 
-    //도시 선택 시 바로 관광지 화면에 띄우기
     document.getElementById('citySelect').addEventListener('change', function() {
         selectedCityName = this.value;  // 도시 선택 시 selectedCityName에 값 저장
         console.log('Selected city:', selectedCityName);
+
+        // cityId를 hidden input에 설정
+        document.getElementById('cityId').value = this.options[this.selectedIndex].value;
 
         if (selectedCityName) {
             // 도시가 선택되면 관광지 필터를 자동으로 적용
             filterPlaces(12); // 관광지 id -> 12
         }
     });
+
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
