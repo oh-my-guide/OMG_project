@@ -30,7 +30,7 @@ public class ImageController {
 
         try {
             // S3 버킷에 업로드
-            String s3Url = imageService.upload(image);
+            String s3Url = imageService.upload(image, "JoinPost");
 
             // 제대로 업로드가 되었다면 uploaded=true와 url 설정 해줌
             responseData.put("uploaded", true);
