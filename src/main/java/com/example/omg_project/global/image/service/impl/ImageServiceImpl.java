@@ -39,17 +39,28 @@ public class ImageServiceImpl implements ImageService {
 
     /**
      * 외부에서 사용할 public 메서드
-     * 업로드할 이미지를 S3에 업로드하고 URL을 반환
+     * 업로드할 이미지를 S3의 루트 폴더에 업로드하고 URL을 반환
+     * @param image 업로드할 이미지 파일
+     * @return S3에 저장된 이미지 객체의 S3 URL
+     */
+    @Override
+    public String upload(MultipartFile image) {
+        return upload(image, "");
+    }
+
+    /**
+     * 외부에서 사용할 public 메서드
+     * 업로드할 이미지를 S3의 directoryName 폴더에 업로드하고 URL을 반환
      * @param image 업로드할 이미지 파일
      * @return S3에 저장된 이미지 객체의 S3 URL
      * @throws CustomException 파일이 비어있거나 이름이 없는 경우
      */
     @Override
-    public String upload(MultipartFile image) {
+    public String upload(MultipartFile image, String directoryName) {
         if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
             throw new CustomException(ErrorCode.EMPTY_FILE_EXCEPTION);
         }
-        return uploadImage(image);
+        return uploadImage(image, directoryName);
     }
 
     /**
@@ -60,10 +71,10 @@ public class ImageServiceImpl implements ImageService {
      * @throws CustomException 이미지 업로드 중 IOException 발생한 경우
      */
     @Override
-    public String uploadImage(MultipartFile image) {
+    public String uploadImage(MultipartFile image, String directoryName) {
         validateImageFileExtention(image.getOriginalFilename());
         try {
-            return uploadImageToS3(image);
+            return uploadImageToS3(image, directoryName);
         } catch (IOException e) {
             throw new CustomException(ErrorCode.IO_EXCEPTION_ON_IMAGE_UPLOAD);
         }
@@ -97,10 +108,10 @@ public class ImageServiceImpl implements ImageService {
      * @throws CustomException
      */
     @Override
-    public String uploadImageToS3(MultipartFile image) throws IOException {
+    public String uploadImageToS3(MultipartFile image, String directoryName) throws IOException {
         String originalFilename = image.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
-        String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename;
+        String s3FileName = directoryName + "/" + UUID.randomUUID().toString().substring(0, 10) + originalFilename;
 
         // 입력 스트림을 통해 파일 데이터 읽어옴
         InputStream is = image.getInputStream();
