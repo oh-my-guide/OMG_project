@@ -3,6 +3,8 @@ package com.example.omg_project.global.image.controller;
 import com.example.omg_project.global.exception.CustomException;
 import com.example.omg_project.global.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,8 +21,8 @@ public class ImageController {
 
     // CKEditor 이미지 업로드
     @PostMapping("/image/upload")
-    public Map<String, Object> imageUpload(MultipartRequest request){
-        // CKEditor에서 이미지를 올리면 두 가지 응답 값을 받음 (uploaded: 업로드가 잘되었는지, url: 어디에 업로드되었는지)
+    public ResponseEntity<Map<String, Object>> imageUpload(MultipartRequest request){
+        // CKEditor에서 이미지를 올리면 두 가지 응답 값을 받음 (uploaded: 업로드가 잘 되었는지, url: 어디에 업로드되었는지)
         Map<String, Object> responseData = new HashMap<>();
 
         // CKEditor에서 이미지 파일을 보내줄 때 'upload'라는 key에 이미지 파일을 저장해서 보내줌 -> request에서 이미지 파일 뽑아냄
@@ -33,10 +35,12 @@ public class ImageController {
             // 제대로 업로드가 되었다면 uploaded=true와 url 설정 해줌
             responseData.put("uploaded", true);
             responseData.put("url", s3Url);
-            return responseData;
+
+            return ResponseEntity.ok(responseData);
         } catch (CustomException e) {
             responseData.put("uploaded", false);
-            return responseData;
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseData);
         }
     }
 }
