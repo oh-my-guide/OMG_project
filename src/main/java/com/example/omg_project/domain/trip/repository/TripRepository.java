@@ -2,6 +2,7 @@ package com.example.omg_project.domain.trip.repository;
 
 import com.example.omg_project.domain.trip.entity.Team;
 import com.example.omg_project.domain.trip.entity.Trip;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

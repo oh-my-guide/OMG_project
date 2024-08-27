@@ -94,14 +94,14 @@
         event.preventDefault(); // 폼의 기본 제출 동작 방지
 
         const tripId = window.location.pathname.split('/').pop(); // URL에서 tripId 추출
+        console.log('Extracted tripId:', tripId);
 
         // 여행 일정 데이터를 폼에서 가져오기
         const trip = {
-            id: tripId,
             tripName: document.getElementById('tripName').value,
             startDate: document.getElementById('startDate').value,
             endDate: document.getElementById('endDate').value,
-            cityId: document.getElementById('cityIdInput').value, // 예: cityId 입력 필드
+            cityId: document.getElementById('cityId').value,
             tripDates: [] // tripDates 데이터는 필요에 따라 추가
         };
 
