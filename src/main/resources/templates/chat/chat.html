@@ -58,8 +58,25 @@
       font-size: 14px;
       background-color: #e0f7fa; /* 기본 배경 색상 */
       display: flex;
-      flex-direction: row;
-      align-items: center;
+      flex-direction: column; /* 세로로 나열 */
+      align-items: flex-start; /* 왼쪽 정렬 */
+      position: relative; /* 타임스탬프 위치 조정을 위해 상대적 위치 설정 */
+    }
+
+    /* 이미지 스타일 */
+    .message img {
+      max-width: 100%; /* 이미지가 컨테이너 너비에 맞게 조정 */
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 5px; /* 이미지와 텍스트 사이의 간격 */
+    }
+
+    /* 타임스탬프 스타일 */
+    .timestamp {
+      font-size: 0.8em;
+      color: #888;
+      margin-top: 5px;
+      align-self: flex-end; /* 오른쪽 정렬 */
     }
 
     /* 보낸 메시지 (오른쪽 정렬) */
@@ -74,14 +91,6 @@
       background-color: #fce4ec;
       margin-right: auto;
       align-self: flex-start; /* 왼쪽 정렬 */
-    }
-
-    /* 타임스탬프 스타일 */
-    .timestamp {
-      font-size: 0.8em;
-      color: #888;
-      display: block;
-      margin-top: 5px;
     }
 
     /* 입력 필드 및 버튼 스타일 */
@@ -112,6 +121,11 @@
     .button.is-info:hover {
       background-color: #7AB8E3;
     }
+
+    /* 파일 입력 스타일 */
+    #fileInput {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -125,6 +139,8 @@
     </div>
     <div class="control">
       <button id="sendButton" class="button is-info">전송</button>
+      <input id="fileInput" type="file" accept="image/*">
+      <button id="uploadButton" class="button is-info">이미지 업로드</button>
     </div>
   </div>
 </section>
@@ -143,7 +159,32 @@
       var createdAt = new Date(messageData.createdAt).toLocaleTimeString();
       var messageClass = (messageData.userNickname === currentUserNickname) ? 'sent' : 'received';
       message.addClass(messageClass);
-      message.html(`<strong>${messageData.userNickname}</strong>: ${messageData.message} <span class="timestamp">${createdAt}</span>`);
+
+      // messageData.message가 JSON 문자열인 경우 파싱
+      var parsedMessage;
+      try {
+        parsedMessage = JSON.parse(messageData.message);
+      } catch (e) {
+        console.error("JSON 파싱 오류:", e);
+        parsedMessage = { message: messageData.message }; // JSON 파싱 실패 시 원본 메시지를 사용
+      }
+
+      if (parsedMessage.imageUrl) {
+        // 이미지 메시지
+        message.html(
+                `<strong>${messageData.userNickname}</strong> ` +
+                `<img src="${parsedMessage.imageUrl}" /> ` +
+                `<span class="timestamp">${createdAt}</span>`
+        );
+      } else {
+        // 텍스트 메시지
+        message.html(
+                `<strong>${messageData.userNickname}</strong> ` +
+                `${parsedMessage.message} ` +
+                `<span class="timestamp">${createdAt}</span>`
+        );
+      }
+
       chat.append(message);
       chat.scrollTop(chat[0].scrollHeight);
     }
@@ -165,6 +206,7 @@
 
     socket.onmessage = function(event) {
       var messageData = JSON.parse(event.data);
+      console.log(messageData);
       appendMessage(messageData);
     };
 
@@ -185,7 +227,7 @@
       var messageInput = $('#messageInput');
       var message = messageInput.val();
       if (message) {
-        socket.send(message);
+        socket.send(JSON.stringify({ message: message }));
         messageInput.val('');
       }
     });
@@ -193,6 +235,34 @@
     $('#messageInput').on('keypress', function(event) {
       if (event.key === 'Enter') {
         $('#sendButton').click();
+      }
+    });
+
+    $('#uploadButton').click(function() {
+      $('#fileInput').click();
+    });
+
+    $('#fileInput').change(function(event) {
+      var file = event.target.files[0];
+      if (file) {
+        var formData = new FormData();
+        formData.append('file', file);
+
+        $.ajax({
+          url: '/api/chat/upload',
+          method: 'POST',
+          data: formData,
+          contentType: false,
+          processData: false,
+          success: function(response) {
+            var imageUrl = response; // 서버에서 반환한 이미지 URL
+            console.log(imageUrl);
+            socket.send(JSON.stringify({ imageUrl: imageUrl }));
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Upload error:', textStatus, errorThrown);
+          }
+        });
       }
     });
   });
