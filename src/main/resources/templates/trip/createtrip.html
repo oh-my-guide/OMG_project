@@ -170,13 +170,13 @@
 
         // 기본 설정
         const serviceKey = "bR6YX%2Fkp0Y%2Bvm31sUAayaUZjxmI7dVH0PTsTtlb90Ae9abKUTxIFBc7X4u1wnHnDUuk8uYekiXhdYgb5iyiw5w%3D%3D";
-        const numOfRows = 10;  // 한 페이지에 표시할 결과 수
+        const numOfRows = 100;  // 한 페이지에 표시할 결과 수
         const pageNo = 1;  // 페이지 번호
         const MobileOS = "WIN";  // 운영체제 정보
         const MobileApp = "MyTourApp";  // 애플리케이션 이름
 
         // API 호출 URL 구성
-        const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=${serviceKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=A&keyword=${encodeURIComponent(selectedCityName)}&contentTypeId=${contentTypeId}&numOfRows=${numOfRows}&pageNo=${pageNo}`;
+        const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=${serviceKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=D&keyword=${encodeURIComponent(selectedCityName)}&contentTypeId=${contentTypeId}&numOfRows=${numOfRows}&pageNo=${pageNo}`;
 
         // API 호출 URL을 콘솔에 출력
         console.log('API 호출 URL:', apiUrl);
