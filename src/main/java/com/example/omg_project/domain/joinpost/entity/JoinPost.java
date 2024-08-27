@@ -36,6 +36,9 @@ public class JoinPost {
     @Column(nullable = false, length = 500)
     private String content;
 
+    @Column(nullable = false)
+    private int views;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -61,4 +64,11 @@ public class JoinPost {
         this.content = content;
         this.updatedAt = LocalDateTime.now();
     }
+
+    // 조회수 증가
+    public void incrementViews() {
+        this.views++;
+    }
+
+
 }

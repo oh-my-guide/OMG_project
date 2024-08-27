@@ -73,6 +73,12 @@
             color: #999;
         }
 
+        .post-views {
+            margin-left: 15px;
+            color: #999;
+            font-size: 0.9em;
+        }
+
         .post-content {
             margin: 20px 0;
             padding: 20px;
@@ -272,10 +278,13 @@
 <div th:replace="fragments/header :: headerFragment"></div>
 <div class="container">
     <h1 class="post-title" th:text="${post.title}"></h1>
+    <!-- postId를 숨겨진 입력 필드에 포함 -->
+    <input type="hidden" id="postId" th:value="${post.id}"/>
     <div class="post-meta">
         <div class="post-meta-left">
             <span class="post-author" th:text="${post.usernick}"></span>
             <span class="post-date" th:text="${post.formattedCreatedAt}"></span>
+            <span class="post-views" th:text="'조회수 ' + ${post.views}"></span>
         </div>
         <div class="button-container" th:if="${#authentication.name} == ${post.username}">
             <a th:href="@{/reviewPost/{postId}/updatePost(postId=${post.id})}" class="button edit-button">수정</a>
@@ -337,7 +346,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const postId = [[${post.id}]];
+    const postId = $('#postId').val();
     const userId = $('#userId').val();
     const postUserId = $('#postUserId').val();
     const postTripId = $('#postTripId').val();
