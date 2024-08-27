@@ -195,7 +195,7 @@
                 <option value="views">인기순</option>
             </select>
             <select id="regionSelect" onchange="updateCities()">
-                <option value="">도시를 선택해주세요</option>
+                <option value="">지역을 선택해주세요</option>
                 <option value="특별시/광역시">특별시/광역시</option>
                 <option value="강원도">강원도</option>
                 <option value="경기도">경기도</option>
@@ -209,7 +209,7 @@
             </select>
 
             <select id="citySelect" onchange="filterPosts()">
-                <option value="">지역을 선택해주세요</option>
+                <option value="">도시를 선택해주세요</option>
             </select>
         </div>
 
@@ -229,25 +229,25 @@
 
 <script>
     const regions = {
-        "특별시/광역시": ["서울특별시", "부산광역시", "대구광역시", "인천광역시", "광주광역시", "대전광역시", "울산광역시", "세종특별자치시"],
-        "강원도": ["춘천시", "원주시", "강릉시", "동해시", "태백시", "속초시", "삼척시", "홍천군", "횡성군", "평창군", "정선군", "영월군"],
-        "경기도": ["수원시", "고양시", "용인시", "성남시", "부천시", "남양주시", "안산시", "안양시", "평택시", "의정부시", "군포시", "오산시", "시흥시", "하남시", "의왕시", "양주시", "파주시", "광명시", "구리시", "여주시"],
-        "경상남도": ["창원시", "김해시", "진주시", "양산시", "거제시", "통영시", "사천시", "밀양시", "함안군", "거창군", "창녕군", "산청군", "의령군", "고성군", "하동군", "합천군"],
-        "경상북도": ["포항시", "경주시", "구미시", "김천시", "안동시", "영주시", "상주시", "문경시", "경산시", "영천시", "청송군", "영양군", "봉화군", "울릉군", "예천군", "성주군", "군위군", "의성군"],
-        "충청남도": ["천안시", "아산시", "서산시", "논산시", "보령시", "계룡시", "당진시", "금산군", "부여군", "서천군", "홍성군", "예산군", "청양군", "태안군"],
-        "충청북도": ["청주시", "충주시", "제천시", "보은군", "옥천군", "영동군"],
-        "전라남도": ["여수시", "순천시", "목포시", "나주시", "광양시", "담양군", "곡성군", "구례군", "고흥군", "보성군", "장흥군", "강진군", "해남군", "완도군", "진도군", "신안군", "무안군", "영암군"],
-        "전라북도": ["전주시", "군산시", "익산시", "남원시", "정읍시", "김제시", "완주군", "진안군", "무주군", "장수군", "고창군", "임실군", "순창군"],
-        "제주특별자치도": ["제주시", "서귀포시"]
+        "특별시/광역시": ["서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종"],
+        "강원도": ["춘천", "원주", "강릉", "동해", "태백", "속초", "삼척", "홍천", "횡성", "평창", "정선", "영월"],
+        "경기도": ["수원", "고양", "용인", "성남", "부천", "남양주", "안산", "안양", "평택", "의정부", "군포", "오산", "시흥", "하남", "의왕", "양주", "파주", "광명", "구리", "여주"],
+        "경상남도": ["창원", "김해", "진주", "양산", "거제", "통영", "사천", "밀양", "함안", "거창", "창녕", "산청", "의령", "고성", "하동", "합천"],
+        "경상북도": ["포항", "경주", "구미", "김천", "안동", "영주", "상주", "문경", "경산", "영천", "청송", "영양", "봉화", "울릉", "예천", "성주", "군위", "의성"],
+        "충청남도": ["천안", "아산", "서산", "논산", "보령", "계룡", "당진", "금산", "부여", "서천", "홍성", "예산", "청양", "태안"],
+        "충청북도": ["청주", "충주", "제천", "보은", "옥천", "영동"],
+        "전라남도": ["여수", "순천", "목포", "나주", "광양", "담양", "곡성", "구례", "고흥", "보성", "장흥", "강진", "해남", "완도", "진도", "신안", "무안", "영암"],
+        "전라북도": ["전주", "군산", "익산", "남원", "정읍", "김제", "완주", "진안", "무주", "장수", "고창", "임실", "순창"],
+        "제주특별자치도": ["제주", "서귀포"]
     };
 
-    // 도시 선택에 따른 지역 업데이트
+    // 지역 선택에 따른 도시 업데이트
     function updateCities() {
         const regionSelect = document.getElementById('regionSelect');
         const citySelect = document.getElementById('citySelect');
         const selectedRegion = regionSelect.value;
 
-        citySelect.innerHTML = '<option value="">지역을 선택해주세요</option>';
+        citySelect.innerHTML = '<option value="">도시를 선택하세요</option>';
 
         if (selectedRegion && regions[selectedRegion]) {
             regions[selectedRegion].forEach(cityName => {
@@ -257,53 +257,89 @@
                 citySelect.appendChild(option);
             });
         } else {
-            loadPosts();
+            // 지역 선택이 초기화되었을 때 전체 조회를 위해 cityId를 빈 값으로 설정하고 loadPosts 호출
+            citySelect.dataset.cityId = '';
+            loadPosts('', document.getElementById('sortOption').value);
         }
     }
 
-    // 도시 선택에 따른 게시글 필터링 기능
+    // 도시이름으로 도시id 가져오기
+    document.getElementById('citySelect').addEventListener('change', function () {
+        const cityName = this.value;
+
+        if (cityName === "") {
+            // 도시 선택이 초기화되었을 때 전체 조회를 위해 cityId를 빈 값으로 설정하고 loadPosts 호출
+            this.dataset.cityId = '';
+            loadPosts('', document.getElementById('sortOption').value);
+        } else {
+            // 도시가 선택되었을 때 해당 cityId로 필터링
+            fetch(`/api/cities/name/${cityName}`)
+                .then(response => response.json())
+                .then(city => {
+                    if (city) {
+                        this.dataset.cityId = city.id; // 도시 ID를 data 속성에 저장
+                        filterPosts(); // 도시 선택 시 바로 필터링 적용
+                    } else {
+                        alert('City not found in database.');
+                        console.error('City not found in database.');
+                    }
+                })
+                .catch(error => console.error('Error fetching city by name:', error));
+        }
+    });
+
+    // 지역 선택에 따른 게시글 필터링 기능
     function filterPosts() {
-        const cityName = document.getElementById('citySelect').value;
+        const cityId = document.getElementById('citySelect').dataset.cityId; // 도시 ID 가져오기
         const sortOption = document.getElementById('sortOption').value;
 
-        loadPosts(cityName, sortOption);
+        loadPosts(cityId, sortOption);
     }
 
     // 정렬 옵션이 변경될 때 게시글을 다시 로드하는 함수
-    function loadPosts(cityName, sortOption) {
-        // cityName이 undefined일 경우 빈 문자열로 설정
-        cityName = cityName || document.getElementById('citySelect').value || '';
-        // sortOption이 undefined일 경우 현재 선택된 정렬 옵션으로 설정
+    function loadPosts(cityId, sortOption) {
+        cityId = cityId || '';
         sortOption = sortOption || document.getElementById('sortOption').value;
-
-        console.log("도시: " + cityName + ", 정렬: " + sortOption);  // 디버깅용 출력
 
         let url = `/api/joinPosts?sort=${sortOption}`;
 
-        if (cityName) {
-            url += `&city=${encodeURIComponent(cityName)}`;
+        if (cityId) {
+            url += `&cityId=${cityId}`;
         }
 
         fetch(url)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(posts => {
                 const postList = document.getElementById('postList');
-                postList.innerHTML = '';
+                postList.innerHTML = ''; // 기존 게시글 목록 초기화
 
-                posts.forEach(post => {
-                    const postItem = document.createElement('div');
-                    postItem.className = 'post-item';
-                    postItem.innerHTML = `
-                <a href="/joinPost/${post.id}" class="post-title">${post.title}</a>
-                <div class="post-meta">
-                    <p class="post-user">${post.usernick}</p>
-                    <p class="post-date">${post.formattedCreatedAt}</p>
-                </div>
-            `;
-                    postList.appendChild(postItem);
-                });
+                if (posts.length === 0) {
+                    postList.innerHTML = '<p style="color: #999">게시글이 없습니다.</p>';
+                } else {
+                    posts.forEach(post => {
+                        const postItem = document.createElement('div');
+                        postItem.className = 'post-item';
+                        postItem.innerHTML = `
+                        <a href="/joinPost/${post.id}" class="post-title">${post.title}</a>
+                        <div class="post-meta">
+                            <p class="post-user">${post.usernick}</p>
+                            <p class="post-date">${post.formattedCreatedAt}</p>
+                        </div>
+                    `;
+                        postList.appendChild(postItem);
+                    });
+                }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                const postList = document.getElementById('postList');
+                postList.innerHTML = '<p style="color: #999">게시글을 불러오는데 실패했습니다.</p>';
+            });
     }
 
     function searchPosts() {
