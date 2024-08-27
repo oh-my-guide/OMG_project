@@ -65,12 +65,12 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     }
 
     @Override
-    public List<ReviewPostDto.Response> findReviewPostsByCity(String city, String sort) {
+    public List<ReviewPostDto.Response> findReviewPostsByCity(Long cityId, String sort) {
         Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
         if ("views".equals(sort)) {
             sorting = Sort.by(Sort.Direction.DESC, "views"); // 인기순 정렬
         }
-        return reviewPostRepository.findByTrip_CityName(city, sorting).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+        return reviewPostRepository.findByTrip_CityId(cityId, sorting).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
     @Override
