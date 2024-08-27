@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/header.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/translations/ko.js"></script>
     <title>일행 모집 게시글 수정</title>
     <style>
         body {
@@ -67,6 +69,7 @@
 
         button {
             width: 100%;
+            margin-top: 10px;
             padding: 15px;
             background-color: #8fc6ff;
             color: white;
@@ -92,6 +95,11 @@
             background-color: white;
             color: black;
         }
+
+        /* ckeditor css 설정 */
+        .ck-editor__editable_inline {
+            min-height: 300px;
+        }
     </style>
 </head>
 <body>
@@ -112,7 +120,8 @@
     <input type="text" id="updateTitle" name="title" th:value="${post.title}" placeholder="제목" required>
 
     <label for="updateContent">내용</label>
-    <textarea id="updateContent" name="content" placeholder="내용" required th:text="${post.content}"></textarea>
+    <textarea id="updateContent" name="content" placeholder="내용" style="display:none;" th:utext="${post.content}"></textarea>
+
     <button type="submit">수정하기</button>
 </form>
 
@@ -121,6 +130,22 @@
         const postId = document.getElementById('updatePostId').value;
         const tripId = document.getElementById('updateTripId').value;
         const tripSelect = document.getElementById('tripSelect');
+        let editorInstance;
+
+        // CKEditor 초기화
+        ClassicEditor.create(document.querySelector('#updateContent'), {
+            language: "ko",
+            ckfinder : {
+                uploadUrl: "/image/upload",
+                withCredentials: true
+            }
+        }).then(editor => {
+            editorInstance = editor;
+            // 기존 내용을 CKEditor에 동기화
+            editor.setData(document.getElementById('updateContent').getAttribute('th:utext'));
+        }).catch(error => {
+            console.error(error);
+        });
 
         // API 호출로 여행 정보를 가져옴
         fetch(`/api/trips/${tripId}`)
@@ -138,10 +163,18 @@
             event.preventDefault();
 
             const title = document.getElementById('updateTitle').value;
-            const content = document.getElementById('updateContent').value;
+            const content = document.getElementById('updateContent');
 
-            if (!title || !content) {
-                alert('제목과 내용은 필수 입력 항목입니다.');
+            // CKEditor 내용을 숨겨진 textarea에 동기화
+            content.value = editorInstance.getData();
+
+            if (!title.trim()) {
+                alert('제목을 입력해주세요.');
+                return;
+            }
+
+            if (!content.value.trim()) {
+                alert('내용을 입력해주세요.');
                 return;
             }
 
@@ -150,7 +183,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ title, content })
+                body: JSON.stringify({ title, content: content.value })
             })
                 .then(response => {
                     if (response.ok) {

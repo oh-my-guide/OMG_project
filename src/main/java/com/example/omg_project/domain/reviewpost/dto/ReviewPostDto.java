@@ -43,6 +43,7 @@ public class ReviewPostDto {
         private Long id;
         private String title;
         private String content;
+        private int views;
         private LocalDateTime createdAt;
         private Long userId;
         private String username;
@@ -55,6 +56,7 @@ public class ReviewPostDto {
                     .id(reviewPost.getId())
                     .title(reviewPost.getTitle())
                     .content(reviewPost.getContent())
+                    .views(reviewPost.getViews())
                     .createdAt(reviewPost.getCreatedAt())
                     .userId(reviewPost.getUser().getId())
                     .usernick(reviewPost.getUser().getUsernick())

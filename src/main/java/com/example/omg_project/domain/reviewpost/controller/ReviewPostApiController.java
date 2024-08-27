@@ -24,7 +24,7 @@ public class ReviewPostApiController {
     }
 
     /**
-     * 후기 게시글 단건 조회
+     * 후기 게시글 상세 조회
      */
     @GetMapping("/{postId}")
     public ResponseEntity<ReviewPostDto.Response> getReviewPostById(@PathVariable(name = "postId") Long id) {
@@ -33,11 +33,17 @@ public class ReviewPostApiController {
     }
 
     /**
-     * 후기 게시글 전체 조회
+     * 후기 게시글 전체 조회 또는 지역별 조회
      */
     @GetMapping
-    public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts() {
-        List<ReviewPostDto.Response> reviewPosts = reviewPostService.findAllReviewPost();
+    public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts(@RequestParam(required = false) String city,
+                                                                          @RequestParam(required = false) String sort) {
+        List<ReviewPostDto.Response> reviewPosts;
+        if (city != null && !city.isEmpty()) {
+            reviewPosts = reviewPostService.findReviewPostsByCity(city, sort);
+        } else {
+            reviewPosts = reviewPostService.findAllReviewPost(sort);
+        }
         return ResponseEntity.ok(reviewPosts);
     }
 
@@ -48,6 +54,15 @@ public class ReviewPostApiController {
     public ResponseEntity<List<ReviewPostDto.Response>> getReviewPostsByUserId(@PathVariable Long userId) {
         List<ReviewPostDto.Response> reviewPosts = reviewPostService.findReviewPostsByUserId(userId);
         return ResponseEntity.ok(reviewPosts);
+    }
+
+    /**
+     * 게시글 검색
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<ReviewPostDto.Response>> searchReviewPosts(@RequestParam String searchOption, @RequestParam String keyword) {
+        List<ReviewPostDto.Response> searchResults = reviewPostService.searchReviewPosts(searchOption, keyword);
+        return ResponseEntity.ok(searchResults);
     }
 
     /**

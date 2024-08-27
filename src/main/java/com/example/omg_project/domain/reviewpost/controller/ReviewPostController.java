@@ -57,6 +57,11 @@ public class ReviewPostController {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             User user = userService.findByUsername(username).orElse(null);
             model.addAttribute("user", user);
+
+            // 조회수 증가 (본인 게시글이 아닌 경우에만)
+            if (user != null && !user.getId().equals(post.getUserId())) {
+                reviewPostService.incrementViews(postId);
+            }
         }
 
         return "review/viewpost";
