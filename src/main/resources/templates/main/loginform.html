@@ -42,7 +42,7 @@
 
                 document.cookie = "accessToken=" + accessToken + "; path=/; HttpOnly; SameSite=Strict;";
                 document.cookie = "refreshToken=" + refreshToken + "; path=/; HttpOnly; SameSite=Strict;";
-                window.location.href = '/my';
+                window.location.href = '/';
             })
             .catch(error => {
                 console.error('로그인 에러:', error);

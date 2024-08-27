@@ -30,7 +30,7 @@ public class UserController {
     private final ImageService imageService;
 
     /**
-     * 모든 로그인 회원의 마이페이지
+     * 로그인 회원의 마이페이지
      */
     @GetMapping("/my")
     public String myPage(Model model, HttpServletRequest request) {
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     /**
-     * OAuth2 로그인 회원 추가 정보 기입
+     * OAuth2 로그인 회원 추가 정보 기입 페이지 이동
      */
     @GetMapping("/oauthPage")
     public String addOauth2Form(Model model, HttpServletRequest request) {
@@ -90,7 +90,7 @@ public class UserController {
     }
 
     /**
-     * 회원 정보 수정
+     * 회원 정보 수정 페이지 이동
      */
     @GetMapping("/my/profile")
     public String userEditForm(Model model, HttpServletRequest request) {
@@ -106,7 +106,7 @@ public class UserController {
     }
 
     /**
-     * 회원 정보 수정 처리
+     * 회원 정보 수정 처리 API
      * userEditDto = JSON 데이터, profileImage = file 이므로 file은 JSON에 포함될 수 없고 JSON, file을 포함한 다중 요청 처리하기 위해 @RequestPart 사용
      */
     @PutMapping("/api/users/profile")
@@ -144,7 +144,7 @@ public class UserController {
     }
 
     /**
-     * 비밀번호 재설정
+     * 비밀번호 재설정 페이지 이동
      */
     @GetMapping("/my/change-password")
     public String changePasswordForm(HttpServletRequest request, Model model) {
@@ -162,6 +162,9 @@ public class UserController {
 
     }
 
+    /**
+     * 비밀번호 재설정 API
+     */
     @PutMapping("/api/users/change-password")
     @ResponseBody
     public ResponseEntity<String> changePassword(HttpServletRequest request,
@@ -178,5 +181,4 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
 }

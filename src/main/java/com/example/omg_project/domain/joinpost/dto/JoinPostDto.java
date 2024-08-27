@@ -43,6 +43,7 @@ public class JoinPostDto {
         private Long id;
         private String title;
         private String content;
+        private int views;
         private LocalDateTime createdAt;
         private Long userId;
         private String username;
@@ -55,6 +56,7 @@ public class JoinPostDto {
                     .id(joinPost.getId())
                     .title(joinPost.getTitle())
                     .content(joinPost.getContent())
+                    .views(joinPost.getViews())
                     .createdAt(joinPost.getCreatedAt())
                     .userId(joinPost.getUser().getId())
                     .usernick(joinPost.getUser().getUsernick())

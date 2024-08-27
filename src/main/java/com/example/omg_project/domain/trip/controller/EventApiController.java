@@ -2,6 +2,8 @@ package com.example.omg_project.domain.trip.controller;
 
 import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.entity.Team;
+import com.example.omg_project.domain.trip.entity.TripDate;
+import com.example.omg_project.domain.trip.entity.TripLocation;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
@@ -50,15 +52,21 @@ public class EventApiController {
         for (Team team : teamSet) {
             Trip trip = team.getTrip();
             if (trip != null) {
-                events.add(Map.of(
-                        "title", trip.getTripName(),
-                        "start", trip.getStartDate().toString(),
-                        "end", trip.getEndDate() != null ? trip.getEndDate().toString() : null
-                ));
+                // TripDates와 TripLocations에서 정보를 가져옴
+                for (TripDate tripDate : trip.getTripDates()) {
+                    for (TripLocation location : tripDate.getTripLocations()) {
+                        events.add(Map.of(
+                                "title", trip.getTripName(),
+                                "start", tripDate.getTripDate().toString(),
+                                "end", trip.getEndDate() != null ? trip.getEndDate().toString() : null,
+                                "latitude", location.getLatitude(),
+                                "longitude", location.getLongitude(),
+                                "placeName", location.getPlaceName()
+                        ));
+                    }
+                }
             }
         }
-
         return events;
     }
 }
-

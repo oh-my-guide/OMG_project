@@ -9,6 +9,7 @@ import com.example.omg_project.domain.trip.repository.TripRepository;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,9 +43,18 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ReviewPostDto.Response> findAllReviewPost() {
         return reviewPostRepository.findAll().stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ReviewPostDto.Response> findAllReviewPost(String sort) {
+        Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
+        if ("views".equals(sort)) {
+            sorting = Sort.by(Sort.Direction.DESC, "views"); // 인기순 정렬
+        }
+        return reviewPostRepository.findAll(sorting).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -52,6 +62,37 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     public List<ReviewPostDto.Response> findReviewPostsByUserId(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         return reviewPostRepository.findReviewPostByUserId(user.getId()).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReviewPostDto.Response> findReviewPostsByCity(String city, String sort) {
+        Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
+        if ("views".equals(sort)) {
+            sorting = Sort.by(Sort.Direction.DESC, "views"); // 인기순 정렬
+        }
+        return reviewPostRepository.findByTrip_CityName(city, sorting).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReviewPostDto.Response> searchReviewPosts(String searchOption, String keyword) {
+        List<ReviewPost> results;
+
+        // 검색 옵션에 따라 조회
+        switch (searchOption) {
+            case "title":
+                results = reviewPostRepository.findByTitleContaining(keyword);
+                break;
+            case "content":
+                results = reviewPostRepository.findByContentContaining(keyword);
+                break;
+            case "usernick":
+                results = reviewPostRepository.findByUser_UsernickContaining(keyword);
+                break;
+            default:
+                throw new IllegalArgumentException("검색 옵션이 유효하지 않습니다.");
+        }
+
+        return results.stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
     @Override
@@ -77,5 +118,14 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     @Transactional
     public void deleteReviewPost(Long id) {
         reviewPostRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void incrementViews(Long id) {
+        ReviewPost reviewPost = reviewPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        System.out.println("임플 전" + reviewPost.getViews());
+        reviewPost.incrementViews();
+        System.out.println("임플 후" + reviewPost.getViews());
     }
 }
