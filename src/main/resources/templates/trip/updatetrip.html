@@ -6,6 +6,7 @@
     <title>여행 일정 수정</title>
     <link rel="stylesheet" href="/css/trip.css">
     <link rel="stylesheet" href="/css/map.css">
+    <link rel="stylesheet" href="/css/recommend.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -18,11 +19,9 @@
             <label for="tripName">여행 이름</label>
             <input type="text" id="tripName" name="tripName">
 
-            <div class="header_info">
-                <h1 id="tripTitle">여행 일정 수정</h1>
-                <p id="cityId">도시 ID: 여기에 표시됩니다.</p>
-                <p id="cityName">도시 이름: 여기에 표시됩니다.</p>
-            </div>
+            <!-- 도시 이름을 표시할 요소 추가 -->
+            <input type="hidden" id="cityId" name="cityId" required>
+            <div id="cityName" style="display: none;"></div> <!-- CSS로 숨기기 -->
 
             <label for="startDate">여행 시작일</label>
             <input type="date" id="startDate" name="startDate">
@@ -60,8 +59,29 @@
             <!-- 페이지네이션을 표시 -->
             <div id="pagination"></div>
         </div>
+        <button id="toggleButton" class="toggleButton">접기</button> <!-- 접기/펼치기 버튼을 창 밖으로 이동 -->
+        <div class="filter_wrap" id="filter_wrap">
+            <h3 id="filterTitle">여행 명소 추천</h3> <!-- 제목 추가 -->
+            <div id="filterContent">
+                <div id="filterButtons">
+                    <button type="button" onclick="filterPlaces(12)">관광지</button>
+                    <button type="button" onclick="filterPlaces(39)">식당</button>
+                    <button type="button" onclick="filterPlaces(32)">숙박</button>
+                    <button type="button" onclick="filterPlaces(14)">문화시설</button>
+                    <button type="button" onclick="filterPlaces(15)">축제/행사</button>
+                    <button type="button" onclick="filterPlaces(28)">레포츠</button>
+                    <button type="button" onclick="filterPlaces(38)">쇼핑</button>
+                </div>
+                <br>
+                <hr>
+                <div id="filteredPlacesListContainer">
+                    <ul id="filteredPlacesList"></ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <script>
     let tripDatesCounter = 0;
@@ -358,26 +378,6 @@
 
     document.getElementById('startDate').addEventListener('change', updateTripDates);
     document.getElementById('endDate').addEventListener('change', updateTripDates);
-    //
-    // //도시 id로 이름 불러오기
-    // fetch(`/api/cities/${cityId}`)
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('City not found');
-    //         }
-    //         return response.text(); // 도시 이름을 문자열로 반환합니다.
-    //     })
-    //     .then(cityName => {
-    //         // 도시 이름을 화면에 표시합니다.
-    //         document.getElementById('cityName').textContent = `City Name: ${cityName}`;
-    //         document.getElementById('error').textContent = '';
-    //     })
-    //     .catch(error => {
-    //         // 에러가 발생한 경우 에러 메시지를 화면에 표시합니다.
-    //         document.getElementById('cityName').textContent = '';
-    //         document.getElementById('error').textContent = error.message;
-    //     });
-    //
 
     //도시 관련 데이터 추출
     document.addEventListener('DOMContentLoaded', function() {
@@ -397,6 +397,7 @@
                         document.getElementById('cityId').textContent = '도시 ID: 데이터 없음';
                         document.getElementById('cityName').textContent = '도시 이름: 데이터 없음';
                     }
+                    filterPlaces(12);
                 } else {
                     alert('여행 일정 정보를 가져오는 중 오류가 발생했습니다.');
                 }
@@ -406,6 +407,87 @@
                 alert('여행 일정 정보를 가져오는 중 오류가 발생했습니다.');
             });
     });
+
+    function filterPlaces(contentTypeId) {
+        const cityNameElement = document.getElementById('cityName');
+
+        // 도시 이름 추출
+        const cityName = cityNameElement ? cityNameElement.textContent.replace('도시 이름: ', '').trim() : '';
+
+        if (!cityName) {
+            alert('도시 이름을 확인할 수 없습니다.');
+            return;
+        }
+
+        // 기본 설정
+        const serviceKey = "bR6YX%2Fkp0Y%2Bvm31sUAayaUZjxmI7dVH0PTsTtlb90Ae9abKUTxIFBc7X4u1wnHnDUuk8uYekiXhdYgb5iyiw5w%3D%3D";
+        const numOfRows = 10;  // 한 페이지에 표시할 결과 수
+        const pageNo = 1;  // 페이지 번호
+        const MobileOS = "WIN";  // 운영체제 정보
+        const MobileApp = "OMG";  // 애플리케이션 이름
+
+        // API 호출 URL 구성
+        const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=${serviceKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=A&keyword=${encodeURIComponent(cityName)}&contentTypeId=${contentTypeId}&numOfRows=${numOfRows}&pageNo=${pageNo}`;
+
+        // API 호출 URL을 콘솔에 출력
+        console.log('API 호출 URL:', apiUrl);
+
+        // API 호출
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('API 응답 데이터:', data);
+                if (data.response && data.response.body && data.response.body.items) {
+                    displayFilteredPlaces(data.response.body.items.item);
+                } else {
+                    alert('검색 결과가 없습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert('데이터를 불러오는데 실패했습니다.');
+            });
+    }
+    function displayFilteredPlaces(places) {
+        const listEl = document.getElementById('filteredPlacesList');
+        listEl.innerHTML = '';
+
+        if (!places || places.length === 0) {
+            listEl.innerHTML = '<li>검색 결과가 없습니다.</li>';
+            return;
+        }
+
+        places.forEach(place => {
+            const imageUrl = place.firstimage || 'https://via.placeholder.com/100';  // 기본 이미지 사용
+            const phone = place.tel || 'x';
+            const address1 = place.addr1 || 'x';
+
+            const itemEl = document.createElement('li');
+            itemEl.innerHTML = `
+            <img src="${imageUrl}" alt="${place.title}">
+            <div class="place-info">
+                <h3>${place.title}</h3>
+                <p><strong>전화번호:</strong> ${phone}</p>
+                <p><strong>주소:</strong> ${address1}</p>
+            </div>
+            `;
+            listEl.appendChild(itemEl);
+        });
+    }
+
+    document.getElementById('toggleButton').addEventListener('click', function() {
+        const filterWrap = document.getElementById('filter_wrap');
+        const toggleButton = document.getElementById('toggleButton');
+
+        if (filterWrap.classList.contains('hidden')) {
+            filterWrap.classList.remove('hidden');
+            toggleButton.textContent = '접기';
+        } else {
+            filterWrap.classList.add('hidden');
+            toggleButton.textContent = '열기';
+        }
+    });
+
 
 </script>
 <script type="text/javascript"
