@@ -29,7 +29,6 @@ public class MailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
     private static final String senderEmail = "ch9800113@gmail.com";
     private static final Map<String, Integer> verificationCodes = new HashMap<>();
-    // private static final Map<String, String> verificationCodes = new HashMap<>();
 
     /**
      * 인증 코드 자동 생성 메서드
@@ -52,7 +51,7 @@ public class MailServiceImpl implements MailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setFrom(senderEmail);
             helper.setTo(mail);
-            helper.setSubject("OMG 이메일 인증번호");
+            helper.setSubject("OMG 회원가입 인증번호");
             String body = "<h2>OMG에 오신걸 환영합니다!</h2><h3>아래의 인증번호를 입력하세요.</h3><h1>" + verificationCodes.get(mail) + "</h1><h3>감사합니다.</h3>";
             helper.setText(body, true);
         } catch (MessagingException e) {
@@ -94,7 +93,6 @@ public class MailServiceImpl implements MailService {
         for (int i = 0; i < length; i++) {
             sb.append(characters.charAt(random.nextInt(characters.length())));
         }
-
         return sb.toString();
     }
 
