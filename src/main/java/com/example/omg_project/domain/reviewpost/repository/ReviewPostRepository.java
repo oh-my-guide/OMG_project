@@ -10,7 +10,7 @@ public interface ReviewPostRepository extends JpaRepository<ReviewPost, Long> {
     // 특정 사용자의 전체 게시글 확인
     List<ReviewPost> findReviewPostByUserId(Long userId);
     // 지역별 전체 게시글 조회
-    List<ReviewPost> findByTrip_CityName(String cityName, Sort sort);
+    List<ReviewPost> findByTrip_CityId(Long cityId, Sort sort);
     // 검색 기능 추가: 개별 필드별 검색
     List<ReviewPost> findByTitleContaining(String title);
     List<ReviewPost> findByContentContaining(String content);

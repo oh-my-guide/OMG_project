@@ -65,13 +65,13 @@ public class JoinPostServiceImpl implements JoinPostService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<JoinPostDto.Response> findJoinPostsByCity(String city, String sort) {
+    public List<JoinPostDto.Response> findJoinPostsByCity(Long cityId, String sort) {
         Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
         if ("views".equals(sort)) {
             sorting = Sort.by(Sort.Direction.DESC, "views"); // 인기순 정렬
         }
 
-        return joinPostRepository.findByTrip_CityName(city, sorting)
+        return joinPostRepository.findByTrip_CityId(cityId, sorting)
                 .stream()
                 .map(JoinPostDto.Response::fromEntity)
                 .collect(Collectors.toList());

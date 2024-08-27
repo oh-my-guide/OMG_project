@@ -14,7 +14,7 @@ public interface ReviewPostService {
     // 특정 사용자의 게시글 전체 조회
     List<ReviewPostDto.Response> findReviewPostsByUserId(Long userId);
     // 지역별 게시글 전체 조회
-    List<ReviewPostDto.Response> findReviewPostsByCity(String city, String sort);
+    List<ReviewPostDto.Response> findReviewPostsByCity(Long cityId, String sort);
     // 검색 옵션에 따른 게시글 전체 조회
     List<ReviewPostDto.Response> searchReviewPosts(String searchOption, String keyword);
     // 후기 게시글 상세 조회
