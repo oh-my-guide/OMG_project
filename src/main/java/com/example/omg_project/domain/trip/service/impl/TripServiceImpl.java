@@ -160,7 +160,7 @@ public class TripServiceImpl implements TripService {
         return trips.stream().map(ReadTripDTO::fromEntity).collect(Collectors.toList());
     }
 
-    //여행 일정 수정 (날짜 고정)
+    //여행 일정 수정
     @Override
     @Transactional
     public UpdateTripDTO updateTrip(Long id, UpdateTripDTO updateTripDTO) {
@@ -174,6 +174,14 @@ public class TripServiceImpl implements TripService {
             trip.setTripName(updateTripDTO.getTripName());
             trip.setStartDate(updateTripDTO.getStartDate());
             trip.setEndDate(updateTripDTO.getEndDate());
+            // City 엔티티를 조회하여 설정
+            Optional<City> cityOptional = cityRepository.findById(updateTripDTO.getCityId());
+            if (cityOptional.isPresent()) {
+                trip.setCity(cityOptional.get());
+            } else {
+                log.warn("City not found with id: {}", updateTripDTO.getCityId());
+                return null; // 도시가 존재하지 않을 경우
+            }
             log.info("Updated Trip basic info: {}", trip);
 
             // 기존 TripDates 및 TripLocations 업데이트 로직
@@ -242,7 +250,13 @@ public class TripServiceImpl implements TripService {
 
             tripRepository.save(trip);
             log.info("Trip saved successfully: {}", trip);
-            return updateTripDTO;
+            UpdateTripDTO updatedDTO = new UpdateTripDTO();
+            updatedDTO.setId(trip.getId());
+            updatedDTO.setTripName(trip.getTripName());
+            updatedDTO.setStartDate(trip.getStartDate());
+            updatedDTO.setEndDate(trip.getEndDate());
+            updatedDTO.setCityId(trip.getCity().getId());
+            return updatedDTO;
         } else {
             log.warn("Trip not found with id: {}", id);
             return null;
