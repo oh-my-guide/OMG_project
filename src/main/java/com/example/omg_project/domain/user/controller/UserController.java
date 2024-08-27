@@ -107,16 +107,21 @@ public class UserController {
 
     /**
      * 회원 정보 수정 처리 API
+     * userEditDto = JSON 데이터, profileImage = file 이므로 file은 JSON에 포함될 수 없고 JSON, file을 포함한 다중 요청 처리하기 위해 @RequestPart 사용
      */
     @PutMapping("/api/users/profile")
     @ResponseBody
-    public ResponseEntity<String> updateUserProfile(HttpServletRequest request, @RequestBody UserEditRequest userEditDto, @RequestParam("profileImage") MultipartFile profileImage) {
+    public ResponseEntity<String> updateUserProfile(HttpServletRequest request,
+                                                    @RequestPart(value = "userEditDto") UserEditRequest userEditDto,
+                                                    @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         if (accessToken != null) {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             try {
+                // 유저 정보 업데이트
                 userService.updateUser(username, userEditDto);
-                // 프로필 이미지 파일을 선택했을 경우
+
+                // 프로필 이미지 파일을 선택했을 경우, 프로필 이미지 업데이트
                 if (profileImage != null && !profileImage.isEmpty()) {
                     String imageUrl = imageService.upload(profileImage);
                     userService.updateProfileImage(username, imageUrl);
