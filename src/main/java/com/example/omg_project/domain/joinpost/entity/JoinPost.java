@@ -33,7 +33,7 @@ public class JoinPost {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
 
     @Column(nullable = false)
