@@ -123,7 +123,7 @@
             <tr th:each="user : ${users}">
                 <td th:text="${user.id}">ID</td>
                 <td th:text="${user.username}">이메일</td>
-                <td th:text="${user.registrationDate}">가입일</td>
+                <td th:text="${user.getFormattedCreatedAt()}">가입일</td>
                 <td th:text="${user.status}">상태</td>
                 <td>
                     <input type="hidden" class="userId" th:value="${user.id}"/>
