@@ -123,7 +123,7 @@ public class UserController {
 
                 // 프로필 이미지 파일을 선택했을 경우, 프로필 이미지 업데이트
                 if (profileImage != null && !profileImage.isEmpty()) {
-                    String imageUrl = imageService.upload(profileImage);
+                    String imageUrl = imageService.upload(profileImage, "UserProfileImage");
                     userService.updateProfileImage(username, imageUrl);
                 }
                 return ResponseEntity.ok("회원정보가 수정되었습니다.");
