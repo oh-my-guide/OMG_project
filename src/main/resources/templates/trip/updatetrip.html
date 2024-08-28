@@ -564,8 +564,6 @@
 
         // API 호출 URL 구성
         const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=${apiKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=C&contentTypeId=${contentTypeId}&mapX=${selectedCityCoords.lng}&mapY=${selectedCityCoords.lat}&radius=10000&numOfRows=${numOfRows}&pageNo=${pageNo}`;
-        // API 호출 URL을 콘솔에 출력
-        console.log('API 호출 URL:', apiUrl);
 
         // API 호출
         fetch(apiUrl)
