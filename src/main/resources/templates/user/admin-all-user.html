@@ -27,7 +27,7 @@
             background-color: #fff;
             padding: 10px 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .header .logo {
@@ -40,6 +40,7 @@
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
         }
 
         table {
@@ -106,7 +107,6 @@
 <body>
 <div class="container">
     <div th:replace="fragments/header :: headerFragment"></div>
-    <a th:href="@{/}">홈</a>
     <div class="main-content">
         <h2>OMG 사용자 목록</h2>
         <table>
@@ -123,7 +123,7 @@
             <tr th:each="user : ${users}">
                 <td th:text="${user.id}">ID</td>
                 <td th:text="${user.username}">이메일</td>
-                <td th:text="${user.registrationDate}">가입일</td>
+                <td th:text="${user.getFormattedCreatedAt()}">가입일</td>
                 <td th:text="${user.status}">상태</td>
                 <td>
                     <input type="hidden" class="userId" th:value="${user.id}"/>

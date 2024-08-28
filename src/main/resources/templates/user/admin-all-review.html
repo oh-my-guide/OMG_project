@@ -27,7 +27,7 @@
             background-color: #fff;
             padding: 10px 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .header .logo {
@@ -40,6 +40,7 @@
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
         }
 
         table {
@@ -79,7 +80,6 @@
 <body>
 <div class="container">
     <div th:replace="fragments/header :: headerFragment"></div>
-    <a th:href="@{/}">홈</a>
     <div class="main-content">
         <h2>여행 후기 게시글 목록</h2>
         <table>
@@ -97,9 +97,10 @@
                 <td th:text="${review.id}">ID</td>
                 <td th:text="${review.usernick}">작성자</td>
                 <td th:text="${review.title}">제목</td>
-                <td th:text="${review.createdAt}">작성일</td>
+                <td th:text="${review.getFormattedCreatedAt()}">작성일</td>
                 <td>
-                    <button class="remove-button" data-review-id="${review.id}">정지</button>
+                    <input type="hidden" class="postId" th:value="${review.id}"/>
+                    <button class="delete-account remove-button">정지</button>
                 </td>
             </tr>
             </tbody>
@@ -108,25 +109,22 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('.remove-button').on('click', function() {
-            if (confirm("정말로 이 게시글을 정지하시겠습니까?")) {
-                const postId = $(this).data('review-id');
-                const button = $(this);
-
-                $.ajax({
-                    type: 'DELETE',
-                    url: '/admin/posts/' + postId,
-                    success: function(response) {
-                        alert('게시글이 성공적으로 정지되었습니다.');
-                        button.closest('tr').remove();
-                    },
-                    error: function(error) {
-                        alert('게시글 정지에 실패했습니다.');
-                    }
-                });
-            }
-        });
+    $(document).on('click', '.delete-account', function(e) {
+        e.preventDefault();
+        const postId = $(this).closest('tr').find('.postId').val();
+        if (confirm("정말로 게시글을 정지시키겠습니까?")) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/admin/posts/' + postId,
+                success: function(response) {
+                    alert('게시글이 성공적으로 정지되었습니다.');
+                    window.location.href = '/admin/reviewboard';
+                },
+                error: function(error) {
+                    alert('게시글 정지에 실패했습니다.');
+                }
+            });
+        }
     });
 </script>
 </body>
