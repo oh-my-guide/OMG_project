@@ -530,6 +530,16 @@
             });
     });
 
+    fetch('/api/key')
+        .then(response => response.text())
+        .then(key => {
+            apiKey = key;  // API 키를 전역 변수에 저장
+            // 이 API 키를 사용하여 다른 API 호출을 수행합니다.
+        })
+        .catch(error => {
+            console.error('Error fetching API key:', error);
+        });
+
     function filterPlaces(contentTypeId) {
         const cityNameElement = document.getElementById('cityName');
         // 도시 이름 추출
@@ -547,14 +557,13 @@
         }
 
         // 기본 설정
-        const serviceKey = "bR6YX%2Fkp0Y%2Bvm31sUAayaUZjxmI7dVH0PTsTtlb90Ae9abKUTxIFBc7X4u1wnHnDUuk8uYekiXhdYgb5iyiw5w%3D%3D";
         const numOfRows = 100;  // 한 페이지에 표시할 결과 수
         const pageNo = 1;  // 페이지 번호
         const MobileOS = "WIN";  // 운영체제 정보
         const MobileApp = "OMG";  // 애플리케이션 이름
 
         // API 호출 URL 구성
-        const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=${serviceKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=C&contentTypeId=${contentTypeId}&mapX=${selectedCityCoords.lng}&mapY=${selectedCityCoords.lat}&radius=10000&numOfRows=${numOfRows}&pageNo=${pageNo}`;
+        const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=${apiKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=C&contentTypeId=${contentTypeId}&mapX=${selectedCityCoords.lng}&mapY=${selectedCityCoords.lat}&radius=10000&numOfRows=${numOfRows}&pageNo=${pageNo}`;
         // API 호출 URL을 콘솔에 출력
         console.log('API 호출 URL:', apiUrl);
 
