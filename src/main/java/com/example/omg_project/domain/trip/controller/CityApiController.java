@@ -32,12 +32,4 @@ public class CityApiController {
 
 
     }
-
-    //도시 id로 도시 이름 조회
-    @GetMapping("/{cityId}")
-    public ResponseEntity<String> getCityById(@PathVariable Long cityId) {
-        return cityService.getCityById(cityId)
-                .map(city -> ResponseEntity.ok(city.getName())) // City 객체에서 이름만 반환
-                .orElse(ResponseEntity.notFound().build());
-    }
 }
