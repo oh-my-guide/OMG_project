@@ -28,11 +28,12 @@
                        <th:block th:if="${user.usernick == 'OMGAdmin'}">
                            <a href="/admin/userboard">사용자 관리</a>
                            <a href="/admin/reviewboard">게시글 관리</a>
-                           <a href="#">공지사항 관리</a>
+                           <a href="/notices">공지사항 관리</a>
                        </th:block>
                        <th:block th:if="${user.usernick != 'OMGAdmin'}">
                            <a href="/my">내 정보</a>
                            <a href="/faq">고객센터</a>
+                           <a href="/notices">공지사항</a>
                        </th:block>
                        <a href="/api/users/logout">로그아웃</a>
                    </div>
