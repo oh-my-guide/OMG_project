@@ -97,7 +97,7 @@
                 <td th:text="${review.id}">ID</td>
                 <td th:text="${review.usernick}">작성자</td>
                 <td th:text="${review.title}">제목</td>
-                <td th:text="${review.createdAt}">작성일</td>
+                <td th:text="${review.getFormattedCreatedAt()}">작성일</td>
                 <td>
                     <input type="hidden" class="postId" th:value="${review.id}"/>
                     <button class="delete-account remove-button">정지</button>
