@@ -81,9 +81,131 @@
         </div>
     </div>
 </div>
-
-
 <script>
+    const cityCoordinates = {
+        "서울": { lat: 37.5665, lng: 126.9780 },
+        "부산": { lat: 35.1796, lng: 129.0756 },
+        "대구": { lat: 35.8722, lng: 128.6010 },
+        "인천": { lat: 37.4563, lng: 126.7052 },
+        "광주": { lat: 35.1595, lng: 126.8526 },
+        "대전": { lat: 36.3504, lng: 127.3845 },
+        "울산": { lat: 35.5384, lng: 129.3114 },
+        "세종": { lat: 36.4800, lng: 127.2890 },
+        "춘천": { lat: 37.8813, lng: 127.7298 },
+        "원주": { lat: 37.3422, lng: 127.9202 },
+        "강릉": { lat: 37.7519, lng: 128.8761 },
+        "동해": { lat: 37.5244, lng: 129.1143 },
+        "태백": { lat: 37.1648, lng: 128.9856 },
+        "속초": { lat: 38.2070, lng: 128.5919 },
+        "삼척": { lat: 37.4493, lng: 129.1658 },
+        "홍천": { lat: 37.6972, lng: 127.8880 },
+        "횡성": { lat: 37.4884, lng: 127.9848 },
+        "평창": { lat: 37.3704, lng: 128.3906 },
+        "정선": { lat: 37.3800, lng: 128.6600 },
+        "영월": { lat: 37.1838, lng: 128.4613 },
+        "수원": { lat: 37.2636, lng: 127.0286 },
+        "고양": { lat: 37.6584, lng: 126.8320 },
+        "용인": { lat: 37.2411, lng: 127.1776 },
+        "성남": { lat: 37.4200, lng: 127.1265 },
+        "부천": { lat: 37.5034, lng: 126.7660 },
+        "남양주": { lat: 37.6367, lng: 127.2165 },
+        "안산": { lat: 37.3219, lng: 126.8309 },
+        "안양": { lat: 37.3943, lng: 126.9568 },
+        "평택": { lat: 36.9922, lng: 127.1126 },
+        "의정부": { lat: 37.7381, lng: 127.0337 },
+        "군포": { lat: 37.3614, lng: 126.9350 },
+        "오산": { lat: 37.1495, lng: 127.0772 },
+        "시흥": { lat: 37.3802, lng: 126.8030 },
+        "하남": { lat: 37.5393, lng: 127.2147 },
+        "의왕": { lat: 37.3445, lng: 126.9688 },
+        "양주": { lat: 37.7853, lng: 127.0456 },
+        "파주": { lat: 37.7613, lng: 126.7755 },
+        "광명": { lat: 37.4786, lng: 126.8643 },
+        "구리": { lat: 37.5943, lng: 127.1295 },
+        "여주": { lat: 37.2983, lng: 127.6375 },
+        "창원": { lat: 35.2270, lng: 128.6812 },
+        "김해": { lat: 35.2285, lng: 128.8890 },
+        "진주": { lat: 35.1802, lng: 128.1076 },
+        "양산": { lat: 35.3350, lng: 129.0377 },
+        "거제": { lat: 34.8800, lng: 128.6211 },
+        "통영": { lat: 34.8544, lng: 128.4330 },
+        "사천": { lat: 35.0038, lng: 128.0647 },
+        "밀양": { lat: 35.5037, lng: 128.7489 },
+        "함안": { lat: 35.2723, lng: 128.4064 },
+        "거창": { lat: 35.6870, lng: 127.9095 },
+        "창녕": { lat: 35.5438, lng: 128.4914 },
+        "산청": { lat: 35.4154, lng: 127.8733 },
+        "의령": { lat: 35.3226, lng: 128.2617 },
+        "고성": { lat: 34.9723, lng: 128.3227 },
+        "하동": { lat: 35.0676, lng: 127.7519 },
+        "합천": { lat: 35.5666, lng: 128.1657 },
+        "포항": { lat: 36.0190, lng: 129.3435 },
+        "경주": { lat: 35.8562, lng: 129.2247 },
+        "구미": { lat: 36.1195, lng: 128.3447 },
+        "김천": { lat: 36.1394, lng: 128.1136 },
+        "안동": { lat: 36.5684, lng: 128.7294 },
+        "영주": { lat: 36.8057, lng: 128.6247 },
+        "상주": { lat: 36.4151, lng: 128.1599 },
+        "문경": { lat: 36.5866, lng: 128.1998 },
+        "경산": { lat: 35.8251, lng: 128.7415 },
+        "영천": { lat: 35.9733, lng: 128.9385 },
+        "청송": { lat: 36.4364, lng: 129.0575 },
+        "영양": { lat: 36.6642, lng: 129.1121 },
+        "봉화": { lat: 36.8932, lng: 128.7320 },
+        "울릉": { lat: 37.4853, lng: 130.9057 },
+        "예천": { lat: 36.6552, lng: 128.4523 },
+        "성주": { lat: 35.9194, lng: 128.2816 },
+        "군위": { lat: 36.2394, lng: 128.5724 },
+        "의성": { lat: 36.3522, lng: 128.6975 },
+        "천안": { lat: 36.8151, lng: 127.1139 },
+        "아산": { lat: 36.7894, lng: 127.0019 },
+        "서산": { lat: 36.7845, lng: 126.4502 },
+        "논산": { lat: 36.1872, lng: 127.0986 },
+        "보령": { lat: 36.3330, lng: 126.6126 },
+        "계룡": { lat: 36.2747, lng: 127.2497 },
+        "당진": { lat: 36.8930, lng: 126.6295 },
+        "금산": { lat: 36.1080, lng: 127.4883 },
+        "부여": { lat: 36.2758, lng: 126.9094 },
+        "서천": { lat: 36.0804, lng: 126.6917 },
+        "홍성": { lat: 36.6016, lng: 126.6600 },
+        "예산": { lat: 36.6827, lng: 126.8504 },
+        "청양": { lat: 36.4603, lng: 126.8013 },
+        "태안": { lat: 36.7451, lng: 126.2978 },
+        "여수": { lat: 34.7604, lng: 127.6622 },
+        "순천": { lat: 34.9500, lng: 127.4875 },
+        "목포": { lat: 34.8118, lng: 126.3922 },
+        "나주": { lat: 35.0154, lng: 126.7109 },
+        "광양": { lat: 34.9407, lng: 127.6954 },
+        "담양": { lat: 35.3214, lng: 126.9876 },
+        "곡성": { lat: 35.2816, lng: 127.2900 },
+        "구례": { lat: 35.2028, lng: 127.4620 },
+        "고흥": { lat: 34.5960, lng: 127.2838 },
+        "보성": { lat: 34.7714, lng: 127.0796 },
+        "장흥": { lat: 34.6812, lng: 126.9071 },
+        "강진": { lat: 34.6384, lng: 126.7690 },
+        "해남": { lat: 34.5743, lng: 126.6004 },
+        "완도": { lat: 34.3113, lng: 126.7550 },
+        "진도": { lat: 34.4868, lng: 126.2630 },
+        "신안": { lat: 34.8264, lng: 126.1054 },
+        "무안": { lat: 34.9903, lng: 126.4788 },
+        "영암": { lat: 34.8006, lng: 126.7024 },
+        "전주": { lat: 35.8242, lng: 127.1470 },
+        "군산": { lat: 35.9674, lng: 126.7368 },
+        "익산": { lat: 35.9501, lng: 126.9577 },
+        "남원": { lat: 35.4164, lng: 127.3903 },
+        "정읍": { lat: 35.5695, lng: 126.8577 },
+        "김제": { lat: 35.8030, lng: 126.8807 },
+        "완주": { lat: 35.9044, lng: 127.1627 },
+        "진안": { lat: 35.7912, lng: 127.4247 },
+        "무주": { lat: 35.9204, lng: 127.6601 },
+        "장수": { lat: 35.6481, lng: 127.5210 },
+        "고창": { lat: 35.4352, lng: 126.7010 },
+        "임실": { lat: 35.6175, lng: 127.2887 },
+        "순창": { lat: 35.3748, lng: 127.1374 },
+        "제주": { lat: 33.4996, lng: 126.5312 },
+        "서귀포": { lat: 33.2530, lng: 126.5617 }
+    };
+
     let tripDatesCounter = 0;
     let markers = {};
     let selectedPlaces = {};
@@ -410,12 +532,17 @@
 
     function filterPlaces(contentTypeId) {
         const cityNameElement = document.getElementById('cityName');
-
         // 도시 이름 추출
         const cityName = cityNameElement ? cityNameElement.textContent.replace('도시 이름: ', '').trim() : '';
 
         if (!cityName) {
             alert('도시 이름을 확인할 수 없습니다.');
+            return;
+        }
+
+        const selectedCityCoords = cityCoordinates[cityName];
+        if (!selectedCityCoords) {
+            alert('선택한 도시의 좌표를 찾을 수 없습니다.');
             return;
         }
 
@@ -427,8 +554,7 @@
         const MobileApp = "OMG";  // 애플리케이션 이름
 
         // API 호출 URL 구성
-        const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/searchKeyword?serviceKey=${serviceKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=D&keyword=${encodeURIComponent(cityName)}&contentTypeId=${contentTypeId}&numOfRows=${numOfRows}&pageNo=${pageNo}`;
-
+        const apiUrl = `https://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=${serviceKey}&MobileOS=${MobileOS}&MobileApp=${MobileApp}&_type=json&listYN=Y&arrange=C&contentTypeId=${contentTypeId}&mapX=${selectedCityCoords.lng}&mapY=${selectedCityCoords.lat}&radius=10000&numOfRows=${numOfRows}&pageNo=${pageNo}`;
         // API 호출 URL을 콘솔에 출력
         console.log('API 호출 URL:', apiUrl);
 
