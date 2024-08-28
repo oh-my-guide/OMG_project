@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 관리</title>
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        h1 {
+            color: #8fc6ff;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 20px;
+            margin: 70px auto 0;
+            background-color: #fff;
+            border: 2px solid #8fc6ff;
+            border-radius: 25px;
+            display: block;
+            width: fit-content;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .notice-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .notice-form label {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .notice-form input, .notice-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        .notice-form button {
+            padding: 10px 15px;
+            background-color: #8fc6ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: medium;
+            align-self: flex-start; /* 버튼을 왼쪽으로 정렬 */
+        }
+
+        .notice-form button:hover {
+            background-color: #6ba0d6;
+        }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: headerFragment"></div>
+<h1>공지사항</h1>
+
+<div class="container">
+    <section class="notice-form">
+        <h2>공지사항 작성</h2>
+        <form id="noticeForm">
+            <label for="title">제목:</label>
+            <input type="text" id="title" name="title" required />
+
+            <label for="content">공지 내용:</label>
+            <textarea id="content" name="content" rows="5" required></textarea>
+            <button type="submit">등록</button>
+        </form>
+    </section>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // 공지사항 작성 폼 제출
+        $('#noticeForm').on('submit', function(event) {
+            event.preventDefault();
+            var title = $('#title').val();
+            var content = $('#content').val();
+            $.ajax({
+                url: '/admin/notices',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ title: title, content: content }),
+                success: function() {
+                    alert('공지사항이 작성되었습니다.');
+                    $('#title').val(''); // 제목 입력 필드 비우기
+                    $('#content').val(''); // 내용 입력 필드 비우기
+                    window.location.href = '/notices';
+                },
+                error: function() {
+                    alert('공지사항 작성 중 오류가 발생했습니다.');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
