@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface TeamRepository extends JpaRepository<Team, Long> {
 //    List<Team> findByTrip(Trip trip);
 //    void deleteByTripId(Long tripId);
-    Team findByInviteCode(String inviteCode);
+   Team findByInviteCode(String inviteCode);
     List<Team> findByTrip(Trip trip);
     void deleteByTripId(Long tripId);
     List<Team> findAllByTripId(Long tripId);
@@ -22,4 +22,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     // 팀의 리더를 특정 사용자로 설정된 팀을 찾는 메서드
     List<Team> findByLeaderId(Long leaderId);
     Optional<Team> findByChatRoomId(Long chatRoomId);
+
+    boolean existsByIdAndUsersId(Long teamId, Long userId);
 }

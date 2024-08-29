@@ -256,7 +256,7 @@
         }).then(response => {
             if (response.ok) {
                 alert('여행 일정이 성공적으로 수정되었습니다.');
-                window.location.href = `/trip/update/${tripId}`;
+                window.location.href = `/trip/${tripId}`;
             } else {
                 alert('여행 일정 수정 중 오류가 발생했습니다.');
             }
