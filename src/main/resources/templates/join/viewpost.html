@@ -12,6 +12,7 @@
             margin: 20px;
             background-color: #f8f9fa;
             color: #333;
+            font-size: 16px; /* 기본 글씨 크기 조정 */
         }
 
         .container {
@@ -24,33 +25,28 @@
         }
 
         .trip-info {
-            margin-bottom: 30px;
-            padding: 15px;
-            background-color: #f9fbfd;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding: 0;
         }
 
-        .trip-info h4 {
-            font-size: 1em;
-            color: #555;
-        }
-
-        .trip-info h5 {
-            font-size: 0.9em;
-            color: #777;
-            margin: 0;
+        .trip-info h3 {
+            font-size: 20px; /* 제목 글씨 크기 증가 */
+            color: #333;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #8fc6ff;
+            padding-bottom: 5px;
         }
 
         .post-title {
             margin-bottom: 20px;
-            font-size: 28px;
+            font-size: 30px; /* 게시글 제목 크기 증가 */
             font-weight: 700;
             color: #333;
         }
 
         .post-meta {
-            font-size: 0.9em;
+            font-size: 0.95em; /* 메타 정보 크기 약간 증가 */
             color: #777;
             margin-bottom: 20px;
             display: flex;
@@ -75,20 +71,88 @@
         }
 
         .post-views {
-            margin-left: 15px; /* 날짜와 조회수 사이 간격 조정 */
-            color: #999; /* 조회수 색상 */
-            font-size: 0.9em; /* 폰트 크기 */
+            margin-left: 15px;
+            color: #999;
+            font-size: 0.9em;
         }
 
         .post-content {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #f9fafc;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            line-height: 1.6;
+            display: block;
+            margin-bottom: 20px;
+            width: 100%;
+            padding: 12px; /* 패딩 증가 */
+            font-size: 16px; /* 내용 글씨 크기 증가 */
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            min-height: 150px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .post-content img {
+            max-width: 100%; /* 이미지가 컨테이너의 너비를 초과하지 않도록 설정 */
+            height: auto; /* 원본 비율을 유지하면서 높이를 자동으로 조정 */
+            display: block; /* 이미지를 블록 요소로 설정하여 다른 요소와의 간격을 조정 */
+            margin: 10px 0; /* 이미지 위아래에 간격을 추가 */
+        }
+
+        details {
+            background-color: #fafafa;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        summary {
+            font-size: 18px; /* 요약 텍스트 크기 증가 */
+            font-weight: bold;
+            cursor: pointer;
             color: #555;
-            border-left: 4px solid #8fc6ff;
+            padding: 5px;
+        }
+
+        summary:hover {
+            color: #333;
+        }
+
+        summary::marker {
+            color: #8fc6ff;
+        }
+
+        ol {
+            list-style-type: decimal;
+            margin-block-start: 10px;
+            margin-block-end: 10px;
+            margin-inline-start: 20px;
+            margin-inline-end: 20px;
+            padding-inline-start: 20px;
+            unicode-bidi: isolate;
+            font-size: 16px; /* 번호 크기 증가 */
+        }
+
+        .location-item {
+            margin-bottom: 20px;
+        }
+
+        .location-item-header {
+            display: flex;
+            align-items: center;
+        }
+
+        ol > li {
+            counter-increment: list;
+            font-size: 18px; /* 리스트 번호 크기 증가 */
+            color: #8fc6ff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .location-name {
+            font-weight: 600;
+            font-size: 16px; /* 장소 이름 크기 약간 증가 */
+            color: #555;
+            display: inline-block;
+            margin-left: 5px;
         }
 
         .like-section {
@@ -126,7 +190,7 @@
             border: none;
             cursor: pointer;
             padding: 0;
-            font-size: 0.9em;
+            font-size: 1em;
             text-decoration: none;
             transition: color 0.3s ease;
         }
@@ -147,6 +211,7 @@
             background-color: #fafafa;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            font-size: 16px; /* 댓글과 대댓글의 글씨 크기 증가 */
         }
 
         .reply {
@@ -158,7 +223,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9em;
+            font-size: 0.95em; /* 메타 정보 글씨 크기 약간 증가 */
             color: #555;
             margin-bottom: 8px;
         }
@@ -184,7 +249,7 @@
             border: none;
             cursor: pointer;
             padding: 0;
-            font-size: 0.9em;
+            font-size: 1em;
             transition: color 0.3s ease;
         }
 
@@ -271,25 +336,29 @@
             <span class="post-views" th:text="'조회수 ' + ${post.views}"></span>
         </div>
         <div class="button-container" th:if="${#authentication.name} == ${post.username}">
+            <a th:href="@{/joinPost/}" class="button edit-button">목록보기</a>
             <a th:href="@{/joinPost/{postId}/updatePost(postId=${post.id})}" class="button edit-button">수정</a>
             <button class="button delete-button" onclick="deletePost()">삭제</button>
         </div>
     </div>
 
-    <!-- 여행 일정 정보 추가 -->
     <div class="trip-info">
-        <h4><span th:text="${post.trip.tripName}"></span> ( <span th:text="${post.trip.startDate}"></span> ~ <span th:text="${post.trip.endDate}"></span> )</h4>
+        <h3></h3>
+        <div class="post-content" th:utext="${post.content}"></div>
+        <h3><span th:text="${post.trip.city.getName()}"></span> 여행 일정</h3>
         <div th:each="date : ${post.trip.tripDates}">
-            <h5 th:text="${date.tripDate}">여행 날짜</h5>
-            <ul>
-                <li th:each="location : ${date.tripLocations}">
-                    <span th:text="${location.placeName}">장소 이름</span>
-                </li>
-            </ul>
+            <details>
+                <summary th:text="${date.tripDate}">여행 날짜</summary>
+                <ol>
+                    <li th:each="location : ${date.tripLocations}" class="location-item">
+                        <div class="location-item-header">
+                            <div class="location-name" th:text="${location.placeName}">장소 이름</div>
+                        </div>
+                    </li>
+                </ol>
+            </details>
         </div>
     </div>
-
-    <div class="post-content" th:utext="${post.content}"></div>
 
     <!-- 좋아요 버튼 추가 -->
     <div class="like-section">

@@ -30,7 +30,7 @@
         }
 
         #updatePostForm {
-            max-width: 600px;
+            max-width: 700px;
             margin: 30px auto;
             padding: 20px;
             background-color: #fff;
@@ -187,6 +187,7 @@
             })
                 .then(response => {
                     if (response.ok) {
+                        alert('게시글 수정이 완료되었습니다.');
                         window.location.href = `/joinPost/${postId}`; // 수정 완료 후 viewPost로 리다이렉션
                     } else {
                         alert('수정에 실패했습니다.');

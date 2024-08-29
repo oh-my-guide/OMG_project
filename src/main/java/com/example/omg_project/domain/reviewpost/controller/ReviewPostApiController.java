@@ -1,6 +1,8 @@
 package com.example.omg_project.domain.reviewpost.controller;
 
+import com.example.omg_project.domain.reviewpost.dto.PlaceReviewDto;
 import com.example.omg_project.domain.reviewpost.dto.ReviewPostDto;
+import com.example.omg_project.domain.reviewpost.service.PlaceReviewService;
 import com.example.omg_project.domain.reviewpost.service.ReviewPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewPostApiController {
     private final ReviewPostService reviewPostService;
+    private final PlaceReviewService placeReviewService;
 
     /**
      * 후기 게시글 작성
@@ -81,6 +84,15 @@ public class ReviewPostApiController {
     public ResponseEntity<Void> deleteReviewPostById(@PathVariable(name = "postId") Long id) {
         reviewPostService.deleteReviewPost(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 장소별 후기 조회
+     */
+    @GetMapping("/{postId}/placeReviews")
+    public ResponseEntity<List<PlaceReviewDto.Response>> getPlaceReviewsByPostId(@PathVariable Long postId) {
+        List<PlaceReviewDto.Response> placeReviews = placeReviewService.findByReviewPostId(postId);
+        return ResponseEntity.ok(placeReviews);
     }
 
 }
