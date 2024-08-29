@@ -4,163 +4,219 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/header.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/translations/ko.js"></script>
     <title>후기 게시글 작성</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        color: #333;
+    }
 
-        h1 {
-            color: #8fc6ff; /* 글씨 색상 */
-            padding: 10px 20px; /* 테두리와 텍스트 사이의 여백 */
-            text-align: center;
-            font-size: 20px;
-            margin: 90px auto 0 auto; /* 위쪽 여백 70px, 좌우 중앙 정렬, 아래 여백 0 */
-            background-color: #fff; /* 배경 흰색 */
-            border: 2px solid #8fc6ff; /* 글씨와 동일한 색상으로 테두리 설정 */
-            border-radius: 25px; /* 둥근 테두리 설정 */
-            display: block; /* 블록 요소로 설정 */
-            width: fit-content; /* 글씨 크기에 맞춰 요소 크기 설정 */
-        }
+    h1 {
+        color: #8fc6ff;
+        padding: 10px 20px;
+        text-align: center;
+        font-size: 20px;
+        margin: 90px auto 0 auto;
+        background-color: #fff;
+        border: 2px solid #8fc6ff;
+        border-radius: 25px;
+        display: block;
+        width: fit-content;
+    }
 
-        #createPostForm {
-            max-width: 600px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
+    #createPostForm {
+        max-width: 700px;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: block;
-            font-size: 14px;
-            color: #555;
-        }
+    label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 14px;
+        color: #555;
+    }
 
-        input, textarea, select {
-            display: block;
-            margin-bottom: 20px;
-            width: 100%;
-            padding: 10px;
-            font-size: 14px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            transition: border-color 0.3s;
-        }
+    input, textarea, select {
+        display: block;
+        margin-bottom: 20px;
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
 
-        textarea {
-            height: 200px; /* 내용 부분의 높이를 더 길게 설정 */
-        }
+    input:focus, textarea:focus, select:focus {
+        border-color: #8fc6ff;
+        outline: none;
+    }
 
-        input:focus, textarea:focus, select:focus {
-            border-color: #8fc6ff;
-            outline: none;
-        }
+    button {
+        width: 100%;
+        padding: 15px;
+        background-color: #8fc6ff;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
 
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #8fc6ff;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
+    button:hover {
+        background-color: #7bb4e6;
+    }
 
-        button:hover {
-            background-color: #7bb4e6;
-        }
+    button:active {
+        background-color: #6ba0d6;
+    }
 
-        button:active {
-            background-color: #6ba0d6;
-        }
+    .trip-info {
+        margin-top: 20px;
+        margin-bottom: 10px;
+        padding: 0;
+    }
 
-        .trip-info {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
+    .trip-info h3 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #8fc6ff;
+        padding-bottom: 5px;
+    }
 
-        .trip-info h3 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 10px;
-        }
+    details {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
 
-        .trip-info p {
-            margin: 5px 0;
-            color: #555;
-        }
+    summary {
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #555;
+        padding: 5px;
+    }
 
-        .trip-info ul {
-            padding-left: 20px;
-            color: #555;
-        }
+    summary:hover {
+        color: #333;
+    }
 
-        .trip-info li {
-            margin-bottom: 5px;
-        }
+    summary::marker {
+        color: #8fc6ff;
+    }
 
+    ul {
+        display: block;
+        list-style-type: none;
+        margin-block-start: 10px;
+        margin-block-end: 10px;
+        margin-inline-start: 0px;
+        margin-inline-end: 0px;
+        padding-inline-start: 20px;
+        padding-inline-end: 20px;
+        unicode-bidi: isolate;
+    }
+
+    .location-item {
+        padding: 7px;
+        margin-bottom: 10px;
+        background-color: #f4f4f4;
+        border-radius: 5px;
+    }
+
+    .location-item-header {
+        display: flex;
+        align-items: center;
+    }
+
+    .location-item-header .location-name {
+        flex-grow: 1;
+        font-weight: 600;
+        font-size: 15px;
+        color: #555;
+    }
+
+    .location-item-header .edit-icon {
+        cursor: pointer;
+        margin-right: 10px;
+        font-size: 18px;
+        color: #555;
+    }
+
+    .location-item-header .edit-icon:hover {
+        color: #8fc6ff;
+    }
+
+    .location-textarea {
+        margin-top: 10px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+        font-size: 14px;
+        box-sizing: border-box;
+        display: none; /* 처음에는 textarea가 보이지 않도록 설정 */
+    }
+
+    /* ckeditor css 설정 */
+    .ck-editor__editable_inline {
+        min-height: 300px;
+    }
     </style>
 </head>
 <body>
 <div th:replace="fragments/header :: headerFragment"></div>
 <h1>후기 게시글 작성</h1>
 
-<!-- 게시글 작성 폼 -->
 <form id="createPostForm">
     <input type="hidden" id="userId" name="userId" th:value="${user.id}">
-
-    <label for="title">제목</label>
-    <input type="text" id="title" placeholder="제목을 입력하세요" required>
 
     <label for="tripSelect">나의 여행</label>
     <select id="tripSelect" name="tripId" required>
         <option value="" disabled selected>여행을 선택하세요</option>
-        <!-- 여행 목록이 여기에 추가됩니다 -->
     </select>
 
     <div id="tripInfo" class="trip-info" style="display:none;">
-        <h3>여행 일정</h3>
-        <p><strong>여행 이름:</strong> <span id="tripName"></span></p>
-        <p><strong>여행 시작일:</strong> <span id="tripStartDate"></span></p>
-        <p><strong>여행 종료일:</strong> <span id="tripEndDate"></span></p>
-        <p><strong>도시 이름:</strong> <span id="cityName"></span></p>
+        <h3>여행 후기</h3>
+        <label for="title">제목</label>
+        <input type="text" id="title" placeholder="제목을 입력하세요" required>
+
+        <label for="content">내용</label>
+        <textarea id="content" placeholder="내용을 입력하세요" style="display:none;"></textarea>
+
+        <h3>장소별 후기</h3>
         <div id="tripDates"></div>
     </div>
-
-    <label for="content">내용</label>
-    <textarea id="content" placeholder="내용을 입력하세요" required></textarea>
 
     <button type="submit">작성하기</button>
 </form>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        let mainEditorInstance; // 제목 아래 내용 에디터를 위한 인스턴스
+        const editorsMap = new Map(); // 장소별 에디터를 관리하기 위한 Map
+
         const userId = document.getElementById('userId').value;
         const tripSelect = document.getElementById('tripSelect');
         const tripInfo = document.getElementById('tripInfo');
-        const tripName = document.getElementById('tripName');
-        const tripStartDate = document.getElementById('tripStartDate');
-        const tripEndDate = document.getElementById('tripEndDate');
-        const cityName = document.getElementById('cityName');
         const tripDates = document.getElementById('tripDates');
 
-        // API 호출로 유저의 여행 목록을 가져옴
         fetch(`/api/trips/user/${userId}`)
             .then(response => response.json())
             .then(trips => {
@@ -177,7 +233,6 @@
             })
             .catch(error => console.error('Error:', error));
 
-        // 여행 선택 시 일정 정보를 가져와서 표시
         tripSelect.addEventListener('change', function() {
             const tripId = this.value;
             if (!tripId) return;
@@ -185,21 +240,50 @@
             fetch(`/api/trips/${tripId}`)
                 .then(response => response.json())
                 .then(trip => {
-                    tripName.textContent = trip.tripName;
-                    tripStartDate.textContent = trip.startDate;
-                    tripEndDate.textContent = trip.endDate;
-                    cityName.textContent = trip.city.name;
-
-                    // 여행 일정을 표시
                     tripDates.innerHTML = '';
                     trip.tripDates.forEach(date => {
-                        const dateItem = document.createElement('div');
-                        dateItem.innerHTML = `<h4>${date.tripDate}</h4>`;
+                        const dateItem = document.createElement('details');
+                        dateItem.open = true; // 기본적으로 펼쳐진 상태로 설정
+                        dateItem.innerHTML = `<summary>${date.tripDate}</summary>`;
                         const locationList = document.createElement('ul');
                         date.tripLocations.forEach(location => {
                             const locationItem = document.createElement('li');
-                            locationItem.textContent = `${location.placeName} (위도: ${location.latitude}, 경도: ${location.longitude})`;
+                            locationItem.classList.add('location-item');
+                            locationItem.dataset.locationId = location.id;  // tripLocationId를 데이터 속성으로 추가
+                            locationItem.innerHTML = `
+                            <div class="location-item-header">
+                                <span class="edit-icon">&#9998;</span>
+                                <div class="location-name">${location.placeName}</div>
+                            </div>
+                            <textarea class="location-textarea" placeholder="이 장소에 대한 후기를 입력하세요" style="display: none;"></textarea>
+                        `;
                             locationList.appendChild(locationItem);
+
+                            const editIcon = locationItem.querySelector('.edit-icon');
+                            const textarea = locationItem.querySelector('.location-textarea');
+
+                            editIcon.addEventListener('click', function() {
+                                if (!editorsMap.has(textarea)) {
+                                    // CKEditor가 활성화되지 않은 상태에서 클릭하면 활성화
+                                    ClassicEditor.create(textarea, {
+                                        language: 'ko',
+                                        ckfinder: {
+                                            uploadUrl: '/image/upload',
+                                            withCredentials: true
+                                        }
+                                    }).then(editor => {
+                                        editorsMap.set(textarea, editor); // 에디터 인스턴스를 Map에 저장
+                                    }).catch(error => {
+                                        console.error(error);
+                                    });
+                                } else {
+                                    // CKEditor가 이미 활성화된 상태에서 클릭하면 파괴
+                                    const editor = editorsMap.get(textarea);
+                                    editor.destroy().then(() => {
+                                        editorsMap.delete(textarea); // Map에서 에디터 인스턴스 삭제
+                                    });
+                                }
+                            });
                         });
                         dateItem.appendChild(locationList);
                         tripDates.appendChild(dateItem);
@@ -215,30 +299,65 @@
 
             const tripId = tripSelect.value;
             const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
+            const content = mainEditorInstance.getData(); // 메인 에디터 데이터 가져오기
 
-            // 여행이 선택되지 않은 경우 경고 메시지 표시
             if (!tripId) {
                 alert('여행을 선택해주세요.');
                 return;
             }
 
-            // JSON 데이터로 요청 본문에 포함하여 전송
+            const reviews = [];
+            document.querySelectorAll('.location-item').forEach((locationItem) => {
+                const tripLocationId = locationItem.dataset.locationId; // tripLocationId를 가져옴
+                const editorInstance = editorsMap.get(locationItem.querySelector('.location-textarea')); // 에디터 인스턴스 가져오기
+                if (editorInstance) {
+                    const reviewContent = editorInstance.getData().trim();
+                    if (reviewContent.length > 0) { // 리뷰 내용이 있는 경우에만 추가
+                        reviews.push({
+                            tripLocationId: tripLocationId, // 장소id
+                            content: reviewContent  // 장소후기
+                        });
+                    }
+                }
+            });
+
+            const postData = {
+                userId,
+                tripId,
+                title,
+                content,
+                reviews
+            };
+
             fetch(`/api/reviewPosts`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ userId, tripId, title, content })
+                body: JSON.stringify(postData)
             })
                 .then(response => {
                     if (response.ok) {
+                        alert('게시글 작성이 완료되었습니다.'); // 작성 완료 알림
                         window.location.href = "/reviewPost/";
                     } else {
                         return response.json().then(err => Promise.reject(err));
                     }
                 })
                 .catch(error => console.error('Error:', error));
+        });
+
+        // 제목 아래 내용 에디터 초기화
+        ClassicEditor.create(document.querySelector('#content'), {
+            language: "ko",
+            ckfinder: {
+                uploadUrl: "/image/upload",
+                withCredentials: true
+            }
+        }).then(editor => {
+            mainEditorInstance = editor;
+        }).catch(error => {
+            console.error(error);
         });
     });
 </script>

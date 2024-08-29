@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class ReviewPostDto {
     // Request DTO
@@ -23,6 +24,7 @@ public class ReviewPostDto {
         private String content;
         private Long userId;
         private Long tripId;
+        private List<PlaceReviewDto.Request> reviews;
 
         // DTO -> 엔티티
         public ReviewPost toEntity(User user, Trip trip) {
