@@ -97,10 +97,10 @@
             const result = await response.text();
 
             if (response.ok) {
-                alert(`${result}`);
+                alert(result);
                 window.location.href = '/';
             } else {
-                alert(`초대코드를 잘못 입력하였습니다.`);
+                alert(result);
             }
         } catch (error) {
             console.error('Error:', error);
