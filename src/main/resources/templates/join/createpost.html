@@ -93,7 +93,6 @@
         .ck-editor__editable_inline {
             min-height: 300px;
         }
-
     </style>
 </head>
 <body>
@@ -198,6 +197,7 @@
                         })
                             .then(response => {
                                 if (response.ok) {
+                                    alert('게시글 작성이 완료되었습니다.'); // 작성 완료 알림
                                     window.location.href = "/joinPost/";
                                 } else {
                                     return response.json().then(err => Promise.reject(err));
