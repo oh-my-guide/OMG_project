@@ -44,11 +44,18 @@ public class TeamApiController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
+        Team team = teamService.findByInviteCode(inviteCode);
+        if (team == null) {
+            throw new IllegalArgumentException("잘못된 초대 코드입니다.");
+        }
 
+        // 사용자가 이미 팀에 속해 있는지 확인
+        if (teamService.isUserInTeam(user.getId(), team.getId())) {
+            return new ResponseEntity<>("이미 팀에 가입되어 있습니다.", HttpStatus.BAD_REQUEST);
+        }
 
         // 팀에 사용자 추가
         try {
-            // 팀에 사용자 추가
             teamService.addUserToTeam(inviteCode, user.getId());
             return new ResponseEntity<>("팀에 성공적으로 가입되었습니다.", HttpStatus.OK);
         } catch (IllegalArgumentException e) {

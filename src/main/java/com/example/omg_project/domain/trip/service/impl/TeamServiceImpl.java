@@ -30,7 +30,6 @@ public class TeamServiceImpl implements TeamService {
     public Team findByInviteCode(String inviteCode) {
         return teamRepository.findByInviteCode(inviteCode);
     }
-
     @Override
     public void addUserToTeam(String inviteCode, Long userId) {
         Team team = teamRepository.findByInviteCode(inviteCode);
@@ -101,6 +100,12 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team findById(Long tripId) {
         return teamRepository.findById(tripId).orElse(null);
+    }
+
+    @Override
+    public boolean isUserInTeam(Long userId, Long teamId) {
+        // 팀에서 해당 사용자가 이미 속해 있는지 확인
+        return teamRepository.existsByIdAndUsersId(teamId, userId);
     }
 }
 
