@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 120px auto 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background-color: #f9f9f9;
+            color: #555;
+            transition: background-color 0.3s ease;
+        }
+        .tab.active {
+            background-color: #8FC6FF;
+            color: white;
+        }
+        .notifications {
+            display: none;
+        }
+        .notifications.active {
+            display: block;
+        }
+        .notification {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+        }
+        .notification.read {
+            background-color: #f0f0f0;
+        }
+        .notification.unread {
+            border-left: 5px solid #8FC6FF;
+        }
+        button {
+            background-color: #8FC6FF;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #7AB8E3;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: headerFragment"></div>
+<div class="container">
+    <h1>알림</h1>
+    <div class="tabs">
+        <div class="tab active" data-tab="CHAT">채팅</div>
+        <div class="tab" data-tab="JOINPOSTCOMMENT">일행모집 게시글 댓글</div>
+        <div class="tab" data-tab="JOINPOSTREPLY">일행모집 게시글 대댓글</div>
+        <div class="tab" data-tab="REVIEWPOSTCOMMENT">여행후기 게시글 댓글</div>
+        <div class="tab" data-tab="REVIEWPOSTREPLY">여행후기 게시글 대댓글</div>
+    </div>
+    <div id="notifications">
+        <div class="notifications active" id="CHAT">
+            <div th:each="notification : ${notifications}" th:if="${notification.notificationType == 'CHAT' && !notification.read}" class="notification" th:classappend="${notification.read ? 'read' : 'unread'}">
+                <p th:text="${notification.message}">Sample Notification</p>
+                <p class="notification-date" th:text="${notification.createdAt}">2024-08-29T12:34:56</p>
+                <button type="button" th:if="!${notification.read}" th:onclick="'markAsRead(' + ${notification.id} + ')'">읽음 처리</button>
+            </div>
+        </div>
+        <div class="notifications" id="JOINPOSTCOMMENT">
+            <div th:each="notification : ${notifications}" th:if="${notification.notificationType == 'JOINPOSTCOMMENT' && notification.isRead() == false}" class="notification" th:classappend="${notification.read ? 'read' : 'unread'}">
+                <p th:text="${notification.message}">Sample Notification</p>
+                <p class="notification-date" th:text="${notification.createdAt}">2024-08-29T12:34:56</p>
+                <button type="button" th:if="!${notification.read}" th:onclick="'markAsRead(' + ${notification.id} + ')'">읽음 처리</button>
+            </div>
+        </div>
+        <div class="notifications" id="JOINPOSTREPLY">
+            <div th:each="notification : ${notifications}" th:if="${notification.notificationType == 'JOINPOSTREPLY' && notification.isRead() == false}" class="notification" th:classappend="${notification.read ? 'read' : 'unread'}">
+                <p th:text="${notification.message}">Sample Notification</p>
+                <p class="notification-date" th:text="${notification.createdAt}">2024-08-29T12:34:56</p>
+                <button type="button" th:if="!${notification.read}" th:onclick="'markAsRead(' + ${notification.id} + ')'">읽음 처리</button>
+            </div>
+        </div>
+        <div class="notifications" id="REVIEWPOSTCOMMENT">
+            <div th:each="notification : ${notifications}" th:if="${notification.notificationType == 'REVIEWPOSTCOMMENT' && notification.isRead() == false}" class="notification" th:classappend="${notification.read ? 'read' : 'unread'}">
+                <p th:text="${notification.message}">Sample Notification</p>
+                <p class="notification-date" th:text="${notification.createdAt}">2024-08-29T12:34:56</p>
+                <button type="button" th:if="!${notification.read}" th:onclick="'markAsRead(' + ${notification.id} + ')'">읽음 처리</button>
+            </div>
+        </div>
+        <div class="notifications" id="REVIEWPOSTREPLY">
+            <div th:each="notification : ${notifications}" th:if="${notification.notificationType == 'REVIEWPOSTREPLY' && notification.isRead() == false}" class="notification" th:classappend="${notification.read ? 'read' : 'unread'}">
+                <p th:text="${notification.message}">Sample Notification</p>
+                <p class="notification-date" th:text="${notification.createdAt}">2024-08-29T12:34:56</p>
+                <button type="button" th:if="!${notification.read}" th:onclick="'markAsRead(' + ${notification.id} + ')'">읽음 처리</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Tab 클릭 이벤트 처리
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // 모든 알림 섹션 숨기기
+                const tabContent = document.querySelectorAll('.notifications');
+                tabContent.forEach(content => content.classList.remove('active'));
+
+                // 선택된 탭의 알림 섹션 보이기
+                const activeContent = document.getElementById(tab.dataset.tab);
+                activeContent.classList.add('active');
+            });
+        });
+
+        // STOMP 클라이언트 설정
+        const socket = new SockJS('/ws');
+        const stompClient = Stomp.over(socket);
+        const userId = `[[${user.id}]]`; // 실제 사용자 ID로 교체
+
+        stompClient.connect({}, function(frame) {
+            console.log('STOMP connected: ' + frame);
+
+            // 각 알림 타입에 대해 구독 설정
+            const notificationTypes = ['CHAT', 'JOINPOSTCOMMENT', 'JOINPOSTREPLY', 'REVIEWPOSTCOMMENT', 'REVIEWPOSTREPLY'];
+            notificationTypes.forEach(type => {
+                stompClient.subscribe(`/topic/notifications/${type}/${userId}`, function(notification) {
+                    const notificationData = JSON.parse(notification.body);
+                    console.log(notification.body);
+                    addNotificationToPage(notificationData, type);
+                });
+            });
+        });
+
+        // 알림을 페이지에 추가하는 함수
+        function addNotificationToPage(notification, type) {
+            const notificationSection = document.getElementById(type);
+            const notificationElement = document.createElement('div');
+            notificationElement.className = `notification ${notification.read ? 'read' : 'unread'}`;
+
+            // createdAt 배열을 Date 객체로 변환
+            let formattedDate = 'Unknown Date';
+            if (notification.createdAt && Array.isArray(notification.createdAt)) {
+                try {
+                    const dateArray = notification.createdAt;
+                    const date = new Date(
+                        dateArray[0], // Year
+                        dateArray[1] - 1, // Month (0-based in JavaScript)
+                        dateArray[2], // Day
+                        dateArray[3], // Hour
+                        dateArray[4], // Minute
+                        dateArray[5], // Second
+                        dateArray[6] // Millisecond
+                    );
+                    formattedDate = formatDate(date);
+                } catch (error) {
+                    console.error('Invalid date format:', notification.createdAt);
+                }
+            }
+
+            notificationElement.innerHTML = `
+                <p>${notification.message}</p>
+                <p>${formattedDate}</p>
+                ${!notification.read ? `<button type="button" onclick="markAsRead(${notification.id})">읽음 처리d</button>` : ''}
+            `;
+            notificationSection.appendChild(notificationElement);
+        }
+
+        // 날짜 포맷팅 함수
+        function formatDate(date) {
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false // 24시간 형식 사용
+            };
+            return new Intl.DateTimeFormat('ko-KR', options).format(date);
+        }
+
+        // 초기 렌더링된 알림의 날짜를 포맷팅
+        document.querySelectorAll('.notification-date').forEach(dateElement => {
+            const rawDate = dateElement.textContent.trim();
+            if (rawDate) {
+                const date = new Date(rawDate);
+                dateElement.textContent = formatDate(date);
+            }
+        });
+
+        // 알림 읽음 처리 함수
+        window.markAsRead = function(notificationId) {
+            // 읽음 처리 요청 보내기
+            fetch(`/notifications/${notificationId}/read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => {
+                if (response.ok) {
+                    console.log(`Notification ${notificationId} marked as read.`);
+                    // UI 업데이트
+                    const buttons = document.querySelectorAll(`button[onclick="markAsRead(${notificationId})"]`);
+                    buttons.forEach(button => {
+                        button.closest('.notification').classList.add('read');
+                        button.style.display = 'none';
+                    });
+                } else {
+                    console.error('Failed to mark notification as read.');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        };
+    });
+</script>
+</body>
+</html>

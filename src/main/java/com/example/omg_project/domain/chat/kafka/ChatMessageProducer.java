@@ -1,21 +1,8 @@
 package com.example.omg_project.domain.chat.kafka;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.ListTopicsResult;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor

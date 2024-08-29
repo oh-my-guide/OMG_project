@@ -81,6 +81,11 @@ dependencies {
 
     // json parsing
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+    // Jackson에 Java 8 날짜와 시간 유형을 처리할 수 있도록 jackson-datatype-jsr310 모듈을 추가
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
+
+
 }
 
 tasks.named('test') {

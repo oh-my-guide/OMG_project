@@ -1,6 +1,7 @@
 package com.example.omg_project.domain.reviewpost.service.impl;
 
 import com.example.omg_project.domain.joinpost.entity.JoinPostReply;
+import com.example.omg_project.domain.notification.service.NotificationService;
 import com.example.omg_project.domain.reviewpost.dto.ReviewPostReplyDto;
 import com.example.omg_project.domain.reviewpost.entity.ReviewPostComment;
 import com.example.omg_project.domain.reviewpost.entity.ReviewPostReply;
@@ -9,6 +10,7 @@ import com.example.omg_project.domain.reviewpost.repository.ReviewPostReplyRepos
 import com.example.omg_project.domain.reviewpost.service.ReviewPostReplyService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +24,21 @@ public class ReviewPostReplyServiceImpl implements ReviewPostReplyService {
     private final ReviewPostReplyRepository reviewPostReplyRepository;
     private final UserRepository userRepository;
     private final ReviewPostCommentRepository reviewPostCommentRepository;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
-    public ReviewPostReplyDto.Response createReply(Long commentId, Long userId, ReviewPostReplyDto.Request replyRequest) {
+    public ReviewPostReplyDto.Response createReply(Long commentId, Long userId, ReviewPostReplyDto.Request replyRequest) throws JsonProcessingException {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         ReviewPostComment reviewPostComment = reviewPostCommentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
         // 대댓글 엔티티 생성
         ReviewPostReply reviewPostReply = replyRequest.toEntity(user, reviewPostComment);
+        User commentUser = reviewPostCommentRepository.findById(commentId).get().getUser();
 
         // 대댓글 저장
         reviewPostReplyRepository.save(reviewPostReply);
+        notificationService.createNotification(commentUser, user.getUsernick() + ": " + replyRequest.getContent(), "REVIEWPOSTREPLY", reviewPostReply.getId());
+
 
         // 저장된 대댓글 엔티티를 DTO로 변환하여 반환
         return ReviewPostReplyDto.Response.fromEntity(reviewPostReply);

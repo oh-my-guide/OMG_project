@@ -2,6 +2,7 @@ package com.example.omg_project.domain.reviewpost.controller;
 
 import com.example.omg_project.domain.reviewpost.dto.ReviewPostReplyDto;
 import com.example.omg_project.domain.reviewpost.service.ReviewPostReplyService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class ReviewPostReplyApiController {
      * 후기 대댓글 등록
      */
     @PostMapping("/{commentId}/replies")
-    public ResponseEntity<ReviewPostReplyDto.Response> createReply(@PathVariable Long commentId, @RequestBody ReviewPostReplyDto.Request replyRequest) {
+    public ResponseEntity<ReviewPostReplyDto.Response> createReply(@PathVariable Long commentId, @RequestBody ReviewPostReplyDto.Request replyRequest) throws JsonProcessingException {
         ReviewPostReplyDto.Response reply = reviewPostReplyService.createReply(commentId, replyRequest.getUserId(), replyRequest);
         return ResponseEntity.ok(reply);
     }

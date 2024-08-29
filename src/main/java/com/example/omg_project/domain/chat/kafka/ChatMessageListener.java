@@ -6,7 +6,12 @@ import com.example.omg_project.domain.chat.repository.ChatMessageRepository;
 import com.example.omg_project.domain.chat.repository.ChatRoomRepository;
 import com.example.omg_project.domain.chat.service.BadWordService;
 import com.example.omg_project.domain.chat.websocket.WebSocketHandler;
+import com.example.omg_project.domain.notification.service.NotificationService;
+import com.example.omg_project.domain.trip.entity.Team;
+import com.example.omg_project.domain.trip.repository.TeamRepository;
+import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -33,6 +38,8 @@ public class ChatMessageListener {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final BadWordService badWordService;
+    private final NotificationService notificationService;
+    private final TeamRepository teamRepository;
 
     private static final Logger logger = Logger.getLogger(ChatMessageListener.class.getName());
 
@@ -57,6 +64,14 @@ public class ChatMessageListener {
 
             // 변환된 ChatMessage 객체를 데이터베이스에 저장
             chatMessageRepository.save(chatMessage);
+            message = message.split(":")[1] + ": " + parseJsonMessage(message.split(": ")[1]);
+
+            Team team = teamRepository.findByChatRoomId(Long.parseLong(roomId)).orElseThrow();
+            for (User user : team.getUsers()){
+                if (!user.getUsernick().equals(chatMessage.getUserNickname())){
+                    notificationService.createNotification(user, message, "CHAT", chatMessage.getId());
+                }
+            }
 
             // 해당 채팅방에 연결된 모든 클라이언트에게 메시지 브로드캐스트
             broadcastMessage(roomId, chatMessage);
@@ -154,6 +169,28 @@ public class ChatMessageListener {
         dto.setCreatedAt(chatMessage.getCreatedAt().toString());
 
         return dto;
+    }
+
+    /**
+     * JSON 문자열에서 메시지 필드 값 추출
+     *
+     * @param jsonString JSON 문자열 (형식: '{"message" : "안녕"}')
+     * @return 추출된 메시지 내용
+     */
+    private String parseJsonMessage(String jsonString) {
+        try {
+            // ObjectMapper 인스턴스 생성
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // JSON 문자열을 JsonNode로 변환
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+
+            // "message" 필드에서 값 추출
+            return jsonNode.get("message").asText();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error parsing JSON message", e);
+            return "Unknown message";
+        }
     }
 
 }
