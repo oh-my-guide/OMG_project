@@ -194,6 +194,8 @@
                             <h2>${wish.reviewPostTitle}</h2>
                             <p>작성자: ${wish.userNick}</p>
                             <button class="chat-button" onclick="window.location.href='/reviewPost/${wish.reviewPostId}'">자세히 보기</button>
+                            <button class="chat-button" onclick="copyTripToUser(${wish.reviewPostId})">내 일정으로 담기</button>
+                         </div>
                         </div>
                     `;
                             $('.my-wishlist').append(wishlistItem);
@@ -210,6 +212,31 @@
             });
         }
     });
+
+    //내 일정으로 담기
+    function copyTripToUser(reviewPostId) {
+        fetch(`/api/trips/${reviewPostId}/copy`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'same-origin'  // 쿠키가 포함된 요청을 보낼 수 있도록 설정
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('일정 담기에 성공했습니다.');
+                    window.location.href = `/trip/update/${data.tripId}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('일정 담기 중 오류가 발생했습니다.');
+            });
+    }
+
 </script>
 </body>
 </html>
