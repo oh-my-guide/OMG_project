@@ -51,7 +51,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
                 break;
             default:
-                log.error("로그인 실패: 지원하지 않는 로그인 제공자입니다. 등록 ID: {}", registrationId);
                 throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 

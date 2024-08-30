@@ -18,6 +18,7 @@ public enum ErrorCode {
     PUT_OBJECT_EXCEPTION("S3_006", "S3에 객체를 업로드하는 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // User
+    TOKEN_NOT_FOUND("USER_001", "엑세스 토큰이 없습니다.", HttpStatus.UNAUTHORIZED),
     USER_DELETION_ERROR("USER_002", "삭제할 사용자가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     TEMP_PASSWORD_SENDING_ERROR("USER_003", "임시 비밀번호 전송 오류입니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     EMAIL_CREATION_ERROR("USER_004", "이메일 생성 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
@@ -26,9 +27,8 @@ public enum ErrorCode {
     TOKEN_DELETION_ERROR("USER_007", "토큰 삭제 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     ROLE_NOT_FOUND("USER_008", "User 역할이 없습니다.", HttpStatus.NOT_FOUND),
     UNSUPPORTED_LOGIN_PROVIDER("USER_009","지원하지 않는 로그인 제공자입니다.", HttpStatus.BAD_REQUEST),
-    TOKEN_NOT_FOUND("USER_009", "엑세스 토큰이 없습니다.", HttpStatus.UNAUTHORIZED),
-    INVALID_NOTICE_DATA("NOTICE_001", "제목 또는 내용이 비어 있습니다.", HttpStatus.BAD_REQUEST),
-    NOTICE_SAVING_ERROR("NOTICE_002", "공지사항 저장 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_NOTICE_DATA("ADMIN_001", "제목 또는 내용이 비어 있습니다.", HttpStatus.BAD_REQUEST),
+    NOTICE_SAVING_ERROR("ADMIN_002", "공지사항 저장 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // Chat Room Errors
     CHAT_ROOM_NOT_FOUND("CHAT_001", "채팅방이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
