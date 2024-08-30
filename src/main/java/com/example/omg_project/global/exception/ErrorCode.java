@@ -33,7 +33,15 @@ public enum ErrorCode {
     NOTIFICATION_COUNT_ERROR("NOTIF_005", "알림 개수 조회 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     NOTIFICATION_NOT_FOUND("NOTIF_006", "알림을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     NOTIFICATION_PROCESSING_ERROR("NOTIF_007", "알림 처리 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    DESERIALIZATION_ERROR("NOTIF_008", "데이터 변환 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    DESERIALIZATION_ERROR("NOTIF_008", "데이터 변환 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    //Trip
+    USER_NOT_FOUND_EXCEPTION("USER_001", "사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    CITY_NOT_FOUND_EXCEPTION("CITY_001", "도시를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    TRIP_NOT_FOUND_EXCEPTION("TRIP_001", "여행 일정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    INVALID_INVITE_CODE("TEAM_001", "잘못된 초대 코드입니다.", HttpStatus.BAD_REQUEST),
+    LEADER_CANNOT_LEAVE_TEAM("TEAM_002", "팀 리더는 팀에서 탈퇴할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    TEAM_NOT_FOUND_EXCEPTION("TEAM_003", "채팅방 ID에 해당하는 팀을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final String code;
     private final String message;
