@@ -411,6 +411,7 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
+
         })
             .then(response => response.json().then(data => {
                 if (!response.ok) {
@@ -421,7 +422,7 @@
             .then(data => {
                 alert(data.message);
                 console.log('Success:', data);
-                window.location.href = '/';
+                window.location.href = `/trip/${data.tripId}`;
             })
             .catch(error => {
                 alert(error.message);

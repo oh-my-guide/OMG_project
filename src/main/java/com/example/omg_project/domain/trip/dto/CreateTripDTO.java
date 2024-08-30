@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 public class CreateTripDTO {
+    private Long tripId;
     private String tripName;
     private LocalDate startDate;
     private LocalDate endDate;

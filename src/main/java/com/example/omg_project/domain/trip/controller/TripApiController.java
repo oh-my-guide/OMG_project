@@ -48,10 +48,11 @@ public class TripApiController {
             }
 
             // 여행 일정 생성
-            tripService.createTrip(createTripDTO, jwtToken);
+            Trip createdTrip = tripService.createTrip(createTripDTO, jwtToken);
 
             Map<String, String> successResponse = new HashMap<>();
             successResponse.put("message", "여행 일정이 생성되었습니다.");
+            successResponse.put("tripId", String.valueOf(createdTrip.getId()));
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();

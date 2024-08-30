@@ -2,6 +2,7 @@ package com.example.omg_project.domain.trip.controller;
 
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.entity.Team;
+import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.repository.TeamRepository;
 import com.example.omg_project.domain.trip.service.TripService;
 import com.example.omg_project.domain.user.entity.User;
@@ -36,6 +37,7 @@ public class TripController {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
         User user = userService.findByUsername(username).orElseThrow();
+
         model.addAttribute("user", user);
         return "trip/createtrip";
     }
