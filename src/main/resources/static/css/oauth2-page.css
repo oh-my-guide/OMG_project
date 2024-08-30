@@ -11,57 +11,62 @@ body {
 
 .container {
     background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
 }
 
 h1 {
     color: #333;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: 600;
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #333;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: #444;
+    font-size: 16px;
 }
 
 input, select {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     box-sizing: border-box;
+    font-size: 16px;
 }
 
 input:focus, select:focus {
     border-color: #333;
     outline: none;
+    box-shadow: 0 0 0 2px rgba(51, 51, 51, 0.2);
 }
 
 button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background-color: #8fc6ff;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     color: #fff;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-    margin-top: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 15px;
 }
 
 button:hover {
     background-color: #6aabf4;
-    transform: scale(1.02);
+    transform: scale(1.05);
 }
 
 button:disabled {
@@ -69,6 +74,13 @@ button:disabled {
     cursor: not-allowed;
     opacity: 0.7;
 }
+
 .save-button {
-    background-color: #8FC6FFFF;
+    background-color: #8fc6ff;
+    color: #fff;
+}
+
+.save-button:hover {
+    background-color: #6aabf4;
+    transform: scale(1.05);
 }

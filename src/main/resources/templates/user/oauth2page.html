@@ -13,8 +13,7 @@
 <div class="container">
     <div th:replace="fragments/header :: headerFragment"></div>
     <h1>추가 정보 기입</h1>
-    <form th:action="@{/oauthPage}" th:object="${user}" method="post">
-
+    <form id="oauth2-form">
         <label for="phoneNumber">연락처</label>
         <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="'-'을 제외하고 입력해주세요.'" required/>
 
@@ -32,9 +31,51 @@
         <a href="/my" class="link-button light-button">돌아가기</a>
     </form>
 </div>
-<script src="/js/oauth2-page-add.js"></script>
+
+<script>
+    $(document).ready(function() {
+        function validateForm() {
+            let isValid = true;
+
+            // 연락처, 성별, 생일이 모두 입력되었는지 확인
+            if (!$('#phoneNumber').val() || !$('#gender').val() || !$('#birthdate').val()) {
+                isValid = false;
+            }
+
+            $('#submit-button').prop('disabled', !isValid);
+
+            return isValid;
+        }
+
+        $('#oauth2-form').on('submit', function(event) {
+            event.preventDefault();
+
+            if (!validateForm()) {
+                alert('모든 필드를 올바르게 입력해주세요.');
+                return;
+            }
+
+            var formData = {
+                phoneNumber: $('#phoneNumber').val(),
+                birthdate: $('#birthdate').val(),
+                gender: $('#gender').val()
+            };
+
+            $.ajax({
+                url: '/oauthPage',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                success: function(response) {
+                    alert('추가 정보가 저장되었습니다.');
+                    window.location.href = "/oauthPage";
+                },
+                error: function(xhr) {
+                    alert('정보를 저장하는 중 오류가 발생했습니다.');
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
-
-
-
