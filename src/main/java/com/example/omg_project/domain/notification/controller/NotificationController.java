@@ -35,7 +35,7 @@ public class NotificationController {
             model.addAttribute("notifications", notifications);
         }
 
-        return "notification";
+        return "notification/notification";
     }
 
     @PostMapping("/{id}/read")
