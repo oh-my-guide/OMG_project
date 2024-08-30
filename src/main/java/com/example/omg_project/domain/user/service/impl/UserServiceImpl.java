@@ -16,6 +16,8 @@ import com.example.omg_project.domain.user.dto.request.UserSignUpRequest;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.example.omg_project.global.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +57,7 @@ public class UserServiceImpl implements UserService {
     public void signUp(UserSignUpRequest userSignUpDto) {
 
         Role role = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("User 역할이 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ROLE_NOT_FOUND));
 
         User user = User.builder()
                 .username(userSignUpDto.getUsername())
@@ -113,7 +115,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
 
         } else {
-            throw new RuntimeException("삭제할 사용자가 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.USER_DELETION_ERROR);
         }
     }
     // 탈퇴 시 유니크한 username 부여
@@ -146,17 +148,14 @@ public class UserServiceImpl implements UserService {
 
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
-            log.error("사용자 없습니다. :: {}", username);
             return Optional.empty();
         }
 
         User user = userOptional.get();
-
         user.setUsernick(userEditDto.getUsernick());
         user.setPhoneNumber(userEditDto.getPhoneNumber());
-
-        User updatedUser = userRepository.save(user);
-        return Optional.of(updatedUser);
+        userRepository.save(user);
+        return Optional.of(user);
     }
 
     /**
@@ -166,7 +165,6 @@ public class UserServiceImpl implements UserService {
     public Optional<User> updateOauth2(String username, Oauth2LoginRequest oauth2LoginDto) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
-            log.error("사용자 없습니다. :: {}", username);
             return Optional.empty();
         }
 
@@ -187,14 +185,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-
     /**
      * 비밀번호 재설정
      */
     @Override
     public boolean changePassword(String username, UserPasswordChangeRequest userPasswordChangeRequest) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (passwordEncoder.matches(userPasswordChangeRequest.getOldPassword(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(userPasswordChangeRequest.getNewPassword()));

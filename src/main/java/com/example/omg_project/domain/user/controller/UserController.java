@@ -45,7 +45,6 @@ public class UserController {
             return "redirect:/";
 
         } catch (RuntimeException e) {
-            log.info("에러 :: " + e.getMessage());
             e.printStackTrace();
             return "redirect:/signin";
         }
@@ -56,28 +55,26 @@ public class UserController {
      */
     @GetMapping("/oauthPage")
     public String addOauth2Form(Model model, HttpServletRequest request) {
+        try {
+            String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+            if(accessToken != null) {
+                String username = jwtTokenizer.getUsernameFromToken(accessToken);
+                User user = userService.findByUsername(username).orElse(null);
+                if (user.getGender().equals("default")) {
+                    model.addAttribute("user", user);
+                    return "user/oauth2page";
+                }
+            }return "redirect:/my";
 
-        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        String username = jwtTokenizer.getUsernameFromToken(accessToken);
-        Optional<User> userOptional = userService.findByUsername(username);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-
-            // 처음 로그인 한 회원일 경우
-            if (user.getGender().equals("default")) {
-                model.addAttribute("user", user);
-                return "user/oauth2page";
-            }
-            return "redirect:/my";
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return "redirect:/signin";
         }
-        return "redirect:/signin";
     }
 
     @PostMapping("/oauthPage")
-    public String addOauth2(HttpServletRequest request, @ModelAttribute Oauth2LoginRequest oauth2LoginDto, RedirectAttributes redirectAttributes) {
+    public String addOauth2(HttpServletRequest request, @ModelAttribute Oauth2LoginRequest oauth2LoginDto) {
 
-        log.info("Received User: {}", oauth2LoginDto);
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
 
@@ -95,14 +92,19 @@ public class UserController {
     @GetMapping("/my/profile")
     public String userEditForm(Model model, HttpServletRequest request) {
 
-        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        if(accessToken != null){
-            String username = jwtTokenizer.getUsernameFromToken(accessToken);
-            User user = userService.findByUsername(username).orElse(null);
-            model.addAttribute("user", user);
-            return "/user/mypageEdit";
+        try {
+            String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+            if(accessToken != null) {
+                String username = jwtTokenizer.getUsernameFromToken(accessToken);
+                User user = userService.findByUsername(username).orElse(null);
+                model.addAttribute("user", user);
+                return "/user/mypageEdit";
+            }
+            return "redirect:/signin";
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return "redirect:/signin";
         }
-        return "redirect:/signin";
     }
 
     /**
@@ -150,16 +152,19 @@ public class UserController {
     public String changePasswordForm(HttpServletRequest request, Model model) {
         model.addAttribute("userPasswordChangeRequest", new UserPasswordChangeRequest());
 
-        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        if(accessToken != null){
-            String username = jwtTokenizer.getUsernameFromToken(accessToken);
-            User user = userService.findByUsername(username).orElse(null);
-            model.addAttribute("user", user);
-
-            return "user/change-Password";
+        try {
+            String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+            if(accessToken != null) {
+                String username = jwtTokenizer.getUsernameFromToken(accessToken);
+                User user = userService.findByUsername(username).orElse(null);
+                model.addAttribute("user", user);
+                return "user/change-Password";
+            }
+            return "redirect:/my";
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            return "redirect:/signin";
         }
-        return "redirect:/my";
-
     }
 
     /**
