@@ -7,6 +7,8 @@ import com.example.omg_project.domain.joinpost.repository.JoinPostRepository;
 import com.example.omg_project.domain.joinpost.service.JoinPostLikeService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +40,10 @@ public class JoinPostLikeServiceImpl implements JoinPostLikeService {
     @Override
     public void toggleLike(Long userId, Long postId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
 
         JoinPost joinPost = joinPostRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
 
         // 좋아요 상태 확인
         JoinPostLike existingLike = joinPostLikeRepository.findByUserAndJoinPost(user, joinPost);

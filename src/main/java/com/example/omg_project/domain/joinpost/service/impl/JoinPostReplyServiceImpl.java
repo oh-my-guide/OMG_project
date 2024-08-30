@@ -9,6 +9,8 @@ import com.example.omg_project.domain.joinpost.service.JoinPostReplyService;
 import com.example.omg_project.domain.notification.service.NotificationService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,8 @@ public class JoinPostReplyServiceImpl implements JoinPostReplyService {
     @Override
     @Transactional
     public JoinPostReplyDto.Response createReply(Long commentId, Long userId, JoinPostReplyDto.Request replyRequest) throws JsonProcessingException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        JoinPostComment joinPostComment = joinPostCommentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
+        JoinPostComment joinPostComment = joinPostCommentRepository.findById(commentId).orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
         // 대댓글 엔티티 생성
         JoinPostReply joinPostReply = replyRequest.toEntity(user, joinPostComment);
         User commentUser = joinPostCommentRepository.findById(commentId).get().getUser();
@@ -55,7 +57,7 @@ public class JoinPostReplyServiceImpl implements JoinPostReplyService {
     @Transactional
     public JoinPostReplyDto.Response updateReply(Long replyId, JoinPostReplyDto.Request replyRequest) {
         JoinPostReply joinPostReply = joinPostReplyRepository.findById(replyId)
-                .orElseThrow(() -> new RuntimeException("대댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND_EXCEPTION));
 
         // 엔티티 메서드를 통해 업데이트
         joinPostReply.updateContent(replyRequest.getContent());
