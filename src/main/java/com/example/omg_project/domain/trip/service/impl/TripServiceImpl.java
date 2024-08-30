@@ -10,6 +10,8 @@ import com.example.omg_project.domain.trip.repository.*;
 import com.example.omg_project.domain.trip.service.TripService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
@@ -41,12 +43,14 @@ public class TripServiceImpl implements TripService {
     public Trip createTrip(CreateTripDTO createTripDTO, String jwtToken) {
         Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
         Long leaderId = claims.get("userId", Long.class);
+        // 사용자 조회
         User leader = userRepository.findById(leaderId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
 
-        //도시 조회
+        // 도시 조회
         City city = cityRepository.findById(createTripDTO.getCityId())
-                .orElseThrow(() -> new RuntimeException("City not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.CITY_NOT_FOUND_EXCEPTION));
+
 
         //여행 일정 생성
         Trip trip = new Trip();
@@ -149,7 +153,8 @@ public class TripServiceImpl implements TripService {
     @Override
     @Transactional
     public ReadTripDTO getTripById(Long id) {
-        Trip trip = tripRepository.findById(id).orElseThrow(() -> new RuntimeException("Trip not found"));
+        Trip trip = tripRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.TRIP_NOT_FOUND_EXCEPTION));
         return ReadTripDTO.fromEntity(trip);
     }
 
@@ -254,11 +259,11 @@ public class TripServiceImpl implements TripService {
     public Trip copyTripToUser(Long tripId, String jwtToken) {
         log.info("copyTripToUser 시작 - tripId: {}, jwtToken: {}", tripId, jwtToken);
             // 기존 일정 조회
-            Trip originalTrip = tripRepository.findById(tripId)
-                    .orElseThrow(() -> {
-                        log.error("Trip not found with id: {}", tripId);
-                        return new RuntimeException("Trip not found");
-                    });
+        Trip originalTrip = tripRepository.findById(tripId)
+                .orElseThrow(() -> {
+                    log.error("Trip not found with id: {}", tripId);
+                    return new CustomException(ErrorCode.TRIP_NOT_FOUND_EXCEPTION);
+                });
             log.info("Found original trip: {}", originalTrip);
 
             // 여행 이름에 " -copy" 추가
@@ -271,12 +276,18 @@ public class TripServiceImpl implements TripService {
 
             // 사용자 정보 조회
             User leader = userRepository.findById(leaderId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User not found with id: {}", leaderId);
+                    return new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION);
+                });
             log.info("Found user: {}", leader);
 
             // 도시에 대한 정보 가져오기
-            City city = cityRepository.findById(originalTrip.getCity().getId())
-                    .orElseThrow(() -> new RuntimeException("City not found"));
+        City city = cityRepository.findById(originalTrip.getCity().getId())
+                .orElseThrow(() -> {
+                    log.error("City not found with id: {}", originalTrip.getCity().getId());
+                    return new CustomException(ErrorCode.CITY_NOT_FOUND_EXCEPTION);
+                });
             log.info("Found city: {}", city);
 
             // 여행 일정 생성

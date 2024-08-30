@@ -48,7 +48,8 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND_EXCEPTION("POST_002", "댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     REPLY_NOT_FOUND_EXCEPTION("POST_003", "대댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     TRIP_LOCATION_NOT_FOUND_EXCEPTION("POST_004", "장소를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    INVALID_SEARCH_OPTION_EXCEPTION("SEARCH_001", "검색 옵션이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+    INVALID_SEARCH_OPTION_EXCEPTION("SEARCH_001", "검색 옵션이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
+    TEAM_NOT_FOUND_EXCEPTION("TEAM_003", "채팅방 ID에 해당하는 팀을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final String code;
     private final String message;
