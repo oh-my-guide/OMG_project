@@ -3,8 +3,10 @@ package com.example.omg_project.domain.user.controller;
 import com.example.omg_project.domain.user.dto.request.MailRequest;
 import com.example.omg_project.domain.user.dto.request.PasswordVerificationRequest;
 import com.example.omg_project.domain.user.dto.request.MailVerificationRequest;
+import com.example.omg_project.domain.user.dto.request.UserPasswordChangeRequest;
 import com.example.omg_project.domain.user.service.MailService;
 import com.example.omg_project.domain.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,9 +72,9 @@ public class MailApiController {
         if (userService.existsByUsername(email)) {
             String tempPassword = mailService.createTemporaryPassword(email);
             mailService.sendTemporaryPasswordMail(email, tempPassword);
-            return ResponseEntity.ok("임시 비밀번호가 이메일로 발송되었습니다.");
+            return ResponseEntity.ok("ok");
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당 이메일로 가입된 사용자가 없습니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not found user");
         }
     }
 
