@@ -8,6 +8,8 @@ import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.repository.TripRepository;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -27,10 +29,10 @@ public class JoinPostServiceImpl implements JoinPostService {
     @Transactional
     public JoinPostDto.Response createJoinPost(JoinPostDto.Request joinPostRequest) {
         User user = userRepository.findById(joinPostRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
 
         Trip trip = tripRepository.findById(joinPostRequest.getTripId())
-                .orElseThrow(() -> new RuntimeException("여행을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.TRIP_NOT_FOUND_EXCEPTION));
 
         // JoinPost 엔티티 생성
         JoinPost joinPost = joinPostRequest.toEntity(user, trip);
@@ -59,7 +61,7 @@ public class JoinPostServiceImpl implements JoinPostService {
     @Override
     @Transactional(readOnly = true)
     public List<JoinPostDto.Response> findJoinPostsByUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
         return joinPostRepository.findJoinPostByUserId(user.getId()).stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
@@ -93,7 +95,7 @@ public class JoinPostServiceImpl implements JoinPostService {
                 results = joinPostRepository.findByUser_UsernickContaining(keyword);
                 break;
             default:
-                throw new IllegalArgumentException("검색 옵션이 유효하지 않습니다.");
+                throw new CustomException(ErrorCode.INVALID_SEARCH_OPTION_EXCEPTION);
         }
 
         return results.stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
@@ -102,14 +104,14 @@ public class JoinPostServiceImpl implements JoinPostService {
     @Override
     @Transactional(readOnly = true)
     public JoinPostDto.Response findJoinPostById(Long id) {
-        JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
         return JoinPostDto.Response.fromEntity(joinPost);
     }
 
     @Override
     @Transactional
     public JoinPostDto.Response updateJoinPost(Long id, JoinPostDto.Request joinPostRequest) {
-        JoinPost originPost = joinPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        JoinPost originPost = joinPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
 
         // 엔티티 메서드를 통해 업데이트
         originPost.updateContent(joinPostRequest.getTitle(), joinPostRequest.getContent());
@@ -132,7 +134,7 @@ public class JoinPostServiceImpl implements JoinPostService {
     @Override
     @Transactional
     public void incrementViews(Long id) {
-        JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
         joinPost.incrementViews();
     }
 

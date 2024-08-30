@@ -10,6 +10,8 @@ import com.example.omg_project.domain.reviewpost.repository.ReviewPostReplyRepos
 import com.example.omg_project.domain.reviewpost.service.ReviewPostReplyService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +31,8 @@ public class ReviewPostReplyServiceImpl implements ReviewPostReplyService {
     @Override
     @Transactional
     public ReviewPostReplyDto.Response createReply(Long commentId, Long userId, ReviewPostReplyDto.Request replyRequest) throws JsonProcessingException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        ReviewPostComment reviewPostComment = reviewPostCommentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
+        ReviewPostComment reviewPostComment = reviewPostCommentRepository.findById(commentId).orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
         // 대댓글 엔티티 생성
         ReviewPostReply reviewPostReply = replyRequest.toEntity(user, reviewPostComment);
         User commentUser = reviewPostCommentRepository.findById(commentId).get().getUser();
@@ -56,7 +58,7 @@ public class ReviewPostReplyServiceImpl implements ReviewPostReplyService {
     @Transactional
     public ReviewPostReplyDto.Response updateReply(Long replyId, ReviewPostReplyDto.Request replyRequest) {
         ReviewPostReply reviewPostReply = reviewPostReplyRepository.findById(replyId)
-                .orElseThrow(() -> new RuntimeException("대댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.REPLY_NOT_FOUND_EXCEPTION));
 
         // 엔티티 메서드를 통해 업데이트
         reviewPostReply.updateContent(replyRequest.getContent());

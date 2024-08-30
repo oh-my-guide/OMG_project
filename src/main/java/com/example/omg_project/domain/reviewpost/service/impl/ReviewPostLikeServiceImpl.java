@@ -7,6 +7,8 @@ import com.example.omg_project.domain.reviewpost.repository.ReviewPostRepository
 import com.example.omg_project.domain.reviewpost.service.ReviewPostLikeService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,10 +40,10 @@ public class ReviewPostLikeServiceImpl implements ReviewPostLikeService {
     @Override
     public void toggleLike(Long userId, Long postId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
 
         ReviewPost reviewPost = reviewPostRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("게시물을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
 
         // 좋아요 상태 확인
         ReviewPostLike existingLike = reviewPostLikeRepository.findByUserAndReviewPost(user, reviewPost);

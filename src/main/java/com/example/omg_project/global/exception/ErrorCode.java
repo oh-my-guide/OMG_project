@@ -41,6 +41,14 @@ public enum ErrorCode {
     TRIP_NOT_FOUND_EXCEPTION("TRIP_001", "여행 일정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     INVALID_INVITE_CODE("TEAM_001", "잘못된 초대 코드입니다.", HttpStatus.BAD_REQUEST),
     LEADER_CANNOT_LEAVE_TEAM("TEAM_002", "팀 리더는 팀에서 탈퇴할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    TEAM_NOT_FOUND_EXCEPTION("TEAM_003", "채팅방 ID에 해당하는 팀을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+    // Post
+    POST_NOT_FOUND_EXCEPTION("POST_001", "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    COMMENT_NOT_FOUND_EXCEPTION("POST_002", "댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    REPLY_NOT_FOUND_EXCEPTION("POST_003", "대댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    TRIP_LOCATION_NOT_FOUND_EXCEPTION("POST_004", "장소를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    INVALID_SEARCH_OPTION_EXCEPTION("SEARCH_001", "검색 옵션이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
     TEAM_NOT_FOUND_EXCEPTION("TEAM_003", "채팅방 ID에 해당하는 팀을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final String code;
