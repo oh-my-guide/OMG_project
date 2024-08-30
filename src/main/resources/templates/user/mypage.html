@@ -189,12 +189,13 @@
 
                     if (data && data.length > 0) {
                         data.forEach(function(wish) {
+                            const tripId = wish.tripId;
                             const wishlistItem = `
                         <div class="wishlist-item">
                             <h2>${wish.reviewPostTitle}</h2>
                             <p>작성자: ${wish.userNick}</p>
                             <button class="chat-button" onclick="window.location.href='/reviewPost/${wish.reviewPostId}'">자세히 보기</button>
-                            <button class="chat-button" onclick="copyTripToUser(${wish.reviewPostId})">내 일정으로 담기</button>
+                            <button class="chat-button" onclick="copyTripToUser(${tripId})">내 일정으로 담기</button>
                          </div>
                         </div>
                     `;
@@ -214,8 +215,8 @@
     });
 
     //내 일정으로 담기
-    function copyTripToUser(reviewPostId) {
-        fetch(`/api/trips/${reviewPostId}/copy`, {
+    function copyTripToUser(tripId) {
+        fetch(`/api/trips/${tripId}/copy`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -8,6 +8,8 @@ import com.example.omg_project.domain.reviewpost.repository.WishlistRepository;
 import com.example.omg_project.domain.reviewpost.service.WishlistService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,8 +25,8 @@ public class WishlistServiceImpl implements WishlistService {
 
     @Override
     public void toggleWishlist(WishlistDto.Request request) {
-        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        ReviewPost reviewPost = reviewPostRepository.findById(request.getReviewPostId()).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
+        ReviewPost reviewPost = reviewPostRepository.findById(request.getReviewPostId()).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
 
         Wishlist existingWishlist = wishlistRepository.findByUserIdAndReviewPostId(user.getId(), reviewPost.getId());
 

@@ -10,6 +10,8 @@ import com.example.omg_project.domain.notification.service.NotificationService;
 import com.example.omg_project.domain.reviewpost.entity.ReviewPostComment;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,8 +31,8 @@ public class JoinPostCommentServiceImpl implements JoinPostCommentService {
     @Override
     @Transactional
     public JoinPostCommentDto.Response createComment(Long postId, Long userId, JoinPostCommentDto.Request commentRequest) throws JsonProcessingException {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        JoinPost joinPost = joinPostRepository.findById(postId).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
+        JoinPost joinPost = joinPostRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
         // 댓글 엔티티 생성
         JoinPostComment joinPostComment = commentRequest.toEntity(user, joinPost);
 
@@ -57,7 +59,7 @@ public class JoinPostCommentServiceImpl implements JoinPostCommentService {
     @Transactional
     public JoinPostCommentDto.Response updateComment(Long commentId, JoinPostCommentDto.Request commentRequest) {
         JoinPostComment joinPostComment = joinPostCommentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
 
         // 엔티티 메서드를 통해 업데이트
         joinPostComment.updateContent(commentRequest.getContent());

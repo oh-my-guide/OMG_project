@@ -13,6 +13,8 @@ import com.example.omg_project.domain.trip.repository.TripLocationRepository;
 import com.example.omg_project.domain.trip.repository.TripRepository;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -36,10 +38,10 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     public ReviewPostDto.Response createReviewPost(ReviewPostDto.Request reviewPostRequest) {
         // 1. User 및 Trip을 조회
         User user = userRepository.findById(reviewPostRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
 
         Trip trip = tripRepository.findById(reviewPostRequest.getTripId())
-                .orElseThrow(() -> new RuntimeException("여행을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.TRIP_NOT_FOUND_EXCEPTION));
 
         // 2. ReviewPost 엔티티 생성 및 저장
         ReviewPost reviewPost = reviewPostRequest.toEntity(user, trip);
@@ -48,7 +50,7 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         // 3. PlaceReview 엔티티 생성 및 저장
         List<PlaceReview> placeReviews = reviewPostRequest.getReviews().stream().map(placeReviewDto -> {
                     TripLocation tripLocation = tripLocationRepository.findById(placeReviewDto.getTripLocationId())
-                            .orElseThrow(() -> new RuntimeException("장소를 찾을 수 없습니다."));
+                            .orElseThrow(() -> new CustomException(ErrorCode.TRIP_LOCATION_NOT_FOUND_EXCEPTION));
                     return placeReviewDto.toEntity(tripLocation, reviewPost);
                 })
                 .collect(Collectors.toList());
@@ -77,7 +79,7 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     @Override
     @Transactional(readOnly = true)
     public List<ReviewPostDto.Response> findReviewPostsByUserId(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
         return reviewPostRepository.findReviewPostByUserId(user.getId()).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
@@ -106,7 +108,7 @@ public class ReviewPostServiceImpl implements ReviewPostService {
                 results = reviewPostRepository.findByUser_UsernickContaining(keyword);
                 break;
             default:
-                throw new IllegalArgumentException("검색 옵션이 유효하지 않습니다.");
+                throw new CustomException(ErrorCode.INVALID_SEARCH_OPTION_EXCEPTION);
         }
 
         return results.stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
@@ -115,7 +117,7 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     @Override
     @Transactional(readOnly = true)
     public ReviewPostDto.Response findReviewPostById(Long id) {
-        ReviewPost reviewPost = reviewPostRepository.findWithReviewsById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        ReviewPost reviewPost = reviewPostRepository.findWithReviewsById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
         return ReviewPostDto.Response.fromEntity(reviewPost);
     }
 
@@ -124,7 +126,7 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     public ReviewPostDto.Response updateReviewPost(Long id, ReviewPostDto.Request reviewPostRequest) {
         // 1. 기존 게시글 조회
         ReviewPost originPost = reviewPostRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
 
         // 2. 게시글 제목 및 내용 업데이트
         originPost.updateContent(reviewPostRequest.getTitle(), reviewPostRequest.getContent());
@@ -136,7 +138,7 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         List<PlaceReview> placeReviews = reviewPostRequest.getReviews().stream()
                 .map(placeReviewDto -> {
                     TripLocation tripLocation = tripLocationRepository.findById(placeReviewDto.getTripLocationId())
-                            .orElseThrow(() -> new RuntimeException("장소를 찾을 수 없습니다."));
+                            .orElseThrow(() -> new CustomException(ErrorCode.TRIP_LOCATION_NOT_FOUND_EXCEPTION));
                     return placeReviewDto.toEntity(tripLocation, originPost);
                 })
                 .collect(Collectors.toList());
@@ -156,7 +158,7 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     @Override
     @Transactional
     public void incrementViews(Long id) {
-        ReviewPost reviewPost = reviewPostRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+        ReviewPost reviewPost = reviewPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
         reviewPost.incrementViews();
     }
 }

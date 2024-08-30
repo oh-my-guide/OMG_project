@@ -42,9 +42,14 @@ public class ChatController {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             User user = userService.findByUsername(username).orElseThrow();
 
-            // 사용자 및 채팅방 검증 로직 호출
-            // user객채와 채팅방 ID를 기반으로 사용자가 해당 채팅방에 참여하고 있는지 확인
-            chatService.validateUserInChatRoom(roomId, user);
+            try {
+                // 사용자 및 채팅방 검증 로직 호출
+                // user객채와 채팅방 ID를 기반으로 사용자가 해당 채팅방에 참여하고 있는지 확인
+                chatService.validateUserInChatRoom(roomId, user);
+            }catch (RuntimeException e){
+                e.printStackTrace();
+            }
+
 
             String tripName = chatService.findTripName(roomId);
 
