@@ -132,6 +132,7 @@
         .fc-daygrid-day {
             background-color: #fff;
             border: 1px solid #ddd;
+             padding: 5px; /* 날짜 셀 안쪽 여백 조정 */
         }
 
         .fc-daygrid-day-number {
@@ -151,36 +152,13 @@
             background-color: #8fc6ff;
             color: #000;
             border: none;
-            padding: 5px;
+            padding: 3px;
             border-radius: 5px;
+            font-size: 12px;
         }
         .weather-icon {
             width: 50px;
             height: 50px;
-        }
-        .search-container {
-            margin: 40px 0;
-        }
-        .search-input {
-            padding: 10px;
-            font-size: 16px;
-            width: 100%;
-            max-width: 200px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .search-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #8fc6ff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-        .search-button:hover {
-            background-color: #6da8e2;
         }
         .weather-section {
             margin-top: 200px;
@@ -199,10 +177,6 @@
                 <a href="/trip/select" class="button">OMG 시작하기</a>
             </div>
             <div class="weather-section">
-                 <div class="search-container" style="display: none;">
-                     <input type="text" id="location-input" class="search-input"  style="display: none;"placeholder="지역 입력">
-                     <button id="search-button" class="search-button" style="display: none;">검색</button>
-                 </div>
                 <div>
                      <h3 style="display: none;">현재 날씨</h3>
                      <div id="current-weather" style="display: none;"></div>
@@ -230,45 +204,43 @@
                 right: 'prev,next today'
             },
             dayMaxEvents: 2,
-            events: function (fetchInfo, successCallback, failureCallback) {
+            events: function(fetchInfo, successCallback, failureCallback) {
                 fetch('/api/events')
                     .then(response => response.json())
-                    .then(data => successCallback(data))
+                    .then(data => {
+                        // 이벤트에 위치 정보 포함 (캘린더에는 표시되지 않음)
+                        const events = data.map(event => ({
+                            title: event.title,
+                            start: event.start,
+                            end: event.end,
+                            extendedProps: event.extendedProps // 위치 정보 포함
+                        }));
+                        successCallback(events);
+                    })
                     .catch(error => {
                         console.error('Error fetching events:', error);
                         failureCallback(error);
                     });
             },
-            // 위도와 경도를 가져와서 보여주기
             eventClick: function(info) {
-                console.log(info.event.extendedProps); // 여기서 이벤트 데이터 확인
-                const latitude = info.event.extendedProps.latitude;
-                const longitude = info.event.extendedProps.longitude;
+                // 이벤트 클릭 시 첫 번째 위치의 날씨 정보만 가져옴
+                const locations = info.event.extendedProps.locations;
 
-                if (latitude && longitude) {
-                    fetchWeatherByCoords(latitude, longitude);
+                if (locations && locations.length > 0) {
+                    const location = locations[0]; // 첫 번째 장소만 선택
+                    fetchWeatherByCoords(location.latitude, location.longitude);
                 } else {
                     console.error('위도 또는 경도 값이 없습니다.');
                 }
             }
-
         });
+
         calendar.render();
 
-        <!-- 날씨 API 불러오기 -->
+<!-- >날씨 API 불러오기 -->
         const weatherContainer = document.getElementById('weather-container');
         const currentWeather = document.getElementById('current-weather');
         const currentDateEl = document.getElementById('current-date');
-
-        // 위치 이름으로 날씨 불러오기
-        function fetchWeather(location) {
-            fetch(`/api/weather?location=${encodeURIComponent(location)}`)
-                .then(response => response.json())
-                .then(data => {
-                    displayWeather(data);
-                })
-                .catch(error => console.error('날씨 정보를 가져오지 못했습니다:', error));
-        }
 
         // 위도와 경도로 날씨 불러오기
         function fetchWeatherByCoords(lat, lon) {
@@ -276,7 +248,7 @@
                 .then(response => response.json())
                 .then(data => {
                     displayWeather(data);
-                    updateCurrentDate();  // 현재 날짜를 업데이트하는 함수 호출
+                    updateCurrentDate();
                 })
                 .catch(error => console.error('날씨 정보를 가져오지 못했습니다:', error));
         }
@@ -293,7 +265,7 @@
                 console.error('유효한 날씨 데이터가 없습니다.');
                 return;
             }
-            // 날짜별로 날씨 정보를 집계
+
             const weatherMap = {};
             data.list.forEach(item => {
                 const date = new Date(item.dt * 1000);
@@ -321,58 +293,81 @@
                 const iconUrl = `http://openweathermap.org/img/wn/${weatherInfo.iconCode}@2x.png`;
 
                 return `
-                    <div class="weather-item">
-                        <div class="day">${weatherInfo.weekday}</div>
-                        <div class="date">${date}</div>
-                        <div class="temp">${averageTemp}°C</div>
-                        <img src="${iconUrl}" alt="날씨 아이콘" class="weather-icon"/>
-                        <div>${weatherInfo.weatherDescription}</div>
-                    </div>
-                `;
+            <div class="weather-item">
+                <div class="day">${weatherInfo.weekday}</div>
+                <div class="date">${date}</div>
+                <div class="temp">${averageTemp}°C</div>
+                <img src="${iconUrl}" alt="날씨 아이콘" class="weather-icon"/>
+                <div>${weatherInfo.weatherDescription}</div>
+            </div>
+        `;
             }).join('');
 
             weatherContainer.innerHTML = weatherItems;
 
             const today = new Date();
-            const options = {year: 'numeric', month: 'long', day: 'numeric'};
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
             const formattedDate = today.toLocaleDateString('ko-KR', options);
 
             const currentItem = data.list[0];
             currentWeather.innerHTML = `
-                <div class="current-temp">${currentItem.main.temp.toFixed(1)}°C</div>
-                <img src="http://openweathermap.org/img/wn/${currentItem.weather[0].icon}@2x.png" alt="날씨 아이콘" class="weather-icon"/>
-                <div class="current-description">${currentItem.weather[0].description}</div>
-            `;
+        <div class="current-temp">${currentItem.main.temp.toFixed(1)}°C</div>
+        <img src="http://openweathermap.org/img/wn/${currentItem.weather[0].icon}@2x.png" alt="날씨 아이콘" class="weather-icon"/>
+        <div class="current-description">${currentItem.weather[0].description}</div>
+    `;
             currentDateEl.innerHTML = `<div>${formattedDate}</div>`;
         }
 
-        fetchWeather('Seoul'); // 제일먼저 보이는 기본값 서울
-
-        // 검색 버튼
-        document.getElementById('search-button').addEventListener('click', function () {
-            const locationInput = document.getElementById('location-input').value;
-            if (locationInput) {
-                fetchWeather(locationInput);
-            } else {
-                alert('지역 이름을 입력하세요.');
-            }
-        });
-
-        // 엔터 쳐도 입력 가능하도록
-        document.getElementById('location-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                document.getElementById('search-button').click();
-            }
-        });
+        fetchWeatherByCoords('37.5665', '126.9780'); // 제일 먼저 보이는 기본값 서울로 지정
     });
 </script>
 <!-- 상담 채널 톡-->
 <script>
-    (function(){var w=window;if(w.ChannelIO){return w.console.error("ChannelIO script included twice.");}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(args){ch.q.push(args);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x);}}if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}})();
+    (function(){
+        var w=window;
+        if(w.ChannelIO){
+            return w.console.error("ChannelIO script included twice.");
+        }
+        var ch=function(){
+            ch.c(arguments);
+        };
+        ch.q=[];
+        ch.c=function(args){
+            ch.q.push(args);
+        };
+        w.ChannelIO=ch;
+        function l(){
+            if(w.ChannelIOInitialized){
+                return;
+            }
+            w.ChannelIOInitialized=true;
+            var s=document.createElement("script");
+            s.type="text/javascript";
+            s.async=true;
+            s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";
+            var x=document.getElementsByTagName("script")[0];
+            if(x.parentNode){
+                x.parentNode.insertBefore(s,x);
+            }
 
-    ChannelIO('boot', {
-        "pluginKey": "e790423c-0d86-4e17-bab1-e08a8ce5d40a"
-    });
+            fetch('/api/channel')
+                .then(response => response.text())
+                .then(key => {
+                    ChannelIO('boot', {
+                        "pluginKey": key
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching API key:', error);
+                });
+        }
+        if(document.readyState==="complete"){
+            l();
+        }else{
+            w.addEventListener("DOMContentLoaded",l);
+            w.addEventListener("load",l);
+        }
+    })();
 </script>
 </body>
 </html>

@@ -26,19 +26,17 @@ public class EventApiController {
 
     @GetMapping
     public List<Map<String, Object>> getEvents(HttpServletRequest request) {
-        // 쿠키에서 accessToken 찾기
         String accessToken = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("accessToken".equals(cookie.getName())) {
                     accessToken = cookie.getValue();
-                    break;  // accessToken을 찾으면 반복문 종료
+                    break;
                 }
             }
         }
 
-        // accessToken이 없으면 예외 발생
         if (accessToken == null) {
             throw new RuntimeException("Access token이 없습니다.");
         }
@@ -47,24 +45,29 @@ public class EventApiController {
         User user = userService.findByUsername(username).orElseThrow();
         Set<Team> teamSet = user.getTeams();
 
-        // 각 팀에 해당하는 여행을 찾고, 결과를 List로 반환
         List<Map<String, Object>> events = new ArrayList<>();
         for (Team team : teamSet) {
             Trip trip = team.getTrip();
             if (trip != null) {
-                // TripDates와 TripLocations에서 정보를 가져옴
+                Map<String, Object> event = new HashMap<>();
+                event.put("title", trip.getTripName());
+                event.put("start", trip.getStartDate().toString());
+                event.put("end", trip.getEndDate().plusDays(1).toString());
+
+                // 모든 위치 정보를 리스트로 포함 (단일 이벤트에 대해 하나의 리스트)
+                List<Map<String, Object>> locations = new ArrayList<>();
                 for (TripDate tripDate : trip.getTripDates()) {
                     for (TripLocation location : tripDate.getTripLocations()) {
-                        events.add(Map.of(
-                                "title", trip.getTripName(),
-                                "start", tripDate.getTripDate().toString(),
-                                "end", trip.getEndDate() != null ? trip.getEndDate().toString() : null,
+                        locations.add(Map.of(
                                 "latitude", location.getLatitude(),
                                 "longitude", location.getLongitude(),
                                 "placeName", location.getPlaceName()
                         ));
                     }
                 }
+
+                event.put("extendedProps", Map.of("locations", locations));
+                events.add(event);
             }
         }
         return events;
