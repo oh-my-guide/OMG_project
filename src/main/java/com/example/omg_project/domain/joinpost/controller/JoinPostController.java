@@ -61,6 +61,8 @@ public class JoinPostController {
             // 조회수 증가 (본인 게시글이 아닌 경우에만)
             if (user != null && !user.getId().equals(post.getUserId())) {
                 joinPostService.incrementViews(postId);
+                post = joinPostService.findJoinPostById(postId);
+                model.addAttribute("post", post);
             }
         }
 

@@ -136,6 +136,7 @@ public class JoinPostServiceImpl implements JoinPostService {
     public void incrementViews(Long id) {
         JoinPost joinPost = joinPostRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
         joinPost.incrementViews();
+        joinPostRepository.save(joinPost);
     }
 
 }

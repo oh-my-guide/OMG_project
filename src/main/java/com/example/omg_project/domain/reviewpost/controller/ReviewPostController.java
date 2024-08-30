@@ -70,6 +70,8 @@ public class ReviewPostController {
             // 조회수 증가 (본인 게시글이 아닌 경우에만)
             if (user != null && !user.getId().equals(post.getUserId())) {
                 reviewPostService.incrementViews(postId);
+                post = reviewPostService.findReviewPostById(postId);
+                model.addAttribute("post", post);
             }
         }
 
