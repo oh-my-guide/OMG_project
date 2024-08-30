@@ -229,6 +229,7 @@
                 left: 'title',
                 right: 'prev,next today'
             },
+            dayMaxEvents: 2,
             events: function (fetchInfo, successCallback, failureCallback) {
                 fetch('/api/events')
                     .then(response => response.json())

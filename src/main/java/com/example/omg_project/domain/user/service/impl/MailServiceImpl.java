@@ -3,6 +3,8 @@ package com.example.omg_project.domain.user.service.impl;
 import com.example.omg_project.domain.user.service.MailService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +57,7 @@ public class MailServiceImpl implements MailService {
             String body = "<h2>OMG에 오신걸 환영합니다!</h2><h3>아래의 인증번호를 입력하세요.</h3><h1>" + verificationCodes.get(mail) + "</h1><h3>감사합니다.</h3>";
             helper.setText(body, true);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            throw new CustomException(ErrorCode.EMAIL_CREATION_ERROR);
         }
 
         return message;
@@ -111,7 +113,7 @@ public class MailServiceImpl implements MailService {
             helper.setText(body, true);
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            throw new RuntimeException("임시 비밀번호 전송 오류", e);
+            throw new CustomException(ErrorCode.TEMP_PASSWORD_SENDING_ERROR);
         }
     }
 
@@ -122,7 +124,7 @@ public class MailServiceImpl implements MailService {
     public String createTemporaryPassword(String mail) {
         String tempPassword = generateRandomPassword();
         User user = userRepository.findByUsername(mail)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         user.setPassword(passwordEncoder.encode(tempPassword));
         userRepository.save(user);
         return tempPassword;
@@ -134,7 +136,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public boolean verifyTemporaryPassword(String mail, String tempPassword) {
         User user = userRepository.findByUsername(mail)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return passwordEncoder.matches(tempPassword, user.getPassword());
     }
 }

@@ -1,11 +1,13 @@
 package com.example.omg_project.domain.user.controller;
 
 import com.example.omg_project.domain.reviewpost.service.ReviewPostService;
+import com.example.omg_project.domain.user.dto.request.AdminNoticeRequest;
 import com.example.omg_project.domain.user.entity.AdminNotice;
 import com.example.omg_project.domain.user.repository.AdminNoticeRepository;
 import com.example.omg_project.domain.user.service.AdminNoticeService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.exception.CustomException;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -113,15 +115,12 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/notices")
     @ResponseBody
-    public ResponseEntity<Void> createNotice(@RequestBody AdminNotice notice) {
+    public ResponseEntity<Void> createNotice(@RequestBody AdminNoticeRequest notice) {
         try {
-            String title = notice.getTitle();
-            String content = notice.getContent();
-            if (title == null || title.isEmpty() || content == null || content.isEmpty()) {
-                return ResponseEntity.badRequest().build();
-            }
-            omgPosterService.saveNotice(title, content);
+            omgPosterService.saveNotice(notice);
             return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (CustomException e) {
+            return ResponseEntity.status(e.getHttpStatus()).build();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -147,10 +146,6 @@ public class AdminController {
 
     /**
      * 공지글 상세보기 폼
-     * @param id 공지글 아이디
-     * @param model
-     * @param request
-     * @return
      */
     @GetMapping("/notices/{id}")
     public String viewNoticeDetail(@PathVariable("id") Long id, Model model, HttpServletRequest request) {

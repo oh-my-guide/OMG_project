@@ -2,6 +2,8 @@ package com.example.omg_project.global.oauth2.handle;
 
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.example.omg_project.global.jwt.service.RedisRefreshTokenService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import com.example.omg_project.global.oauth2.dto.CustomOAuth2User;
@@ -38,16 +40,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             Optional<User> user = userRepository.findByUsername(username);
 
             if (user.isEmpty()) {
-                log.info("사용자가 없습니다.");
-                throw new UsernameNotFoundException("User not found with username: " + username);
+                throw new CustomException(ErrorCode.UNSUPPORTED_LOGIN_PROVIDER);
             }
             Long userId = user.get().getId();
-            System.out.println("userId :: " + userId);
             String name = customUserDetails.getName();
             List<String> roles = customUserDetails.getRoles();
-
-            log.info("Oauth2 로그인 성곻했습니다. ");
-            log.info("Oauth2 생성 :: userId: {}, username: {}, name: {}, roles: {}", userId, username, name, roles);
 
             String accessToken = jwtTokenizer.createAccessToken(userId, username, name, roles);
             String refreshToken = jwtTokenizer.createRefreshToken(userId, username, name, roles);
@@ -75,7 +72,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             }
 
         } catch (Exception e) {
-            log.error("Oauth2 로그인에 실패했습니다.", e);
             if (!response.isCommitted()) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred during authentication");
             }

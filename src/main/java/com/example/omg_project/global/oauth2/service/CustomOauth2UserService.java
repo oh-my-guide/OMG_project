@@ -4,6 +4,8 @@ import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.role.repository.RoleRepository;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.example.omg_project.global.oauth2.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +52,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 break;
             default:
                 log.error("로그인 실패: 지원하지 않는 로그인 제공자입니다. 등록 ID: {}", registrationId);
-                throw new IllegalArgumentException("지원하지 않는 로그인 제공자입니다.");
+                throw new CustomException(ErrorCode.USER_NOT_FOUND);
         }
 
         String provider = oAuth2Response.getProvider();
@@ -60,8 +62,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         Optional<User> userOptional = userRepository.findByUsername(username);
 
         if (userOptional.isPresent()) {
-            // 기존 유저가 이미 존재하는 경우, 추가 작업 없이 바로 반환
-            log.info("기존 유저 로그인: {}", username);
             return new CustomOAuth2User(oAuth2Response, userOptional.get().getRoles().stream().map(Role::getName).collect(Collectors.joining(",")));
         }
 

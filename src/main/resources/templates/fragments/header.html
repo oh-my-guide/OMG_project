@@ -99,10 +99,10 @@
                     document.querySelector('.notification-icon').style.display = 'none';
 
                     // 로그아웃 요청
-                    fetch('/api/users/logout', { method: 'POST' })
+                    fetch('/api/users/logout', { method: 'GET' })
                         .then(response => {
                             if (response.ok) {
-                                window.location.href = '/signin'; // 로그아웃 후 로그인 페이지로 리다이렉트
+                                window.location.href = '/'; // 로그아웃 후 로그인 페이지로 리다이렉트
                             } else {
                                 console.error('Logout failed');
                             }

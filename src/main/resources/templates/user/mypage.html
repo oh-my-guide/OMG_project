@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header"></head>
 <head>
     <meta charset="UTF-8">
     <title>마이페이지</title>
@@ -125,7 +127,6 @@
                                 <div class="post-item">
                                     <h2>${post.title}</h2>
                                     <p>작성자: ${post.usernick}</p>
-                                    <p>${post.content}</p>
                                     <button class="chat-button" onclick="window.location.href='/joinPost/${post.id}'">자세히 보기</button>
                                 </div>
                             `;
@@ -159,7 +160,6 @@
                                 <div class="review-item">
                                     <h2>${review.title}</h2>
                                     <p>작성자: ${review.usernick}</p>
-                                    <p>${review.content}</p>
                                     <button class="chat-button" onclick="window.location.href='/reviewPost/${review.id}'">자세히 보기</button>
                                 </div>
                             `;

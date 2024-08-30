@@ -7,6 +7,8 @@ import com.example.omg_project.domain.user.dto.response.UserLoginResponse;
 import com.example.omg_project.domain.user.entity.RandomNickname;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.example.omg_project.global.jwt.service.RedisBlackTokenService;
 import com.example.omg_project.global.jwt.service.RedisRefreshTokenService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
@@ -55,14 +57,14 @@ public class UserApiController {
         log.info("비밀번호 :: {}", userLoginDto.getPassword());
 
         if(bindingResult.hasErrors()){ // 필드 에러 확인
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
 
         Optional<User> user = userService.findByUsername(userLoginDto.getUsername());
 
         // 비밀번호 일치여부 체크
         if(!passwordEncoder.matches(userLoginDto.getPassword(), user.get().getPassword())) {
-            return new ResponseEntity("비밀번호가 올바르지 않습니다.",HttpStatus.UNAUTHORIZED);
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
         }
 
         List<String> roles = user.get().getRoles().stream().map(Role::getName).collect(Collectors.toList());
@@ -154,8 +156,7 @@ public class UserApiController {
         try {
             response.sendRedirect("/");
         } catch (IOException e) {
-            log.error("로그아웃 후 리디렉션 중 오류 발생", e);
-            e.printStackTrace();
+            throw new CustomException(ErrorCode.TOKEN_DELETION_ERROR);
         }
     }
 
@@ -229,8 +230,7 @@ public class UserApiController {
             }
             return ResponseEntity.ok("회원 탈퇴 성공 !!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 탈퇴 실패 !!");
+            throw new CustomException(ErrorCode.USER_DELETION_ERROR);
         }
     }
 }
