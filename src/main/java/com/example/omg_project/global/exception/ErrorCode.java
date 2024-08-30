@@ -28,7 +28,7 @@ public enum ErrorCode {
     UNSUPPORTED_LOGIN_PROVIDER("USER_009","지원하지 않는 로그인 제공자입니다.", HttpStatus.BAD_REQUEST),
     TOKEN_NOT_FOUND("USER_009", "엑세스 토큰이 없습니다.", HttpStatus.UNAUTHORIZED),
     INVALID_NOTICE_DATA("NOTICE_001", "제목 또는 내용이 비어 있습니다.", HttpStatus.BAD_REQUEST),
-    NOTICE_SAVING_ERROR("NOTICE_002", "공지사항 저장 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    NOTICE_SAVING_ERROR("NOTICE_002", "공지사항 저장 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // Chat Room Errors
     CHAT_ROOM_NOT_FOUND("CHAT_001", "채팅방이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
@@ -54,14 +54,14 @@ public enum ErrorCode {
     TRIP_NOT_FOUND_EXCEPTION("TRIP_001", "여행 일정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     INVALID_INVITE_CODE("TEAM_001", "잘못된 초대 코드입니다.", HttpStatus.BAD_REQUEST),
     LEADER_CANNOT_LEAVE_TEAM("TEAM_002", "팀 리더는 팀에서 탈퇴할 수 없습니다.", HttpStatus.BAD_REQUEST),
+    TEAM_NOT_FOUND_EXCEPTION("TEAM_003", "채팅방 ID에 해당하는 팀을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
     // Post
     POST_NOT_FOUND_EXCEPTION("POST_001", "게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     COMMENT_NOT_FOUND_EXCEPTION("POST_002", "댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     REPLY_NOT_FOUND_EXCEPTION("POST_003", "대댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     TRIP_LOCATION_NOT_FOUND_EXCEPTION("POST_004", "장소를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    INVALID_SEARCH_OPTION_EXCEPTION("SEARCH_001", "검색 옵션이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
-    TEAM_NOT_FOUND_EXCEPTION("TEAM_003", "채팅방 ID에 해당하는 팀을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+    INVALID_SEARCH_OPTION_EXCEPTION("SEARCH_001", "검색 옵션이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
 
 
     private final String code;
