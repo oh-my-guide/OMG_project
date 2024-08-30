@@ -23,6 +23,11 @@ repositories {
     mavenCentral()
 }
 
+// 매개변수 이름 인식문제 해결 (ex) @RequestParam, @PathVariable, ..)
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters"
+}
+
 dependencies {
     // email smtp
     implementation 'org.springframework.boot:spring-boot-starter-mail'
