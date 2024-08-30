@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>후기 게시글 목록</title>
     <style>
@@ -61,13 +62,14 @@
         }
 
         .post-meta {
+            display: contents;
             text-align: right;
             font-size: 14px;
             color: #999;
         }
 
-        .post-user, .post-date {
-            margin: 0;
+        .post-user, .post-date, .post-view {
+            margin: 0 10px;
         }
 
         #createPostButton {
@@ -157,14 +159,15 @@
             border: 1px solid #8fc6ff;
             border-radius: 8px;
             background-color: #fff;
-            color: #999;
+            color: #999; /* 텍스트 색상 */
             font-size: 14px;
             cursor: pointer;
         }
 
+        /* placeholder 텍스트 색상 설정 */
         #searchInput::placeholder {
-            color: #999;
-            opacity: 1;
+            color: #999; /* placeholder 텍스트 색상 */
+            opacity: 1; /* 브라우저에 따라 opacity가 적용될 수 있음 */
         }
 
         #searchButton {
@@ -178,6 +181,11 @@
             border-color: #6ba0d6;
             box-shadow: 0 0 5px rgba(107, 160, 214, 0.5);
             outline: none;
+        }
+
+        .post-view i {
+            margin-right: 3px; /* 아이콘과 텍스트 사이의 간격 */
+            font-size: 12px; /* 아이콘 크기 조절 */
         }
     </style>
 </head>
@@ -328,7 +336,8 @@
                         <a href="/reviewPost/${post.id}" class="post-title">${post.title}</a>
                         <div class="post-meta">
                             <p class="post-user">${post.usernick}</p>
-                            <p class="post-date">${post.formattedCreatedAt}</p>
+                            <p class="post-date">${post.formattedDateOnly}</p>
+                            <p class="post-view"><i class="fas fa-eye"></i> ${post.views}</p>
                         </div>
                     `;
                         postList.appendChild(postItem);
@@ -363,6 +372,7 @@
                             <div class="post-meta">
                                 <p class="post-user">${post.usernick}</p>
                                 <p class="post-date">${post.formattedCreatedAt}</p>
+                                <p class="post-view"><i class="fas fa-eye"></i> ${post.views}</p>
                             </div>
                         `;
                         postList.appendChild(postItem);
