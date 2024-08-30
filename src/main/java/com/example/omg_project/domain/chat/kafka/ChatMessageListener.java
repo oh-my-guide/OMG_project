@@ -2,6 +2,7 @@ package com.example.omg_project.domain.chat.kafka;
 
 import com.example.omg_project.domain.chat.dto.ChatMessageDTO;
 import com.example.omg_project.domain.chat.entity.ChatMessage;
+import com.example.omg_project.domain.chat.entity.ChatRoom;
 import com.example.omg_project.domain.chat.repository.ChatMessageRepository;
 import com.example.omg_project.domain.chat.repository.ChatRoomRepository;
 import com.example.omg_project.domain.chat.service.BadWordService;
@@ -11,6 +12,8 @@ import com.example.omg_project.domain.trip.entity.Team;
 import com.example.omg_project.domain.trip.repository.TeamRepository;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +69,10 @@ public class ChatMessageListener {
             chatMessageRepository.save(chatMessage);
             message = message.split(":")[1] + ": " + parseJsonMessage(message.split(": ")[1]);
 
-            Team team = teamRepository.findByChatRoomId(Long.parseLong(roomId)).orElseThrow();
+            // Team을 조회하여 각 사용자에게 알림 생성
+            Team team = teamRepository.findByChatRoomId(Long.parseLong(roomId))
+                    .orElseThrow(() -> new CustomException(ErrorCode.TEAM_NOT_FOUND));
+
             for (User user : team.getUsers()){
                 if (!user.getUsernick().equals(chatMessage.getUserNickname())){
                     notificationService.createNotification(user, message, "CHAT", chatMessage.getId());
@@ -78,6 +84,7 @@ public class ChatMessageListener {
         } catch (Exception e) {
             // 메시지 처리 중 오류가 발생하면 로깅
             logger.log(Level.SEVERE, "Error processing message", e);
+            throw new CustomException(ErrorCode.INVALID_MESSAGE_FORMAT); // 기본적인 예외 처리로 변경
         }
     }
 
@@ -93,7 +100,7 @@ public class ChatMessageListener {
 
         // 메시지 형식이 올바르지 않으면 예외 발생
         if (parts.length < 3) {
-            throw new IllegalArgumentException("올바른 메세지 형식이 아닙니다");
+            throw new CustomException(ErrorCode.INVALID_MESSAGE_FORMAT);
         }
 
         // roomId 반환
@@ -113,14 +120,18 @@ public class ChatMessageListener {
 
         // 메시지 형식이 올바르지 않으면 예외 발생
         if (parts.length < 3) {
-            throw new IllegalArgumentException("올바른 메세지 형식이 아닙니다");
+            throw new CustomException(ErrorCode.INVALID_MESSAGE_FORMAT);
         }
 
         // ChatMessage 객체 생성 및 속성 설정
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(parts[2].trim());  // 메시지 내용 설정
         chatMessage.setUser(userRepository.findByUsernick(parts[1]));  // 사용자 정보 설정
-        chatMessage.setChatRoom(chatRoomRepository.findById(Long.parseLong(roomId)).orElseThrow());  // 채팅방 정보 설정
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findById(Long.parseLong(roomId));
+        if (chatRoom.isEmpty()) {
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
+        }
+        chatMessage.setChatRoom(chatRoom.get());  // 채팅방 정보 설정
         chatMessage.setUserNickname(parts[1]);  // 사용자 닉네임 설정
 
         return chatMessage;
@@ -189,7 +200,7 @@ public class ChatMessageListener {
             return jsonNode.get("message").asText();
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error parsing JSON message", e);
-            return "Unknown message";
+            throw new CustomException(ErrorCode.INVALID_MESSAGE_FORMAT); // JSON 파싱 오류를 사용자 정의 예외로 처리
         }
     }
 

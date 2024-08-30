@@ -10,6 +10,8 @@ import com.example.omg_project.domain.trip.entity.Team;
 import com.example.omg_project.domain.trip.service.TeamService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,10 @@ public class ChatServiceImpl implements ChatService {
      */
     @Override
     public List<ChatMessageDTO> getMessagesByRoomId(Long roomId) {
+        // 채팅방이 존재하는지 확인
+        if (!existsById(roomId)) {
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
+        }
         // 채팅방 ID에 해당하는 메시지를 가져옴
         List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomId(roomId);
 
@@ -83,14 +89,14 @@ public class ChatServiceImpl implements ChatService {
     public void validateUserInChatRoom(Long roomId, User user) {
         // 채팅방이 존재하지 않을 경우 예외 발생
         if (!existsById(roomId)) {
-            throw new RuntimeException("채팅방이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
         }
 
         // 채팅방에 연결된 팀 정보를 조회하고, 사용자가 팀에 속해 있는지 확인
         Team team = teamService.findByChatRoomId(roomId);
         if (!team.getUsers().contains(user)) {
             // 사용자가 팀에 속해 있지 않으면 예외 발생
-            throw new RuntimeException("사용자가 채팅방에 참여하고 있지 않습니다.");
+            throw new CustomException(ErrorCode.USER_NOT_IN_CHAT_ROOM);
         }
     }
 
@@ -103,7 +109,15 @@ public class ChatServiceImpl implements ChatService {
      */
     @Override
     public String findTripName(Long roomId) {
+        // 팀을 찾기 전에 채팅방 존재 여부 확인
+        if (!existsById(roomId)) {
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
+        }
         Team team = teamService.findByChatRoomId(roomId);
+        // 여행 정보가 없는 경우 처리
+        if (team.getTrip() == null) {
+            throw new CustomException(ErrorCode.TRIP_NOT_FOUND); // 새로운 에러 코드 필요
+        }
         return team.getTrip().getTripName();
     }
 }
