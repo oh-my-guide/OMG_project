@@ -84,7 +84,7 @@
         </div>
     </div>
 </div>
-<script>
+<script defer>
     const cityCoordinates = {
         "서울": { lat: 37.5665, lng: 126.9780 },
         "부산": { lat: 35.1796, lng: 129.0756 },
@@ -269,6 +269,23 @@
             }
         });
     });
+
+    /**
+     * 마커 이미지 색상과 장소명 앞 span 태그의 글자 색상 연관 짓기
+     * @param index
+     * @returns {string}
+     */
+    function getColorCode(index) {
+        const colors = [
+            '#F78181',  // red
+            '#F7D358',  // yellow
+            '#82FA58',  // green
+            '#58FAF4',  // cyan
+            '#58ACFA',  // blue
+            '#9F81F7'   // purple
+        ];
+        return colors[index-1]; // colors는 0부터 시작하고 markerIndex는 1부터 시작하기 때문에 -1 해서 값 맞춰줌
+    }
 
     /**
      * fetchTripData에서 호출되어 각 여행 날짜 동적으로 생성
@@ -744,6 +761,6 @@
 </script>
 <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c60fdc23b01e5e1886e831583b4cefb0&libraries=services"></script>
-<script src="/js/updatetrip.js"></script>
+<script src="/js/updatetrip.js" defer></script>
 </body>
 </html>

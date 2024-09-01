@@ -41,23 +41,6 @@ const markerImages = {
 const MAX_LOCATIONS = 15;
 
 /**
- * 마커 이미지 색상과 장소명 앞 span 태그의 글자 색상 연관 짓기
- * @param index
- * @returns {string}
- */
-function getColorCode(index) {
-    const colors = [
-        '#F78181',  // red
-        '#F7D358',  // yellow
-        '#82FA58',  // green
-        '#58FAF4',  // cyan
-        '#58ACFA',  // blue
-        '#9F81F7'   // purple
-    ];
-    return colors[index-1]; // colors는 0부터 시작하고 markerIndex는 1부터 시작하기 때문에 -1 해서 값 맞춰줌
-}
-
-/**
  * 키워드 검색을 요청하는 함수입니다
  * @returns {boolean} - 키워드가 유효하지 않으면 false
  */
