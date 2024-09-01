@@ -180,30 +180,28 @@
             const notificationElement = document.createElement('div');
             notificationElement.className = `notification ${notification.read ? 'read' : 'unread'}`;
 
-            // createdAt 배열을 Date 객체로 변환
-            let formattedDate = 'Unknown Date';
-            if (notification.createdAt && Array.isArray(notification.createdAt)) {
-                try {
-                    const dateArray = notification.createdAt;
-                    const date = new Date(
-                        dateArray[0], // Year
-                        dateArray[1] - 1, // Month (0-based in JavaScript)
-                        dateArray[2], // Day
-                        dateArray[3], // Hour
-                        dateArray[4], // Minute
-                        dateArray[5], // Second
-                        dateArray[6] // Millisecond
-                    );
-                    formattedDate = formatDate(date);
-                } catch (error) {
-                    console.error('Invalid date format:', notification.createdAt);
-                }
-            }
+            // 날짜 포멧 변경해서 보이도록 수정
+            const date = new Date(notification.createdAt)
+            const dateString = date.toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const timeString = date.toLocaleTimeString('ko-KR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false // 24시간 형식으로 설정
+            });
+
+            // 최종 날짜 포맷
+            const formattedDateTime = `${dateString} ${timeString}`;
 
             notificationElement.innerHTML = `
                 <p>${notification.message}</p>
-                <p>${formattedDate}</p>
-                ${!notification.read ? `<button type="button" onclick="markAsRead(${notification.id})">읽음 처리d</button>` : ''}
+                <p>${formattedDateTime}</p>
+                ${!notification.read ? `<button type="button" onclick="markAsRead(${notification.id})">읽음 처리</button>` : ''}
             `;
             notificationSection.appendChild(notificationElement);
         }

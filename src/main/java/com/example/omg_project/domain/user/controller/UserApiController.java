@@ -57,14 +57,18 @@ public class UserApiController {
         log.info("비밀번호 :: {}", userLoginDto.getPassword());
 
         if(bindingResult.hasErrors()){ // 필드 에러 확인
-            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
+            return new ResponseEntity("필드 에러 발생", HttpStatus.BAD_REQUEST);
         }
 
         Optional<User> user = userService.findByUsername(userLoginDto.getUsername());
 
+        if (!user.isPresent()) {
+            return new ResponseEntity("아이디가 존재하지 않습니다.", HttpStatus.NOT_FOUND);
+        }
+
         // 비밀번호 일치여부 체크
         if(!passwordEncoder.matches(userLoginDto.getPassword(), user.get().getPassword())) {
-            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
+            return new ResponseEntity("비밀번호가 올바르지 않습니다.", HttpStatus.UNAUTHORIZED);
         }
 
         List<String> roles = user.get().getRoles().stream().map(Role::getName).collect(Collectors.toList());

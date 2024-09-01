@@ -65,9 +65,15 @@ public class JoinPostDto {
                     .build();
         }
 
-        // 날짜를 원하는 형식으로 변환
+        // 날짜를 yyyy.MM.dd HH:mm 형식으로 변환
         public String getFormattedCreatedAt() {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+            return createdAt.format(formatter);
+        }
+
+        // 날짜를 yyyy.MM.dd 형식으로 변환
+        public String getFormattedDateOnly() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
             return createdAt.format(formatter);
         }
     }

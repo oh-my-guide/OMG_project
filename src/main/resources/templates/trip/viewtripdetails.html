@@ -16,9 +16,9 @@
             display: flex;
             min-height: 100vh;
             box-sizing: border-box;
-            max-width: 1200px; /* 바디의 최대 너비 설정 */
-            margin: auto; /* 바디를 중앙으로 정렬 */
-            padding-top: 60px; /* 헤더 높이에 맞게 패딩 추가 */
+            max-width: 1200px;
+            margin: auto;
+            padding-top: 60px;
         }
 
         .sidebar {
@@ -103,14 +103,16 @@
 
         .trip-detail {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* 줄바꿈 허용 */
             background-color: transparent;
             box-sizing: border-box;
+            justify-content: flex-start; /* 왼쪽 정렬 */
+            gap: 20px; /* 일정 간의 간격 추가 */
         }
 
         .day-column {
-            flex: 1;
-            margin-right: 20px;
+            flex: 0 0 calc(33.333% - 20px); /* 일정이 한 줄에 3개가 되도록 설정 */
+            margin-bottom: 20px;
             background-color: #ffffff;
             padding: 15px;
             border-radius: 0;
@@ -123,19 +125,15 @@
             display: block; /* 선택된 일정만 보이도록 설정 */
         }
 
-        .day-column:last-child {
-            margin-right: 0;
-        }
-
         .day-title {
             font-size: 24px;
-            color: #007bff; /* Day와 날짜를 모두 파란색으로 표시 */
+            color: #3d8dda;
             margin-bottom: 15px;
             font-weight: bold;
         }
 
         .day-title span {
-            color: #007bff; /* Day 뒤의 날짜도 파란색으로 표시 */
+            color: #3d8dda;
         }
 
         ul {

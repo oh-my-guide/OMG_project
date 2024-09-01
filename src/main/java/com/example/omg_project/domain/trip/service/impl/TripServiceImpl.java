@@ -61,6 +61,8 @@ public class TripServiceImpl implements TripService {
 
         Trip savedTrip = tripRepository.save(trip);
 
+        createTripDTO.setTripId(savedTrip.getId());
+
         //날짜 정보 저장
         for (CreateTripDTO.TripDateDTO tripDateDTO : createTripDTO.getTripDates()) {
             TripDate tripDate = new TripDate();

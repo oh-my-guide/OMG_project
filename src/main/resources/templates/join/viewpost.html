@@ -336,10 +336,13 @@
             <span class="post-date" th:text="${post.formattedCreatedAt}"></span>
             <span class="post-views" th:text="'조회수 ' + ${post.views}"></span>
         </div>
-        <div class="button-container" th:if="${#authentication.name} == ${post.username}">
+        <div class="button-container">
             <a th:href="@{/joinPost/}" class="button edit-button">목록보기</a>
-            <a th:href="@{/joinPost/{postId}/updatePost(postId=${post.id})}" class="button edit-button">수정</a>
-            <button class="button delete-button" onclick="deletePost()">삭제</button>
+            <!-- 로그인한 사용자와 글 작성자가 일치할 경우 -->
+            <div th:if="${#authentication.name} == ${post.username}">
+                <a th:href="@{/joinPost/{postId}/updatePost(postId=${post.id})}" class="button edit-button">수정</a>
+                <button class="button delete-button" onclick="deletePost()">삭제</button>
+            </div>
         </div>
     </div>
 
