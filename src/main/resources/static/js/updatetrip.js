@@ -38,6 +38,8 @@ const markerImages = {
     6: '/files/markers/marker_number_purple.png'
 }
 
+const MAX_LOCATIONS = 15;
+
 /**
  * 마커 이미지 색상과 장소명 앞 span 태그의 글자 색상 연관 짓기
  * @param index
@@ -138,7 +140,6 @@ function handleSelectBtnClick(event, place, placePosition) {
     }
 
     const locationsContainer = selectedDateDiv.querySelector('.trip-locations');
-    const MAX_LOCATIONS = 15;
 
     if (selectedPlaces[dayNum].length >= MAX_LOCATIONS) {
         alert(`하루에 추가할 수 있는 장소는 최대 ${MAX_LOCATIONS}개입니다.`);
@@ -172,10 +173,8 @@ function handleSelectBtnClick(event, place, placePosition) {
     addSelectedMarker(placePosition, index, dayNum);
     // 마커 번호 재정렬
     reorderMarkers(markers, dayNum);
-
     // 지도 범위 재설정
     setBounds(placePosition);
-
     // 지도에 선 표시
     drawLinePath(dayNum, placePosition);
 }
