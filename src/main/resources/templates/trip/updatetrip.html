@@ -571,8 +571,16 @@
             // 새로운 날짜 범위에서 마지막 날에 해당하는 trip-locations 요소를 찾음
             const lastDayElement = newTripDatesContainer.querySelector('.trip-date:last-child .trip-locations');
 
+            // 하루에 추가할 수 있는 장소는 최대 15개이기 때문에 합쳤을 때 15개를 초과하는 장소들은 잘라내야 함
+            // 현재 마지막 날에 이미 있는 장소 개수
+            const currentLastDayLocationsCount = lastDayElement.querySelectorAll('.trip-location').length;
+            // 추가할 수 있는 최대 장소 개수 (15 - 새로운 날짜 범위에 포함되지 않는 날짜들에 있는 장소들의 개수 - 마지막 날에 이미 있는 장소 개수)
+            const maxAddLocations = MAX_LOCATIONS - lastTripLocations.length - currentLastDayLocationsCount;
+            // 남은 장소들 중 추가할 수 있는 최대 개수만큼 잘라냄
+            const LocationsToAdd = lastTripLocations.slice(0, maxAddLocations);
+
             // 남은 날짜들의 장소들(lastTripLocations)을 하나씩 마지막 날에 추가
-            lastTripLocations.forEach((loc, index) => {
+            LocationsToAdd.forEach((loc, index) => {
                 lastDayElement.insertAdjacentHTML(
                     'beforeend',    // lastDayElement의 마지막 자식 요소로 새로운 장소 요소를 추가
                     createTripLocationHtml(loc, newDateIndex, existingTripData.length + index + 1)  // 남은 날짜의 장소(loc)를 HTML로 생성하여 추가
