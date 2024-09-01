@@ -525,6 +525,8 @@
             };
         });
 
+        console.log('existingTripData --- {}', existingTripData);
+
         // 새로운 날짜 범위에 따라 addTripDate()를 사용해 화면에 새로운 여행 날짜 추가 후 해당 날짜에 맞는 기존 데이터를 매칭해 설정
         const newTripDatesContainer = document.getElementById('tripDatesContainer');
         // 새로운 여행 날짜를 표시할 컨테이너를 선택하고 기존 내용을 비움
@@ -552,15 +554,53 @@
             });
 
             newDateIndex++;
+
+            console.log('tripDateData --- {}', tripDateData);
+            console.log('newDateIndex --- ', newDateIndex);
+            console.log('existingTripData.length --- ', existingTripData.length);
+
         }
 
         // 만약 새로운 날짜 범위가 기존 날짜보다 짧다면, 남는 날짜의 장소들을 마지막 날로 합침
         if (newDateIndex < existingTripData.length) {
-            const lastTripLocations = existingTripData.slice(newDateIndex).flatMap(data => data.tripLocations);
+            // 새로운 날짜 범위에 포함되지 않는 남은 날짜들(existingTripData[newDateIndex] 이후)에 있는 모든 장소들을 모아서 lastTripLocations에 저장
+            const lastTripLocations = existingTripData
+                .slice(newDateIndex)    // 기존 데이터에서 새로운 날짜 범위 이후의 데이터를 잘라냄
+                .flatMap(data => data.tripLocations);   // 잘라낸 데이터에서 각 날짜의 장소들(tripLocations)을 추출하여 하나의 배열로 만듦
+
+            // 새로운 날짜 범위에서 마지막 날에 해당하는 trip-locations 요소를 찾음
             const lastDayElement = newTripDatesContainer.querySelector('.trip-date:last-child .trip-locations');
+
+            // 남은 날짜들의 장소들(lastTripLocations)을 하나씩 마지막 날에 추가
             lastTripLocations.forEach((loc, index) => {
-                lastDayElement.insertAdjacentHTML('beforeend', createTripLocationHtml(loc, newDateIndex + 1, index + 1));
+                lastDayElement.insertAdjacentHTML(
+                    'beforeend',    // lastDayElement의 마지막 자식 요소로 새로운 장소 요소를 추가
+                    createTripLocationHtml(loc, newDateIndex, existingTripData.length + index + 1)  // 남은 날짜의 장소(loc)를 HTML로 생성하여 추가
+                    // newDateIndex은 장소 uniqueId의 dayNum이 되고, existingTripData.length + index + 1은 장소 순서가 됨(lastTripLocations의 index는 0부터 시작하므로 +1 해줌)
+                );
+
+                // 선택된 장소들을 저장해둔 selectedPlaces 객체에 데이터 추가
+                if (!selectedPlaces[newDateIndex]) {
+                    selectedPlaces[newDateIndex] = [];
+                }
+                selectedPlaces[newDateIndex].push({
+                    placeName: loc.placeName,
+                    latitude: loc.latitude,
+                    longitude: loc.longitude
+                });
+
+                // 지도에 장소들을 제대로 표시하기 위해 아래 함수들 실행
+                // 지도에 마커 추가
+                const placePosition = new kakao.maps.LatLng(loc.latitude, loc.longitude);
+                addSelectedMarker(placePosition, existingTripData.length + index + 1, newDateIndex);
+                // 마커 번호 재정렬
+                reorderMarkers(markers, newDateIndex);
+                // 지도 범위 재설정
+                setBounds(placePosition);
+                // 지도에 선 표시
+                drawLinePath(newDateIndex, placePosition);
             });
+
         }
 
         updateDayCount();
