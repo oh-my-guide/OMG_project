@@ -16,9 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -73,17 +70,15 @@ public class UserController {
     }
 
     @PostMapping("/oauthPage")
-    public String addOauth2(HttpServletRequest request, @ModelAttribute Oauth2LoginRequest oauth2LoginDto) {
-
+    @ResponseBody
+    public ResponseEntity<String> addOauth2(@RequestBody Oauth2LoginRequest oauth2LoginDto, HttpServletRequest request) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-        String username = jwtTokenizer.getUsernameFromToken(accessToken);
-
-        try {
+        if (accessToken != null) {
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
             userService.updateOauth2(username, oauth2LoginDto);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ResponseEntity.ok("정보가 성공적으로 저장되었습니다.");
         }
-        return "redirect:/oauthPage";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("정보를 저장하는 중 오류가 발생했습니다.");
     }
 
     /**
@@ -131,7 +126,7 @@ public class UserController {
                 return ResponseEntity.ok("회원정보가 수정되었습니다.");
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원정보 수정 중 오류가 발생했습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원정보 수정 중 오류가 발생했습니다.");
             }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

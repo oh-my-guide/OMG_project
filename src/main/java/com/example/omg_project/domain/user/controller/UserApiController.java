@@ -165,20 +165,6 @@ public class UserApiController {
     }
 
     /**
-     * 회원가입
-     */
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody UserSignUpRequest userSignUpDto) {
-        try {
-            userService.signUp(userSignUpDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
-        } catch (RuntimeException e) {
-            log.error("회원가입 실패 :: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("회원가입 실패 :: " + e.getMessage());
-        }
-    }
-
-    /**
      * 랜덤 닉네임 생성
      */
     @GetMapping("/randomNickname")
@@ -232,7 +218,7 @@ public class UserApiController {
             if (refreshToken != null) {
                 redisRefreshTokenService.deleteRefreshToken(refreshToken);
             }
-            return ResponseEntity.ok("회원 탈퇴 성공 !!");
+            return ResponseEntity.ok("ok");
         } catch (Exception e) {
             throw new CustomException(ErrorCode.USER_DELETION_ERROR);
         }

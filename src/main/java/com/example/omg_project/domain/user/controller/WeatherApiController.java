@@ -21,8 +21,16 @@ public class WeatherApiController {
     @Value("${weather.api.key}")
     private String apiKey;
 
+    @Value("${channel.api.key}")
+    private String channelKey;
+
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+
+    @GetMapping("/api/channel")
+    public ResponseEntity<String> getChannelKey() {
+        return ResponseEntity.ok(channelKey);
+    }
 
     // 위치 이름으로 날씨 가져오기
     @GetMapping("/api/weather")
@@ -71,4 +79,6 @@ public class WeatherApiController {
         String forecastResponse = restTemplate.getForObject(forecastUrl, String.class);
         return ResponseEntity.ok(forecastResponse);
     }
+
+
 }
