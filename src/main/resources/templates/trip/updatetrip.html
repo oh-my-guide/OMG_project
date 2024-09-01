@@ -210,7 +210,7 @@
     };
 
     let tripDatesCounter = 0;
-    let markers = {};   // 마커를 저장할 객체
+    let markers = {};   // 마커를 저장할 객체 (key: dayNum, value: marker 객체 배열)
     let selectedPlaces = {};    // 선택된 장소를 저장할 객체
     let selectedDateDiv = null; // 선택된 날짜의 div 요소
 
@@ -530,9 +530,13 @@
         // 새로운 여행 날짜를 표시할 컨테이너를 선택하고 기존 내용을 비움
         newTripDatesContainer.innerHTML = '';
 
-        // selectedPlaces와 markers의 기존 데이터들을 비워줌
+        // addTripDate() 호출 전 기존 데이터들 모두 지우기
+        // 추가된 장소 배열인 selectedPlaces 객체 & 폴리라인을 구성하는 좌표 배열인 linePath 객체를 초기화시킴
         selectedPlaces = {};
-        markers = {};
+        linePath = {};
+        // 지도 위에 표시되고 있는 마커와 폴리라인을 제거
+        clearAllMarker();
+        clearAllPolyline();
 
         let newDateIndex = 0;
         // 시작 날짜부터 종료 날짜까지 반복하며 날짜를 생성
