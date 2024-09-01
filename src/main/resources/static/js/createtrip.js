@@ -447,13 +447,36 @@ function reorderMarkers(markers, dayNum) {
 }
 
 /**
- * 지도 위에 표시되고 있는 마커를 모두 제거합니다
+ * 지도 위에 표시되고 있는 모든 날짜에 대한 마커를 모두 제거하는 함수
  */
-function removeMarker() {
-    for (let i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-    markers = [];
+function clearAllMarker() {
+    // markers 객체에 저장된 모든 dayNum(key)을 순회하며 각 날짜에 대한 marker 처리
+    Object.keys(markers).forEach(dayNum => {
+        // 각 날짜에 해당하는 markers 배열 순회하며 marker 처리
+        markers[dayNum].forEach(marker => {
+            // 지도에서 마커를 제거
+            marker.setMap(null);
+        });
+        // 마커 배열을 초기화
+        markers[dayNum] = [];
+    });
+    console.log('---clearAllMarker---');
+}
+
+/**
+ * 지도 위에 그려진 모든 폴리라인(선)를 제거하는 함수
+ */
+function clearAllPolyline() {
+    // polyline 객체에 저장된 모든 dayNum(key)을 순회
+    Object.keys(polyline).forEach(dayNum => {
+        if (polyline[dayNum]) {
+            // 지도에서 폴리라인을 제거
+            polyline[dayNum].setMap(null);
+            // 해당 dayNum의 polyline 객체 초기화
+            delete polyline[dayNum];
+        }
+    });
+    console.log('---clearAllPolyline---');
 }
 
 /**

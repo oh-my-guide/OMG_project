@@ -469,6 +469,14 @@
 
         // 날짜 변경 시 날짜 변경 전에 띄워둔 검색창 숨기기
         $('#menu_wrap').hide();
+
+        // updateTripDates() 호출되면 기존 데이터들 모두 지우기
+        // 추가된 장소 배열인 selectedPlaces 객체 & 폴리라인을 구성하는 좌표 배열인 linePath 객체를 초기화시킴
+        selectedPlaces = {};
+        linePath = {};
+        // 지도 위에 표시되고 있는 마커와 폴리라인을 제거
+        clearAllMarker();
+        clearAllPolyline();
     }
 
     function toggleTripDate(element) {
