@@ -369,6 +369,9 @@
         });
     }
 
+    /**
+     * 여행 일정 폼 제출 처리
+     */
     document.getElementById('tripForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -430,6 +433,9 @@
             });
     });
 
+    /**
+     * 여행 날짜 업데이트 함수
+     */
     function updateTripDates() {
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
@@ -460,6 +466,17 @@
                 console.log(`TripDate added: Day ${dayCount}, Date: ${date.toISOString().split('T')[0]}`);
             }
         }
+
+        // 날짜 변경 시 날짜 변경 전에 띄워둔 검색창 숨기기
+        $('#menu_wrap').hide();
+
+        // updateTripDates() 호출되면 기존 데이터들 모두 지우기
+        // 추가된 장소 배열인 selectedPlaces 객체 & 폴리라인을 구성하는 좌표 배열인 linePath 객체를 초기화시킴
+        selectedPlaces = {};
+        linePath = {};
+        // 지도 위에 표시되고 있는 마커와 폴리라인을 제거
+        clearAllMarker();
+        clearAllPolyline();
     }
 
     function toggleTripDate(element) {
@@ -467,6 +484,11 @@
         dayContent.classList.toggle('show');
     }
 
+    /**
+     * 장소 추가 버튼 클릭 시 검색창을 열고 해당 날짜 정보를 저장 및 selectedPlaces, markers 객체 초기화
+     * @param button
+     * @returns {null|string}
+     */
     function addLocation(button) {
         // 장소 추가 버튼을 누를 시 menu_wrap이 보이도록 설정
         document.getElementById('menu_wrap').style.display = 'block';
