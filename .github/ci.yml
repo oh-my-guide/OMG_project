@@ -22,3 +22,6 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean build
+
+
+# CI 테스트용 커밋
