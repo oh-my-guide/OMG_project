@@ -31,7 +31,7 @@ jobs:
         with:
           arguments: build
 
-      - name: List downloaded files
+      - name: List build directory
         run: ls -la build/libs
 
       # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드
@@ -53,6 +53,9 @@ jobs:
         with:
           name: OMG_project-0.0.1-SNAPSHOT
           path: build/libs
+
+      - name: List downloaded files
+        run: ls -la build/libs
 
       - name: Copy JAR file to EC2
         uses: appleboy/ssh-action@v0.1.9
