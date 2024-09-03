@@ -4,7 +4,7 @@ name: CI
 # 워크플로가 시작될 조건 지정
 on:
   push:
-    branches: [feat/hyeju-cicd]
+    branches: [hyeju-cicd]
 
 jobs:
   build:
