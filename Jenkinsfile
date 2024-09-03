@@ -51,6 +51,25 @@ pipeline {
                 archiveArtifacts artifacts: 'build/libs/*.jar', allowEmptyArchive: false // 생성된 JAR 파일을 Jenkins에 저장
             }
         }
+        stage('Prepare Deployment Package') {
+            steps {
+                echo 'Preparing deployment package...'
+                sh """
+                cd deployment
+                zip -r ${env.DEPLOY_ZIP} appspec.yml scripts/
+                mv ${env.DEPLOY_ZIP} ../
+                cd ..
+                zip -r ${env.DEPLOY_ZIP} -g build/libs/OMG_project-0.0.1-SNAPSHOT.jar
+                """
+            }
+        }
+        stage('Upload to S3') {
+            steps {
+                withAWS(credentials: 'aws_omg') {
+                    s3Upload(bucket: env.S3_BUCKET, file: env.DEPLOY_ZIP)
+                }
+            }
+        }
 
         stage('Deploy') {
             steps {
