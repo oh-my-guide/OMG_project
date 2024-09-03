@@ -17,7 +17,7 @@ public class ChatMessageProducer {
      * @param message 전송할 메시지 내용
      */
     public void sendMessage(String roomId, String message) {
-        String topicName = "chat_topic"; // 채팅 메시지를 전송할 Kafka 토픽 이름 설정
+        String topicName = "chatTopic"; // 채팅 메시지를 전송할 Kafka 토픽 이름 설정
 
         System.out.println("채팅방 ID: " + roomId + ", 토픽: " + topicName + ", 메시지: " + message);
 

@@ -53,7 +53,7 @@ public class ChatMessageListener {
      * @param topic   메시지가 수신된 토픽 이름
      * @throws Exception 메시지 처리 중 발생한 예외
      */
-    @KafkaListener(topics = "chat_topic", groupId = "chat-room-listener")
+    @KafkaListener(topics = "chatTopic", groupId = "chat-room-listener")
     public void listen(@Payload String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws Exception {
         try {
             // 메시지에서 roomId를 추출
