@@ -104,7 +104,7 @@ public class AdminController {
             String username = jwtTokenizer.getUsernameFromToken(accessToken);
             User user = userService.findByUsername(username).orElse(null);
             model.addAttribute("user", user);
-            return "/user/admin-notice";
+            return "user/admin-notice";
         }
         return "redirect:/";
     }
@@ -139,7 +139,7 @@ public class AdminController {
             model.addAttribute("user", user);
             List<AdminNotice> notices = omgPosterService.getAllNotices();
             model.addAttribute("notices", notices);
-            return "/user/admin-notice-view";
+            return "user/admin-notice-view";
         }
         return "redirect:/";
     }
@@ -157,7 +157,7 @@ public class AdminController {
             AdminNotice notice = omgPosterRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid notice Id:" + id));
             model.addAttribute("notice", notice);
-            return "/user/admin-noticeDetail";
+            return "user/admin-noticeDetail";
         }
         return "redirect:/";
     }
