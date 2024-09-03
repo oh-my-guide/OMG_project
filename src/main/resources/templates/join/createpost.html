@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/header.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/translations/ko.js"></script>
     <title>일행 모집 게시글 작성</title>
     <style>
         body {
@@ -28,7 +31,7 @@
         }
 
         #createPostForm {
-            max-width: 600px;
+            max-width: 700px;
             margin: 30px auto;
             padding: 20px;
             background-color: #fff;
@@ -57,7 +60,7 @@
         }
 
         textarea {
-            height: 200px; /* 내용 부분의 높이를 더 길게 설정 */
+            height: 600px; /* 내용 부분의 높이를 더 길게 설정 */
         }
 
         input:focus, textarea:focus, select:focus {
@@ -67,6 +70,7 @@
 
         button {
             width: 100%;
+            margin-top: 10px;
             padding: 15px;
             background-color: #8fc6ff;
             color: white;
@@ -84,6 +88,15 @@
 
         button:active {
             background-color: #6ba0d6;
+        }
+
+        /* ckeditor css 설정 */
+        .ck-editor__editable_inline {
+            min-height: 300px;
+        }
+
+        .ck-content {
+            font-size: 14px; /* 원하는 폰트 사이즈로 변경 */
         }
     </style>
 </head>
@@ -105,7 +118,7 @@
     <input type="text" id="title" name="title" placeholder="제목을 입력하세요" required>
 
     <label for="content">내용</label>
-    <textarea id="content" name="content" placeholder="내용을 입력하세요" required></textarea>
+    <textarea id="content" name="content" placeholder="내용을 입력하세요" style="display:none;"></textarea>
 
     <button type="submit">작성하기</button>
 </form>
@@ -114,6 +127,20 @@
     document.addEventListener('DOMContentLoaded', function() {
         const userId = document.getElementById('userId').value;
         const tripSelect = document.getElementById('tripSelect');
+        let editorInstance;
+
+        // CKEditor 초기화
+        ClassicEditor.create(document.querySelector('#content'), {
+            language: "ko",
+            ckfinder : {
+                uploadUrl: "/image/upload",
+                withCredentials: true
+            }
+        }).then(editor => {
+            editorInstance = editor;
+        }).catch(error => {
+            console.error(error);
+        });
 
         // API 호출로 유저의 여행 목록을 가져옴
         fetch(`/api/trips/user/${userId}`)
@@ -137,15 +164,28 @@
 
             const tripId = tripSelect.value;
             const title = document.getElementById('title').value;
-            const content = document.getElementById('content').value;
+            const content = document.getElementById('content');
 
-            // 여행이 선택되지 않은 경우 경고 메시지 표시
+            // CKEditor 내용을 숨겨진 textarea에 동기화
+            content.value = editorInstance.getData();
+
+            // 폼 검증
             if (!tripId) {
                 alert('여행을 선택해주세요.');
                 return;
             }
 
-            // 중복 검사를 위해 API 호출
+            if (!title.trim()) {
+                alert('제목을 입력해주세요.');
+                return;
+            }
+
+            if (!content.value.trim()) {
+                alert('내용을 입력해주세요.');
+                return;
+            }
+
+            // 중복 검사를 위한 API 호출
             fetch(`/api/joinPosts/checkDuplicate/${tripId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -158,10 +198,11 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify({ userId: userId, tripId: tripId, title: title, content: content })
+                            body: JSON.stringify({ userId: userId, tripId: tripId, title: title, content: content.value })
                         })
                             .then(response => {
                                 if (response.ok) {
+                                    alert('게시글 작성이 완료되었습니다.'); // 작성 완료 알림
                                     window.location.href = "/joinPost/";
                                 } else {
                                     return response.json().then(err => Promise.reject(err));

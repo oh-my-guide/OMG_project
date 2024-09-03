@@ -6,8 +6,13 @@ import com.example.omg_project.domain.joinpost.entity.JoinPostComment;
 import com.example.omg_project.domain.joinpost.repository.JoinPostCommentRepository;
 import com.example.omg_project.domain.joinpost.repository.JoinPostRepository;
 import com.example.omg_project.domain.joinpost.service.JoinPostCommentService;
+import com.example.omg_project.domain.notification.service.NotificationService;
+import com.example.omg_project.domain.reviewpost.entity.ReviewPostComment;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,17 +26,22 @@ public class JoinPostCommentServiceImpl implements JoinPostCommentService {
     private final JoinPostCommentRepository joinPostCommentRepository;
     private final UserRepository userRepository;
     private final JoinPostRepository joinPostRepository;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
-    public JoinPostCommentDto.Response createComment(Long postId, Long userId, JoinPostCommentDto.Request commentRequest) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
-        JoinPost joinPost = joinPostRepository.findById(postId).orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다."));
+    public JoinPostCommentDto.Response createComment(Long postId, Long userId, JoinPostCommentDto.Request commentRequest) throws JsonProcessingException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
+        JoinPost joinPost = joinPostRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND_EXCEPTION));
         // 댓글 엔티티 생성
         JoinPostComment joinPostComment = commentRequest.toEntity(user, joinPost);
 
+        User postUser = joinPostRepository.findById(postId).get().getUser();
+
         // 댓글 저장
         joinPostCommentRepository.save(joinPostComment);
+        notificationService.createNotification(postUser, user.getUsernick() + ": " + commentRequest.getContent(), "JOINPOSTCOMMENT", joinPostComment.getId());
+
 
         // 저장된 댓글 엔티티를 DTO로 변환하여 반환
         return JoinPostCommentDto.Response.fromEntity(joinPostComment);
@@ -49,7 +59,7 @@ public class JoinPostCommentServiceImpl implements JoinPostCommentService {
     @Transactional
     public JoinPostCommentDto.Response updateComment(Long commentId, JoinPostCommentDto.Request commentRequest) {
         JoinPostComment joinPostComment = joinPostCommentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("댓글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
 
         // 엔티티 메서드를 통해 업데이트
         joinPostComment.updateContent(commentRequest.getContent());
@@ -63,5 +73,10 @@ public class JoinPostCommentServiceImpl implements JoinPostCommentService {
         joinPostCommentRepository.deleteById(commentId);
     }
 
-
+    @Override
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        List<JoinPostComment> joinPostComments = joinPostCommentRepository.findByUserId(userId);
+        joinPostCommentRepository.deleteAll(joinPostComments);
+    }
 }

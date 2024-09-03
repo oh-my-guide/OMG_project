@@ -31,8 +31,11 @@ public class ReviewPost {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String content;
+
+    @Column(nullable = false)
+    private int views;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -64,5 +67,10 @@ public class ReviewPost {
         this.title = title;
         this.content = content;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    // 조회수 증가
+    public void incrementViews() {
+        this.views++;
     }
 }

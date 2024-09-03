@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
 <head>
     <meta charset="UTF-8">
     <title>회원 정보 수정</title>
@@ -15,13 +16,14 @@
     <div class="main-content">
         <div class="profile-container">
             <div class="profile-pic">
-                <img src="/files/user.png" alt="프로필 사진">
+                <img id="profileImageEditPreview" th:src="@{${user.filepath != null ? user.filepath : '/files/user.png'}}" alt="프로필 사진">
             </div>
         </div>
         <div class="form-container">
-            <form th:action="@{/my/profile}" th:object="${user}" method="post">
-                <div th:if="${msg}" class="alert">
-                    <p th:text="${msg}"></p>
+            <form id="profile-edit-form" th:action="@{/my/profile}" th:object="${user}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="profileImage">프로필 사진</label>
+                    <input type="file" id="profileImage" name="profileImage" />
                 </div>
                 <div class="form-group">
                     <label for="name">이름</label>
@@ -47,12 +49,67 @@
                 <input type="hidden" id="userId" th:value="${user.id}"/>
                 <button id="delete-account" class="text-link">회원 탈퇴</button>
             </form>
+            <a href="/my/change-password" class="change-password-button">비밀번호 변경</a>
         </div>
     </div>
 </div>
 
 <script>
+
+    // 프로필 이미지 선택 시 이미지 미리보기
     $(document).ready(function() {
+        $('#profileImage').on('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#profileImageEditPreview').attr('src', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#profile-edit-form').on('submit', function(e) {
+            e.preventDefault();
+
+            // FormData 객체 생성
+            const formData = new FormData();
+
+            // userEditDto 객체를 생성하고 필드 값을 추가
+            const userEditDto = {
+                usernick: $('#usernick').val(),
+                phoneNumber: $('#phoneNumber').val()
+            };
+
+            // userEditDto를 JSON 문자열로 변환하여 FormData에 추가
+            formData.append('userEditDto',
+                new Blob([JSON.stringify(userEditDto)],
+                    {type: "application/json"}));
+
+            // 프로필 이미지 파일을 FormData에 추가
+            const profileImage = $('#profileImage')[0].files[0];
+            if (profileImage) {
+                formData.append('profileImage', profileImage);
+            }
+
+            $.ajax({
+                type: 'PUT',
+                url: '/api/users/profile',
+                data: formData,
+                contentType: false, // 파일 전송 시 반드시 false로 설정
+                processData: false, // jQuery가 데이터를 처리하지 않도록 설정
+                success: function(response) {
+                    alert(response);
+                    window.location.href = '/my/profile';
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert('회원정보 수정 중 오류가 발생했습니다.');
+                }
+            });
+        });
+      
         $('#delete-account').on('click', function(e) {
             e.preventDefault();
             if (confirm("정말로 탈퇴 하시겠습니까?")) {

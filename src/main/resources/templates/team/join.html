@@ -23,7 +23,7 @@
         h1 {
             font-size: 22px;
             font-weight: bold;
-            color: #1981ff;
+            color: #000000;
             margin-bottom: 20px;
         }
 
@@ -71,7 +71,6 @@
     </style>
 </head>
 <body>
-<div th:replace="fragments/header :: headerFragment"></div>
 
 <form id="joinTeamForm">
     <h1>초대 코드를 입력하여 여행 일정에 참여해보세요 😀</h1>
@@ -98,10 +97,10 @@
             const result = await response.text();
 
             if (response.ok) {
-                alert(`${result}`);
+                alert(result);
                 window.location.href = '/';
             } else {
-                alert(`초대코드를 잘못 입력하였습니다.`);
+                alert(result);
             }
         } catch (error) {
             console.error('Error:', error);

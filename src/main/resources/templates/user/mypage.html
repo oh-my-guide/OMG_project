@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header"></head>
 <head>
     <meta charset="UTF-8">
     <title>마이페이지</title>
@@ -17,9 +19,9 @@
 
     <div class="main-content">
         <div class="user-info">
-            <img src="/files/user.png" alt="Profile Picture">
+            <img th:src="@{${user.filepath != null ? user.filepath : '/files/user.png'}}" alt="프로필 사진">
             <p><span th:text="${user.usernick}"></span>님</p>
-            <a href="/my/profile" class="link-button">프로필 편집</a>
+            <a href="/my/profile" class="link-button">내정보 관리</a>
             <a href="/team/myteam" class="link-button team-button">나의 팀</a>
             <input type="hidden" id="userId" name="userId" th:value="${user.getId()}">
         </div>
@@ -125,7 +127,6 @@
                                 <div class="post-item">
                                     <h2>${post.title}</h2>
                                     <p>작성자: ${post.usernick}</p>
-                                    <p>${post.content}</p>
                                     <button class="chat-button" onclick="window.location.href='/joinPost/${post.id}'">자세히 보기</button>
                                 </div>
                             `;
@@ -159,7 +160,6 @@
                                 <div class="review-item">
                                     <h2>${review.title}</h2>
                                     <p>작성자: ${review.usernick}</p>
-                                    <p>${review.content}</p>
                                     <button class="chat-button" onclick="window.location.href='/reviewPost/${review.id}'">자세히 보기</button>
                                 </div>
                             `;
@@ -189,11 +189,14 @@
 
                     if (data && data.length > 0) {
                         data.forEach(function(wish) {
+                            const tripId = wish.tripId;
                             const wishlistItem = `
                         <div class="wishlist-item">
                             <h2>${wish.reviewPostTitle}</h2>
                             <p>작성자: ${wish.userNick}</p>
                             <button class="chat-button" onclick="window.location.href='/reviewPost/${wish.reviewPostId}'">자세히 보기</button>
+                            <button class="chat-button" onclick="copyTripToUser(${tripId})">내 일정으로 담기</button>
+                         </div>
                         </div>
                     `;
                             $('.my-wishlist').append(wishlistItem);
@@ -210,6 +213,31 @@
             });
         }
     });
+
+    //내 일정으로 담기
+    function copyTripToUser(tripId) {
+        fetch(`/api/trips/${tripId}/copy`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'same-origin'  // 쿠키가 포함된 요청을 보낼 수 있도록 설정
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('일정 담기에 성공했습니다.');
+                    window.location.href = `/trip/update/${data.tripId}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('일정 담기 중 오류가 발생했습니다.');
+            });
+    }
+
 </script>
 </body>
 </html>

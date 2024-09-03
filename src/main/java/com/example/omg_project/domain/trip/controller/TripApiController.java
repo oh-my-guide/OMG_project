@@ -10,6 +10,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +23,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/trips")
 @RequiredArgsConstructor
+@Slf4j
 public class TripApiController {
     private final TripService tripService;
     private final JwtTokenizer jwtTokenizer;
 
     //여행 일정 생성
     @PostMapping
-    public ResponseEntity<?> createTrip(@RequestBody CreateTripDTO createTripDTO, HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> createTrip(@RequestBody CreateTripDTO createTripDTO, HttpServletRequest request) {
         try {
             // 쿠키에서 JWT 토큰 가져오기
             String jwtToken = null;
@@ -45,17 +47,12 @@ public class TripApiController {
                 throw new RuntimeException("JWT 토큰이 없습니다.");
             }
 
-            System.out.println("Received JWT Token: " + jwtToken);
-
-            // JWT 토큰 파싱하여 사용자 정보 추출
-            Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
-            claims.getSubject();
-
             // 여행 일정 생성
-            tripService.createTrip(createTripDTO, jwtToken);
+            Trip createdTrip = tripService.createTrip(createTripDTO, jwtToken);
 
             Map<String, String> successResponse = new HashMap<>();
             successResponse.put("message", "여행 일정이 생성되었습니다.");
+            successResponse.put("tripId", String.valueOf(createdTrip.getId()));
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -91,9 +88,9 @@ public class TripApiController {
             // 일정 복사
             Trip copiedTrip = tripService.copyTripToUser(tripId, jwtToken);
 
-            Map<String, String> successResponse = new HashMap<>();
+            Map<String, Object> successResponse = new HashMap<>();
             successResponse.put("message", "이 여행 일정을 나의 일정에 저장하였습니다.");
-            successResponse.put("tripId", String.valueOf(copiedTrip.getId()));
+            successResponse.put("tripId", copiedTrip.getId());  // 복사된 일정의 ID 포함
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();

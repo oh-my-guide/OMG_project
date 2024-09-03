@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 대시보드 - 여행 후기 게시글</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f9f9f9;
+        }
+
+        .chat-button, .remove-button {
+            background-color: #8fc6ff;
+            color: #fff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-button:hover, .remove-button:hover {
+            background-color: #6ea8dc;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/header :: headerFragment"></div>
+    <div class="main-content">
+        <h2>여행 후기 게시글 목록</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>작성자</th>
+                <th>제목</th>
+                <th>작성일</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="review : ${reviews}">
+                <td th:text="${review.id}">ID</td>
+                <td th:text="${review.usernick}">작성자</td>
+                <td th:text="${review.title}">제목</td>
+                <td th:text="${review.getFormattedCreatedAt()}">작성일</td>
+                <td>
+                    <input type="hidden" class="postId" th:value="${review.id}"/>
+                    <button class="delete-account remove-button">정지</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).on('click', '.delete-account', function(e) {
+        e.preventDefault();
+        const postId = $(this).closest('tr').find('.postId').val();
+        if (confirm("정말로 게시글을 정지시키겠습니까?")) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/admin/posts/' + postId,
+                success: function(response) {
+                    alert('게시글이 성공적으로 정지되었습니다.');
+                    window.location.href = '/admin/reviewboard';
+                },
+                error: function(error) {
+                    alert('게시글 정지에 실패했습니다.');
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

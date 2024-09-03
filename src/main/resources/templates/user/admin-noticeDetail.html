@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head th:replace="fragments/header :: header"></head>
+<head>
+    <meta charset="UTF-8">
+    <title>OMG 공지사항</title>
+    <link rel="stylesheet" href="/css/header.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 60px auto 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .notice-detail {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9fbfd;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .notice-title {
+            margin-bottom: 20px;
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            border-bottom: 2px solid #8fc6ff;
+            padding-bottom: 10px;
+        }
+
+        .notice-meta {
+            font-size: 0.9em;
+            color: #777;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notice-meta-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .notice-id {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #555;
+        }
+
+        .notice-date {
+            color: #999;
+        }
+
+        .notice-content {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f9fafc;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            line-height: 1.6;
+            color: #555;
+            border-left: 4px solid #8fc6ff;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #8fc6ff;
+            text-decoration: none;
+            border: 1px solid #8fc6ff;
+            border-radius: 5px;
+            padding: 10px 15px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #8fc6ff;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="fragments/header :: headerFragment"></div>
+<div class="container">
+    <section class="notice-detail">
+        <div class="notice-title" th:text="${notice.title}">공지 제목</div>
+        <div class="notice-meta">
+            <div class="notice-meta-left">
+                <span class="notice-id" th:text="'no. ' + ${notice.id}">no.</span>
+                <span class="notice-date" th:text="${notice.formattedCreatedAt}">작성일</span>
+            </div>
+        </div>
+        <div class="notice-content" th:text="${notice.content}">공지 내용</div>
+    </section>
+    <a href="/notices" class="back-button">목록으로 돌아가기</a>
+</div>
+</body>
+</html>

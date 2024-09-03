@@ -8,4 +8,6 @@ import java.util.List;
 public interface ReviewPostCommentRepository extends JpaRepository<ReviewPostComment, Long> {
     // 특정 게시글에 대한 모든 댓글 조회
     List<ReviewPostComment> findAllByReviewPostId(Long reviewPostId);
+    List<ReviewPostComment> findByUserId(Long userId);
+
 }

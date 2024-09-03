@@ -33,11 +33,17 @@ public class JoinPostApiController {
     }
 
     /**
-     * 일행 게시글 전체 조회
+     * 일행 게시글 전체 조회 또는 지역별 조회
      */
     @GetMapping
-    public ResponseEntity<List<JoinPostDto.Response>> getAllJoinPosts() {
-        List<JoinPostDto.Response> joinPosts = joinPostService.findAllJoinPost();
+    public ResponseEntity<List<JoinPostDto.Response>> getAllJoinPosts(@RequestParam(required = false) Long cityId,
+                                                                      @RequestParam(required = false) String sort) {
+        List<JoinPostDto.Response> joinPosts;
+        if (cityId != null) {
+            joinPosts = joinPostService.findJoinPostsByCity(cityId, sort);
+        } else {
+            joinPosts = joinPostService.findAllJoinPost(sort);
+        }
         return ResponseEntity.ok(joinPosts);
     }
 
@@ -48,6 +54,15 @@ public class JoinPostApiController {
     public ResponseEntity<List<JoinPostDto.Response>> getJoinPostsByUserId(@PathVariable Long userId) {
         List<JoinPostDto.Response> joinPosts = joinPostService.findJoinPostsByUserId(userId);
         return ResponseEntity.ok(joinPosts);
+    }
+
+    /**
+     * 게시글 검색
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<JoinPostDto.Response>> searchJoinPosts(@RequestParam String searchOption, @RequestParam String keyword) {
+        List<JoinPostDto.Response> searchResults = joinPostService.searchJoinPosts(searchOption, keyword);
+        return ResponseEntity.ok(searchResults);
     }
 
     /**

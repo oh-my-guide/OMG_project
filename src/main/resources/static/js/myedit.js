@@ -1,4 +1,7 @@
 $(document).ready(function() {
+    let initialNickname = $('#usernick').val();
+    let isUsernickChecked = false;
+
     function validateForm() {
         let isValid = true;
 
@@ -7,10 +10,16 @@ $(document).ready(function() {
             isValid = false;
         }
 
-        // 닉네임 중복 여부 검사
-        if ($('#usernickCheckMessage').hasClass('error')) {
-            isValid = false;
+        // 닉네임이 변경된 경우만 중복 체크 필요
+        if ($('#usernick').val() !== initialNickname) {
+            if (!isUsernickChecked) {
+                $('#usernickCheckMessage').text('닉네임 중복 체크를 해주세요.').addClass('error');
+                isValid = false;
+            } else if ($('#usernickCheckMessage').hasClass('error')) {
+                isValid = false;
+            }
         }
+
         $('#submit-button').prop('disabled', !isValid);
 
         return isValid;
@@ -34,6 +43,7 @@ $(document).ready(function() {
                 $("#usernickCheckMessage")
                     .text("랜덤 닉네임이 생성되었습니다. 중복 확인을 해주세요.")
                     .removeClass('error').addClass('success');
+                isUsernickChecked = false; // 중복 체크 상태를 초기화
                 validateForm();
             },
             error: function(xhr, status, error) {
@@ -57,13 +67,16 @@ $(document).ready(function() {
             success: function(response) {
                 if (response) {
                     $('#usernickCheckMessage').text('닉네임이 이미 존재합니다.').removeClass('success').addClass('error');
+                    isUsernickChecked = false; // 중복 체크 상태를 실패로 설정
                 } else {
                     $('#usernickCheckMessage').text('사용 가능한 닉네임입니다.').removeClass('error').addClass('success');
+                    isUsernickChecked = true; // 중복 체크 상태를 성공으로 설정
                 }
                 validateForm();
             },
             error: function(error) {
                 $('#usernickCheckMessage').text('닉네임 확인 중 오류가 발생했습니다. 다시 시도해주세요.').removeClass('success').addClass('error');
+                isUsernickChecked = false; // 중복 체크 상태를 실패로 설정
                 validateForm();
             }
         });

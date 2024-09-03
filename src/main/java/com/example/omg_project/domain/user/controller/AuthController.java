@@ -1,6 +1,6 @@
 package com.example.omg_project.domain.user.controller;
 
-import com.example.omg_project.domain.user.dto.request.UserSignUpDto;
+import com.example.omg_project.domain.user.dto.request.UserSignUpRequest;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
@@ -36,7 +36,7 @@ public class AuthController {
             User user = userService.findByUsername(username).orElse(null);
             model.addAttribute("user", user);
         }
-        return "/user/home";
+        return "user/home";
     }
 
     /**
@@ -44,19 +44,17 @@ public class AuthController {
      */
     @GetMapping("/signup")
     public String signup() {
-        return "/main/signupform";
+        return "main/signupform";
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute("user") UserSignUpDto userSignUpDto,
-                         Model model) {
+    public String signup(@ModelAttribute("user") UserSignUpRequest userSignUpDto) {
         try {
             userService.signUp(userSignUpDto);
-            model.addAttribute("success", "성공적으로 회원가입 되었습니다.");
             return "redirect:/signin";
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-            return "/main/signupform";
+            e.printStackTrace();
+            return "main/signupform";
         }
     }
 
@@ -65,14 +63,36 @@ public class AuthController {
      */
     @GetMapping("/signin")
     public String showLoginForm() {
-        return "/main/loginform";
+        return "main/loginform";
     }
 
     /**
      * 서비스 소개 페이지
      */
     @GetMapping("/service")
-    public String showServiceInfo(){
-        return "/main/service";
+    public String showServiceInfo(HttpServletRequest request, Model model){
+
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElse(null);
+            model.addAttribute("user", user);
+        }
+
+        return "main/service";
+    }
+
+    /**
+     * 고객센터 페이지
+     */
+    @GetMapping("/faq")
+    public String adminPageAllFaqForm(Model model, HttpServletRequest request) {
+        String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
+        if(accessToken != null){
+            String username = jwtTokenizer.getUsernameFromToken(accessToken);
+            User user = userService.findByUsername(username).orElse(null);
+            model.addAttribute("user", user);
+        }
+        return "main/faq";
     }
 }

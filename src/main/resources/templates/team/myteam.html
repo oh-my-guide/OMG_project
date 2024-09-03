@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+<head th:replace="fragments/header :: header"></head>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -119,6 +120,7 @@
             }
 
             const teams = await response.json();
+            teams.sort((a, b) => a.id - b.id);
 
             const teamListElement = document.getElementById('teamList');
             teamListElement.innerHTML = '';  // 기존 목록을 지우고 새로 작성
@@ -183,10 +185,10 @@
             const result = await response.text();
 
             if (response.ok) {
-                alert('팀에서 성공적으로 탈퇴하였습니다.');
+                alert(result);
                 fetchTeams(); // 최신 팀 목록을 다시 가져옴
             } else {
-                alert(`탈퇴 실패: ${result}`);
+                alert(result);
             }
         } catch (error) {
             console.error('팀에서 탈퇴하는 중 오류 발생:', error);

@@ -111,23 +111,43 @@ body {
     margin-bottom: 10px;
 }
 
-.trip-item, .post-item, .review-item {
+.trip-item, .post-item, .review-item, .wishlist-item {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+    height: 100%;
     margin-bottom: 10px;
+    align-items: flex-start; /* 자식 요소들을 왼쪽으로 정렬 */
+}
+.trip-item h2, .post-item h2, .review-item h2, .wishlist-item h2 {
+    font-size: 15px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.trip-item p, .post-item p, .review-item p, .wishlist-item p {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .chat-button, .remove-button {
     background-color: #8fc6ff;
     color: #fff;
-    border: none;
-    padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    text-decoration: none;
+    border: 1px solid #8fc6ff;
+    padding: 5px 10px;
+    margin: 5px 0;
+    text-align: center;
+    align-self: flex-start; /* 부모의 flex 방향에 맞춰 시작점으로 정렬 */
 }
-
 .chat-button:hover, .remove-button:hover {
     background-color: #6ea8dc;
 }

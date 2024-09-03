@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class ReviewPostDto {
     // Request DTO
@@ -23,6 +24,7 @@ public class ReviewPostDto {
         private String content;
         private Long userId;
         private Long tripId;
+        private List<PlaceReviewDto.Request> reviews;
 
         // DTO -> 엔티티
         public ReviewPost toEntity(User user, Trip trip) {
@@ -43,6 +45,7 @@ public class ReviewPostDto {
         private Long id;
         private String title;
         private String content;
+        private int views;
         private LocalDateTime createdAt;
         private Long userId;
         private String username;
@@ -55,6 +58,7 @@ public class ReviewPostDto {
                     .id(reviewPost.getId())
                     .title(reviewPost.getTitle())
                     .content(reviewPost.getContent())
+                    .views(reviewPost.getViews())
                     .createdAt(reviewPost.getCreatedAt())
                     .userId(reviewPost.getUser().getId())
                     .usernick(reviewPost.getUser().getUsernick())
@@ -63,9 +67,15 @@ public class ReviewPostDto {
                     .build();
         }
 
-        // 날짜를 원하는 형식으로 변환
+        // 날짜를 yyyy.MM.dd HH:mm 형식으로 변환
         public String getFormattedCreatedAt() {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+            return createdAt.format(formatter);
+        }
+
+        // 날짜를 yyyy.MM.dd 형식으로 변환
+        public String getFormattedDateOnly() {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
             return createdAt.format(formatter);
         }
     }

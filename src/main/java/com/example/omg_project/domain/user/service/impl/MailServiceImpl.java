@@ -3,6 +3,8 @@ package com.example.omg_project.domain.user.service.impl;
 import com.example.omg_project.domain.user.service.MailService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -26,15 +29,16 @@ public class MailServiceImpl implements MailService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender javaMailSender;
-    private static final String senderEmail = "OMG@gmail.com";
+    private static final String senderEmail = "ch9800113@gmail.com";
     private static final Map<String, Integer> verificationCodes = new HashMap<>();
 
     /**
      * 인증 코드 자동 생성 메서드
      */
-    public static void createNumber(String email){
-        int number = new Random().nextInt(900000) + 100000; // 100000-999999 사이의 숫자 생성
-        verificationCodes.put(email, number);
+    private static void createNumber(String email){
+        SecureRandom random = new SecureRandom();
+        int num = random.nextInt(1000000);
+        verificationCodes.put(email, num);
     }
 
     /**
@@ -49,11 +53,11 @@ public class MailServiceImpl implements MailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setFrom(senderEmail);
             helper.setTo(mail);
-            helper.setSubject("OMG 이메일 인증번호");
+            helper.setSubject("OMG 회원가입 인증번호");
             String body = "<h2>OMG에 오신걸 환영합니다!</h2><h3>아래의 인증번호를 입력하세요.</h3><h1>" + verificationCodes.get(mail) + "</h1><h3>감사합니다.</h3>";
             helper.setText(body, true);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            throw new CustomException(ErrorCode.EMAIL_CREATION_ERROR);
         }
 
         return message;
@@ -86,8 +90,10 @@ public class MailServiceImpl implements MailService {
         int length = 8;
         StringBuilder sb = new StringBuilder(length);
         Random random = new Random();
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
         for (int i = 0; i < length; i++) {
-            sb.append((char) (random.nextInt(10) + '0'));
+            sb.append(characters.charAt(random.nextInt(characters.length())));
         }
         return sb.toString();
     }
@@ -103,11 +109,11 @@ public class MailServiceImpl implements MailService {
             helper.setFrom(senderEmail);
             helper.setTo(mail);
             helper.setSubject("OMG 임시 비밀번호");
-            String body = "<h2>OMG에 오신걸 환영합니다!</h2><p>아래의 임시 비밀번호를 사용하세요.</p><h1>" + tempPassword + "</h1><h3>반드시 비밀번호를 재설정하세요.</h3>";
+            String body = "<h2>OMG에 오신걸 환영합니다!</h2><p>아래의 임시 비밀번호를 사용하세요.</p><h1>" + tempPassword + "</h1><h3>로그인 후 반드시 비밀번호를 재설정하세요.</h3>";
             helper.setText(body, true);
             javaMailSender.send(message);
         } catch (MessagingException e) {
-            throw new RuntimeException("임시 비밀번호 전송 오류", e);
+            throw new CustomException(ErrorCode.TEMP_PASSWORD_SENDING_ERROR);
         }
     }
 
@@ -118,7 +124,7 @@ public class MailServiceImpl implements MailService {
     public String createTemporaryPassword(String mail) {
         String tempPassword = generateRandomPassword();
         User user = userRepository.findByUsername(mail)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         user.setPassword(passwordEncoder.encode(tempPassword));
         userRepository.save(user);
         return tempPassword;
@@ -130,7 +136,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public boolean verifyTemporaryPassword(String mail, String tempPassword) {
         User user = userRepository.findByUsername(mail)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         return passwordEncoder.matches(tempPassword, user.getPassword());
     }
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
 <head>
     <meta charset="UTF-8">
     <title>관리자 대시보드</title>
@@ -27,7 +28,7 @@
             background-color: #fff;
             padding: 10px 20px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .header .logo {
@@ -40,6 +41,7 @@
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
         }
 
         table {
@@ -74,33 +76,59 @@
         .chat-button:hover, .remove-button:hover {
             background-color: #6ea8dc;
         }
+        .text-link {
+            background: none;
+            border: none;
+            color: #f44336;
+            text-decoration: underline;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 20px;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .text-link:active,
+        .text-link:focus {
+            color: #d32f2f;
+            background-color: transparent;
+            outline: none;
+            box-shadow: none;
+        }
+
+        .text-link:hover {
+            background-color: transparent;
+            color: #d32f2f;
+            transform: scale(1.02);
+        }
     </style>
 
 </head>
 <body>
 <div class="container">
     <div th:replace="fragments/header :: headerFragment"></div>
-    <a th:href="@{/}">홈</a>
     <div class="main-content">
         <h2>OMG 사용자 목록</h2>
         <table>
             <thead>
             <tr>
-                <th>아이디</th>
+                <th>ID</th>
                 <th>이메일</th>
-                <th>닉네임</th>
                 <th>가입일</th>
-                <th>삭제</th>
+                <th>상태</th>
+                <th>관리</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="user : ${users}">
-                <td th:text="${user.id}">Id</td>
+                <td th:text="${user.id}">ID</td>
                 <td th:text="${user.username}">이메일</td>
-                <td th:text="${user.usernick}">닉네임</td>
-                <td th:text="${user.registrationDate}">가입일</td>
+                <td th:text="${user.getFormattedCreatedAt()}">가입일</td>
+                <td th:text="${user.status}">상태</td>
                 <td>
-                    <button class="remove-button" data-user-id="${user.id}">사용자 탈퇴</button>
+                    <input type="hidden" class="userId" th:value="${user.id}"/>
+                    <button class="delete-account remove-button">계정정지</button>
                 </td>
             </tr>
             </tbody>
@@ -108,4 +136,23 @@
     </div>
 </div>
 </body>
+<script>
+    $(document).on('click', '.delete-account', function(e) {
+        e.preventDefault();
+        const userId = $(this).closest('tr').find('.userId').val();
+        if (confirm("정말로 회원을 정지시키겠습니까?")) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/admin/' + userId,
+                success: function(response) {
+                    alert('성공적으로 회원 정지 되었습니다.');
+                    window.location.href = '/admin/userboard';
+                },
+                error: function(error) {
+                    alert('회원 정지에 실패했습니다.');
+                }
+            });
+        }
+    });
+</script>
 </html>

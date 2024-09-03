@@ -5,6 +5,8 @@ import com.example.omg_project.domain.trip.repository.TeamRepository;
 import com.example.omg_project.domain.trip.service.TeamService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,14 +32,15 @@ public class TeamServiceImpl implements TeamService {
     public Team findByInviteCode(String inviteCode) {
         return teamRepository.findByInviteCode(inviteCode);
     }
-
     @Override
     public void addUserToTeam(String inviteCode, Long userId) {
         Team team = teamRepository.findByInviteCode(inviteCode);
         if (team == null) {
-            throw new IllegalArgumentException("잘못된 초대 코드입니다.");
+            throw new CustomException(ErrorCode.INVALID_INVITE_CODE);
         }
-        User user = userRepository.findById(userId).orElse(null);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
 
         if (team != null && user != null) {
             team.getUsers().add(user);  // 팀에 사용자 추가
@@ -54,7 +57,7 @@ public class TeamServiceImpl implements TeamService {
 
         if (team != null && user != null) {
             if (team.getLeader().getId().equals(userId)) {
-                throw new IllegalStateException("팀 리더는 팀에서 탈퇴할 수 없습니다.");
+                throw new CustomException(ErrorCode.LEADER_CANNOT_LEAVE_TEAM);
             }
             team.getUsers().remove(user);
             user.getTeams().remove(team);
@@ -67,7 +70,7 @@ public class TeamServiceImpl implements TeamService {
     public List<Map<String, Object>> getUserTeams(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-            throw new IllegalStateException("User not found");
+            throw new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION);
         }
 
         return user.getTeams().stream()
@@ -94,13 +97,20 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team findByChatRoomId(Long chatRoomId) {
         Optional<Team> teamOptional = teamRepository.findByChatRoomId(chatRoomId);
-
-        return teamOptional.orElseThrow(() -> new NoSuchElementException("채팅방 ID에 해당하는 팀을 찾을 수 없습니다. ID: " + chatRoomId));
+        return teamOptional.orElseThrow(() ->
+                new CustomException(ErrorCode.TEAM_NOT_FOUND_EXCEPTION)
+        );
     }
 
     @Override
     public Team findById(Long tripId) {
         return teamRepository.findById(tripId).orElse(null);
+    }
+
+    @Override
+    public boolean isUserInTeam(Long userId, Long teamId) {
+        // 팀에서 해당 사용자가 이미 속해 있는지 확인
+        return teamRepository.existsByIdAndUsersId(teamId, userId);
     }
 }
 

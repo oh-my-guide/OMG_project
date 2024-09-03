@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,9 @@ public class User {
     @Column(nullable = false)
     private String gender; // 성별
 
+    @Column(nullable = false)
+    private String status = "ACTIVE"; // 기본값 ACTIVE
+
     private String filename; // 이미지 파일 이름
 
     private String filepath; // 이미지 파일 경로
@@ -54,6 +58,11 @@ public class User {
     private String provider; // oauth2 플랫폼
 
     private String providerId; // 플랫폼 아이디
+
+    public String getFormattedCreatedAt() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+        return registrationDate.format(formatter);
+    }
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

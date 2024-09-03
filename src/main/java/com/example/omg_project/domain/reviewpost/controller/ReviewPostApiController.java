@@ -1,6 +1,8 @@
 package com.example.omg_project.domain.reviewpost.controller;
 
+import com.example.omg_project.domain.reviewpost.dto.PlaceReviewDto;
 import com.example.omg_project.domain.reviewpost.dto.ReviewPostDto;
+import com.example.omg_project.domain.reviewpost.service.PlaceReviewService;
 import com.example.omg_project.domain.reviewpost.service.ReviewPostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReviewPostApiController {
     private final ReviewPostService reviewPostService;
+    private final PlaceReviewService placeReviewService;
 
     /**
      * 후기 게시글 작성
@@ -24,7 +27,7 @@ public class ReviewPostApiController {
     }
 
     /**
-     * 후기 게시글 단건 조회
+     * 후기 게시글 상세 조회
      */
     @GetMapping("/{postId}")
     public ResponseEntity<ReviewPostDto.Response> getReviewPostById(@PathVariable(name = "postId") Long id) {
@@ -33,11 +36,17 @@ public class ReviewPostApiController {
     }
 
     /**
-     * 후기 게시글 전체 조회
+     * 후기 게시글 전체 조회 또는 지역별 조회
      */
     @GetMapping
-    public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts() {
-        List<ReviewPostDto.Response> reviewPosts = reviewPostService.findAllReviewPost();
+    public ResponseEntity<List<ReviewPostDto.Response>> getAllReviewPosts(@RequestParam(required = false) Long cityId,
+                                                                          @RequestParam(required = false) String sort) {
+        List<ReviewPostDto.Response> reviewPosts;
+        if (cityId != null) {
+            reviewPosts = reviewPostService.findReviewPostsByCity(cityId, sort);
+        } else {
+            reviewPosts = reviewPostService.findAllReviewPost(sort);
+        }
         return ResponseEntity.ok(reviewPosts);
     }
 
@@ -48,6 +57,15 @@ public class ReviewPostApiController {
     public ResponseEntity<List<ReviewPostDto.Response>> getReviewPostsByUserId(@PathVariable Long userId) {
         List<ReviewPostDto.Response> reviewPosts = reviewPostService.findReviewPostsByUserId(userId);
         return ResponseEntity.ok(reviewPosts);
+    }
+
+    /**
+     * 게시글 검색
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<ReviewPostDto.Response>> searchReviewPosts(@RequestParam String searchOption, @RequestParam String keyword) {
+        List<ReviewPostDto.Response> searchResults = reviewPostService.searchReviewPosts(searchOption, keyword);
+        return ResponseEntity.ok(searchResults);
     }
 
     /**
@@ -66,6 +84,15 @@ public class ReviewPostApiController {
     public ResponseEntity<Void> deleteReviewPostById(@PathVariable(name = "postId") Long id) {
         reviewPostService.deleteReviewPost(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 장소별 후기 조회
+     */
+    @GetMapping("/{postId}/placeReviews")
+    public ResponseEntity<List<PlaceReviewDto.Response>> getPlaceReviewsByPostId(@PathVariable Long postId) {
+        List<PlaceReviewDto.Response> placeReviews = placeReviewService.findByReviewPostId(postId);
+        return ResponseEntity.ok(placeReviews);
     }
 
 }

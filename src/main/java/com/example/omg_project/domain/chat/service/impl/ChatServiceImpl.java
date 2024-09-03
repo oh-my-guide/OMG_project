@@ -10,6 +10,8 @@ import com.example.omg_project.domain.trip.entity.Team;
 import com.example.omg_project.domain.trip.service.TeamService;
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.service.UserService;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,6 @@ public class ChatServiceImpl implements ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final TeamService teamService;
-    private final UserService userService;
-    private final JwtTokenizer jwtTokenizer;
 
     /**
      * 채팅방의 존재 여부를 확인하는 메서드
@@ -49,6 +49,10 @@ public class ChatServiceImpl implements ChatService {
      */
     @Override
     public List<ChatMessageDTO> getMessagesByRoomId(Long roomId) {
+        // 채팅방이 존재하는지 확인
+        if (!existsById(roomId)) {
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
+        }
         // 채팅방 ID에 해당하는 메시지를 가져옴
         List<ChatMessage> chatMessages = chatMessageRepository.findByChatRoomId(roomId);
 
@@ -76,46 +80,44 @@ public class ChatServiceImpl implements ChatService {
     }
 
     /**
-     * 새로운 채팅방을 생성하는 메서드
-     *
-     * @return 생성된 ChatRoom 객체
-     */
-    @Override
-    public ChatRoom createRoom() {
-        ChatRoom chatRoom = new ChatRoom(); // 새로운 채팅방 객체 생성
-        return chatRoomRepository.save(chatRoom); // 생성된 채팅방을 DB에 저장하고 반환
-    }
-
-    /**
      * 사용자와 채팅방의 접근 권한을 검증하는 메서드
      *
-     * @param roomId      채팅방 ID
-     * @param accessToken 사용자의 JWT 토큰
+     * @param roomId 채팅방 ID
+     * @param user 사용자 객체
      */
     @Override
-    public void validateUserInChatRoom(Long roomId, String accessToken) {
+    public void validateUserInChatRoom(Long roomId, User user) {
         // 채팅방이 존재하지 않을 경우 예외 발생
         if (!existsById(roomId)) {
-            throw new RuntimeException("채팅방이 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
         }
-
-        // JWT 토큰에서 사용자 이름을 추출하고, 사용자 정보를 조회
-        String username = jwtTokenizer.getUsernameFromToken(accessToken);
-        User user = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         // 채팅방에 연결된 팀 정보를 조회하고, 사용자가 팀에 속해 있는지 확인
         Team team = teamService.findByChatRoomId(roomId);
         if (!team.getUsers().contains(user)) {
             // 사용자가 팀에 속해 있지 않으면 예외 발생
-            throw new RuntimeException("사용자가 채팅방에 참여하고 있지 않습니다.");
+            throw new CustomException(ErrorCode.USER_NOT_IN_CHAT_ROOM);
         }
     }
 
-    //해당 채팅방을 가진 팀을 찾고 그 팀에 저장되어있는 여행 아이디를 찾고 그 아이디를 가지고 여행을 찾고 그 여행의 이름을 찾는다
+    /**
+     * 주어진 채팅방 ID를 사용하여 팀을 찾고,
+     * 해당 팀에 연관된 여행의 이름을 반환하는 메서드.
+     *
+     * @param roomId 채팅방 ID
+     * @return 여행 이름
+     */
     @Override
-    public String findTripName(Long roomId){
+    public String findTripName(Long roomId) {
+        // 팀을 찾기 전에 채팅방 존재 여부 확인
+        if (!existsById(roomId)) {
+            throw new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND);
+        }
         Team team = teamService.findByChatRoomId(roomId);
+        // 여행 정보가 없는 경우 처리
+        if (team.getTrip() == null) {
+            throw new CustomException(ErrorCode.TRIP_NOT_FOUND); // 새로운 에러 코드 필요
+        }
         return team.getTrip().getTripName();
     }
 }

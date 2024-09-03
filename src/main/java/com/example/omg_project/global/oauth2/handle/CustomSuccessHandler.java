@@ -2,8 +2,9 @@ package com.example.omg_project.global.oauth2.handle;
 
 import com.example.omg_project.domain.user.entity.User;
 import com.example.omg_project.domain.user.repository.UserRepository;
-import com.example.omg_project.global.jwt.entity.RefreshToken;
-import com.example.omg_project.global.jwt.service.RefreshTokenService;
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
+import com.example.omg_project.global.jwt.service.RedisRefreshTokenService;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import com.example.omg_project.global.oauth2.dto.CustomOAuth2User;
 import jakarta.servlet.ServletException;
@@ -13,12 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +27,7 @@ import java.util.Optional;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenizer jwtTokenizer;
-    private final RefreshTokenService refreshTokenService;
+    private final RedisRefreshTokenService redisRefreshTokenService;
     private final UserRepository userRepository;
 
     @Override
@@ -40,22 +39,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             Optional<User> user = userRepository.findByUsername(username);
 
             if (user.isEmpty()) {
-                System.out.println("유저기ㅏ 없어요");
-                throw new UsernameNotFoundException("User not found with username: " + username);
+                throw new CustomException(ErrorCode.UNSUPPORTED_LOGIN_PROVIDER);
             }
             Long userId = user.get().getId();
-            System.out.println("userId :: " + userId);
             String name = customUserDetails.getName();
             List<String> roles = customUserDetails.getRoles();
 
-            log.info("Oauth2 로그인 성곻했습니다. ");
-            log.info("jwt 토큰 생성 :: userId: {}, username: {}, name: {}, roles: {}", userId, username, name, roles);
-
             String accessToken = jwtTokenizer.createAccessToken(userId, username, name, roles);
             String refreshToken = jwtTokenizer.createRefreshToken(userId, username, name, roles);
-
-            log.info("Access Token :: {}", accessToken);
-            log.info("Refresh Token :: {}", refreshToken);
 
             // 쿠키에 토큰 저장
             Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
@@ -71,24 +62,15 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             response.addCookie(accessTokenCookie);
             response.addCookie(refreshTokenCookie);
 
-            // 리프레시 토큰 DB 저장
-            Date date = new Date(System.currentTimeMillis() + jwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT);
-            RefreshToken refreshTokenEntity = new RefreshToken();
-            refreshTokenEntity.setValue(refreshToken);
-            refreshTokenEntity.setUserId(userId);
-            refreshTokenEntity.setExpiration(date.toString());
+            redisRefreshTokenService.addRefreshToken(refreshToken, jwtTokenizer.REFRESH_TOKEN_EXPIRE_COUNT);
 
-            refreshTokenService.addRefreshToken(refreshTokenEntity);
-
-            // 추가 정보가 없을 때만 oauthPage로 리다이렉트
-            if (user.get().getPhoneNumber().equals("01000000000")) {
+            if (user.get().getGender().equals("default")) {
                 response.sendRedirect("/oauthPage");
             } else {
-                response.sendRedirect("/my"); // 이미 추가 정보가 있을 경우 메인 페이지로 리다이렉트
+                response.sendRedirect("/my");
             }
 
         } catch (Exception e) {
-            log.error("Oauth2 로그인에 실패했습니다.", e);
             if (!response.isCommitted()) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred during authentication");
             }

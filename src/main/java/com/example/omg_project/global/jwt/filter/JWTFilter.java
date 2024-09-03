@@ -1,8 +1,10 @@
 package com.example.omg_project.global.jwt.filter;
 
+import com.example.omg_project.global.exception.CustomException;
+import com.example.omg_project.global.exception.ErrorCode;
 import com.example.omg_project.global.jwt.exception.JwtExceptionCode;
-import com.example.omg_project.global.jwt.service.JwtBlacklistService;
-import com.example.omg_project.global.jwt.service.RefreshTokenService;
+import com.example.omg_project.global.jwt.service.RedisBlackTokenService;
+import com.example.omg_project.global.jwt.service.RedisRefreshTokenService;
 import com.example.omg_project.global.jwt.token.JwtAuthenticationToken;
 import com.example.omg_project.global.jwt.util.JwtTokenizer;
 import com.example.omg_project.global.security.CustomUserDetails;
@@ -16,6 +18,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,21 +30,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * 요청이 들어올 때마다 JWT 토큰을 검증하는 필터
- * 토큰을 검증하고 유효한 사용자라면 그 사용자의 정보를 SecurityContextHolder 에 설정
- */
 @Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JwtTokenizer jwtTokenizer;
-    private final JwtBlacklistService jwtBlacklistService;
-    private final RefreshTokenService refreshTokenService;
+    private final RedisBlackTokenService redisBlackTokenService;
+    private final RedisRefreshTokenService redisRefreshTokenService;
 
-    public JWTFilter(JwtTokenizer jwtTokenizer, JwtBlacklistService jwtBlacklistService, RefreshTokenService refreshTokenService) {
+    public JWTFilter(JwtTokenizer jwtTokenizer, RedisBlackTokenService redisBlackTokenService, RedisRefreshTokenService redisRefreshTokenService) {
         this.jwtTokenizer = jwtTokenizer;
-        this.jwtBlacklistService = jwtBlacklistService;
-        this.refreshTokenService = refreshTokenService;
+        this.redisBlackTokenService = redisBlackTokenService;
+        this.redisRefreshTokenService = redisRefreshTokenService;
     }
 
     /**
@@ -52,8 +51,9 @@ public class JWTFilter extends OncePerRequestFilter {
             "/api/users/mail","/api/users/verify-code", "/api/users/check-email","/api/users/check-usernick",
             "/oauth2/.*", "/login/oauth2/.*", "/api/users/randomNickname",
             "/css/.*", "/js/.*", "/files/.*",
-            "/api/users/reset-password", "/api/users/verify-temporary-password", "/my/change-password",
-            "/service", "/reviewPost/","/joinPost/"
+            "/api/users/reset-password", "/api/users/verify-temporary-password",
+            "/service", "/reviewPost/", "/joinPost/", "/users/reset-user-password",
+            "/api/weather", "/faq"
     );
 
     /**
@@ -84,7 +84,6 @@ public class JWTFilter extends OncePerRequestFilter {
             handleTokenValidation(request, response, token);
         }
         filterChain.doFilter(request, response); // 다음 필터로 요청을 전달
-        // log.info("토큰 제대로?? : {}", token);
     }
 
     /**
@@ -103,7 +102,11 @@ public class JWTFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(refreshToken)) {
             try {
                 // Refresh Token이 DB에 존재하는지 확인
-                if (refreshTokenService.isRefreshTokenValid(refreshToken)) {
+                String storedToken = redisRefreshTokenService.getRefreshToken(refreshToken);
+
+                log.info("Token :: {}", storedToken); // 레디스에 있는 토큰의 값이 잘 출력되는지 확인
+
+                if (refreshToken.equals(storedToken)) {
                     if (!jwtTokenizer.isRefreshTokenExpired(refreshToken)) {
                         String newAccessToken = jwtTokenizer.refreshAccessToken(refreshToken);
                         setAccessTokenCookie(response, newAccessToken);
@@ -131,7 +134,7 @@ public class JWTFilter extends OncePerRequestFilter {
     private void handleTokenValidation(HttpServletRequest request, HttpServletResponse response, String token) throws ServletException, IOException {
         try {
             // 토큰이 블랙리스트에 있는지 확인
-            if (jwtBlacklistService.isTokenBlacklisted(token)) {
+            if (redisBlackTokenService.isTokenBlacklisted(token)) {
                 handleException(request, JwtExceptionCode.BLACKLISTED_TOKEN, "Token is blacklisted: " + token);
             } else {
                 getAuthentication(token);
@@ -253,7 +256,7 @@ public class JWTFilter extends OncePerRequestFilter {
     private void handleException(HttpServletRequest request, JwtExceptionCode exceptionCode, String logMessage, Exception e) {
         request.setAttribute("exception", exceptionCode.getCode());
         log.error(logMessage, e);
-//        throw new BadCredentialsException(logMessage, e);
-        log.error("로그인을 부탁드립니다.");
+        throw new CustomException(ErrorCode.TOKEN_NOT_FOUND);
     }
 }
+

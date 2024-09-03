@@ -2,6 +2,7 @@ package com.example.omg_project.domain.joinpost.controller;
 
 import com.example.omg_project.domain.joinpost.dto.JoinPostCommentDto;
 import com.example.omg_project.domain.joinpost.service.JoinPostCommentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class JoinPostCommentApiController {
      * 일행 모집 댓글 등록
      */
     @PostMapping("/{postId}/comments")
-    public ResponseEntity<JoinPostCommentDto.Response> createComment(@PathVariable Long postId, @RequestBody JoinPostCommentDto.Request commentRequest) {
+    public ResponseEntity<JoinPostCommentDto.Response> createComment(@PathVariable Long postId, @RequestBody JoinPostCommentDto.Request commentRequest) throws JsonProcessingException {
         JoinPostCommentDto.Response comment = joinPostCommentService.createComment(postId, commentRequest.getUserId(), commentRequest);
         return ResponseEntity.ok(comment);
     }

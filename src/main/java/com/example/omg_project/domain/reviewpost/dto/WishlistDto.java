@@ -39,6 +39,7 @@ public class WishlistDto {
         private Long userId;
         private String reviewPostTitle;
         private String userNick;
+        private Long tripId;  // tripId 필드 추가
 
         // Entity -> DTO 변환 메서드
         public static Response fromEntity(Wishlist wishlist) {
@@ -48,6 +49,7 @@ public class WishlistDto {
                     .userId(wishlist.getUser().getId())
                     .reviewPostTitle(wishlist.getReviewPost().getTitle())
                     .userNick(wishlist.getUser().getUsernick())
+                    .tripId(wishlist.getReviewPost().getTrip().getId())
                     .build();
         }
     }

@@ -22,6 +22,39 @@ const ps = new kakao.maps.services.Places();
 // 키워드로 장소를 검색합니다
 // searchPlaces();
 
+// 선을 구성하는 좌표 배열입니다. 이 좌표들을 이어서 선을 표시합니다.
+let linePath = {};
+
+// 폴리라인(선) 객체 배열
+let polyline = {};
+
+// 마커 이미지가 순환되도록 매핑
+const markerImages = {
+    1: '/files/markers/marker_number_red.png',
+    2: '/files/markers/marker_number_yellow.png',
+    3: '/files/markers/marker_number_green.png',
+    4: '/files/markers/marker_number_cyan.png',
+    5: '/files/markers/marker_number_blue.png',
+    6: '/files/markers/marker_number_purple.png'
+}
+
+/**
+ * 마커 이미지 색상과 장소명 앞 span 태그의 글자 색상 연관 짓기
+ * @param index
+ * @returns {string}
+ */
+function getColorCode(index) {
+    const colors = [
+        '#F78181',  // red
+        '#F7D358',  // yellow
+        '#82FA58',  // green
+        '#58FAF4',  // cyan
+        '#58ACFA',  // blue
+        '#9F81F7'   // purple
+    ];
+    return colors[index-1]; // colors는 0부터 시작하고 markerIndex는 1부터 시작하기 때문에 -1 해서 값 맞춰줌
+}
+
 /**
  * 키워드 검색을 요청하는 함수입니다
  * @returns {boolean} - 키워드가 유효하지 않으면 false
@@ -114,12 +147,14 @@ function handleSelectBtnClick(event, place, placePosition) {
 
     // 장소의 고유 ID 생성 (ex. 몇일차-몇번째장소: 1-1, 1-2, 2-1, ..) 나중에 삭제 시 같은 장소 겹침 문제 해결 위해 고유 ID 지정
     const uniqueId = `${dayNum}-${selectedPlaces[dayNum].length + 1}`;
+    const markerImageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);    // 마커 이미지 색상이랑 맞추기 (1 ~ 6 순환)
+    const colorCode = getColorCode(markerImageIndex);
 
     const locations = document.createElement('div');
     locations.className = 'locations';
     locations.innerHTML = `
             <div class="placeNameContainer">
-                <span id="${uniqueId}">${selectedPlaces[dayNum].length + 1}</span>
+                <span id="${uniqueId}" style="color: ${colorCode};">${selectedPlaces[dayNum].length + 1}</span>
                 <input type="text" class="placeNameInput" name="placeName" value="${place.place_name}" readonly />
 <!--                <button type="button" onclick="removeElement(this.parentNode)">삭제</button>-->
                 <button type="button" onclick="handleRemoveBtnClick(event, '${uniqueId}', ${placePosition.La}, ${placePosition.Ma})">삭제</button>
@@ -137,10 +172,66 @@ function handleSelectBtnClick(event, place, placePosition) {
     // 지도에 마커 추가
     addSelectedMarker(placePosition, index, dayNum);
     // 마커 번호 재정렬
-    reorderMarkers(markers);
+    reorderMarkers(markers, dayNum);
 
     // 지도 범위 재설정
     setBounds(placePosition);
+
+    // 지도에 선 표시
+    drawLinePath(dayNum, placePosition);
+}
+
+/**
+ * 장소 추가 시 지도에 선 그리기
+ * @param dayNum - 여행 일차
+ * @param placePosition - kakao.maps.LatLng 객체 (위도, 경도 위치 정보)
+ */
+function drawLinePath(dayNum, placePosition) {
+    // linePath[dayNum]이 존재하지 않으면 빈 배열로 초기화
+    if (!linePath[dayNum]) {
+        linePath[dayNum] = [];
+    }
+    // 좌표 추가
+    linePath[dayNum].push(placePosition);
+
+    // 선 색상 지정
+    const markerImageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);    // 마커 이미지 색상이랑 맞추기 (1 ~ 6 순환)
+    const colorCode = getColorCode(markerImageIndex);
+
+    // 이미 그려진 선이 있으면 지도에서 제거 (제거 안 하면 선이 겹쳐서 그려짐)
+    if (polyline[dayNum]) {
+        polyline[dayNum].setMap(null);
+    }
+
+    // 지도에 표시할 선을 생성합니다
+    polyline[dayNum] = new kakao.maps.Polyline({
+        path: linePath[dayNum], // 선을 구성하는 좌표배열 입니다
+        strokeWeight: 4, // 선의 두께 입니다
+        strokeColor: colorCode, // 선의 색깔입니다
+        strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        strokeStyle: 'dash' // 선의 스타일입니다
+    });
+
+    // 지도에 선을 표시합니다
+    polyline[dayNum].setMap(map);
+}
+
+/**
+ * 장소 제거 시 지도에 선 알맞게 다시 그리기
+ * @param dayNum
+ */
+function redrawLinePath(dayNum) {
+    // 경로가 비어있으면 폴리라인 삭제
+    if (linePath[dayNum].length === 0) {
+        polyline[dayNum].setMap(null);
+        delete polyline[dayNum];
+    } else {
+        polyline[dayNum].setMap(null);
+        polyline[dayNum].setPath(linePath[dayNum]);
+
+        // 지도에 선을 표시합니다
+        polyline[dayNum].setMap(map);
+    }
 }
 
 /**
@@ -168,43 +259,47 @@ function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositi
 
     // selectedPlaces에서 해당 날짜와 인덱스에 있는 장소를 삭제
     if (selectedPlaces[dayNum]) {
-        // console.log('placeIndex: ', placeIndex);
-        // console.log('selectedPlaces[dayNum].length: ', selectedPlaces[dayNum].length);
-        // 인덱스가 유효한지 확인하고 해당 장소를 삭제
-        // if (placeIndex <= selectedPlaces[dayNum].length && placeIndex > 0) {
-            selectedPlaces[dayNum].splice(placeIndex - 1, 1); // 인덱스는 0부터 시작하므로 -1
+        selectedPlaces[dayNum].splice(placeIndex - 1, 1); // 인덱스는 0부터 시작하므로 -1
 
-            // placesContainer에서 해당 장소를 포함하는 element를 찾아서 삭제
-            parentElement.parentElement.remove();
+        // placesContainer에서 해당 장소를 포함하는 element를 찾아서 삭제
+        parentElement.parentElement.remove();
 
-            // markers 배열에서 해당 장소 위치에 해당하는 marker 요소 제거
-            const tolerance = 0.00000001; // 허용 오차 범위 설정
+        // markers 배열에서 해당 장소 위치에 해당하는 marker 요소 제거
+        const tolerance = 0.00000001; // 허용 오차 범위 설정
 
-            // findIndex는 배열에 각 요소에 대해 조건을 만족하는 첫 번째 요소의 인덱스 반환
-            const markerIndex = markers[dayNum].findIndex(marker => {
-                const markerPos = marker.getPosition();
-                // 오차 범위 이내면 같은 장소로 취급
-                return Math.abs(markerPos.La - placePositionLa) < tolerance &&
-                    Math.abs(markerPos.Ma - placePositionMa) < tolerance;
-            });
+        // findIndex는 배열에 각 요소에 대해 조건을 만족하는 첫 번째 요소의 인덱스 반환
+        const markerIndex = markers[dayNum].findIndex(marker => {
+            const markerPos = marker.getPosition();
+            // 오차 범위 이내면 같은 장소로 취급
+            return Math.abs(markerPos.La - placePositionLa) < tolerance &&
+                Math.abs(markerPos.Ma - placePositionMa) < tolerance;
+        });
 
-            if (markerIndex !== -1) {   // 해당 장소 위치의 마커가 존재한다면
-                markers[dayNum][markerIndex].setMap(null);  // 지도에서 마커 제거
-                markers[dayNum].splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
-            }
+        if (markerIndex !== -1) {   // 해당 장소 위치의 마커가 존재한다면
+            markers[dayNum][markerIndex].setMap(null);  // 지도에서 마커 제거
+            markers[dayNum].splice(markerIndex, 1); // 배열에서 마커 제거. 인덱스부터 1개의 요소 삭제
+        }
 
-            console.log('Selected Places:', selectedPlaces);
-            console.log('Markers:', markers);
+        // linePath에서 해당하는 위치 좌표 제거
+        const pathIndex = linePath[dayNum].findIndex(position => {
+            return Math.abs(position.La - placePositionLa) < tolerance &&
+                Math.abs(position.Ma - placePositionMa) < tolerance;
+        });
 
-            // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 ID를 업데이트
-            updatePlaceIndexes(dayNum);
-            reorderMarkers(markers[dayNum]);    // 마커 번호 재정렬
+        if (pathIndex !== -1) {   // 해당 장소 위치 좌표가 존재한다면
+            linePath[dayNum].splice(pathIndex, 1); // 배열에서 해당 좌표 제거. 인덱스부터 1개의 요소 삭제
+        }
 
-        // console.log('삭제 후 selectedPlaces[dayNum].length: ', selectedPlaces[dayNum].length);
+        console.log('Selected Places:', selectedPlaces);
+        console.log('Markers:', markers);
 
-        // } else {
-        //     console.error('장소 인덱스가 유효하지 않습니다.');
-        // }
+        // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 ID를 업데이트
+        updatePlaceIndexes(dayNum);
+        // 마커 번호 재정렬
+        reorderMarkers(markers[dayNum], dayNum);
+        // 장소 지웠으니 선 다시 그리기
+        redrawLinePath(dayNum);
+
     } else {
         console.error('dayNum이 존재하지 않습니다.');
     }
@@ -304,7 +399,10 @@ function getListItem(index, places) {
  * @returns {kakao.maps.Marker} - 생성된 마커 객체
  */
 function addSelectedMarker(position, idx, dayNum) {
-    const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+    // dayNum % 6 === 0 이면 6으로 매핑(dayNum이 1 또는 7이면 1번째 이미지(red), 6이면 6번째 이미지(purple), 2 또는 8이면 2번째 이미지, ... 6 단위로 순환)
+    const imageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);
+    // const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+    const imageSrc = markerImages[imageIndex],
         imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
         imgOptions = {
             spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
@@ -328,11 +426,14 @@ function addSelectedMarker(position, idx, dayNum) {
  * 제거 버튼 클릭 이벤트 발생 시 기존에 있던 마커 번호(마커 이미지)를 재정렬하는 함수
  * @param markers - 선택된 장소들의 마커 배열
  */
-function reorderMarkers(markers) {
+function reorderMarkers(markers, dayNum) {
     for (let i = 0; i < markers.length; i++) {
         const marker = markers[i];
 
-        const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        // dayNum % 6 === 0 이면 6으로 매핑(dayNum이 1 또는 7이면 1번째 이미지, 6이면 6번째 이미지, 2 또는 8이면 2번째 이미지, ... 6 단위로 순환)
+        const imageIndex = (dayNum % 6) === 0 ? 6 : (dayNum % 6);
+        // const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        const imageSrc = markerImages[imageIndex],
             imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
             imgOptions = {
                 spriteSize: new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
@@ -346,13 +447,36 @@ function reorderMarkers(markers) {
 }
 
 /**
- * 지도 위에 표시되고 있는 마커를 모두 제거합니다
+ * 지도 위에 표시되고 있는 모든 날짜에 대한 마커를 모두 제거하는 함수
  */
-function removeMarker() {
-    for (let i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-    }
-    markers = [];
+function clearAllMarker() {
+    // markers 객체에 저장된 모든 dayNum(key)을 순회하며 각 날짜에 대한 marker 처리
+    Object.keys(markers).forEach(dayNum => {
+        // 각 날짜에 해당하는 markers 배열 순회하며 marker 처리
+        markers[dayNum].forEach(marker => {
+            // 지도에서 마커를 제거
+            marker.setMap(null);
+        });
+        // 마커 배열을 초기화
+        markers[dayNum] = [];
+    });
+    console.log('---clearAllMarker---');
+}
+
+/**
+ * 지도 위에 그려진 모든 폴리라인(선)를 제거하는 함수
+ */
+function clearAllPolyline() {
+    // polyline 객체에 저장된 모든 dayNum(key)을 순회
+    Object.keys(polyline).forEach(dayNum => {
+        if (polyline[dayNum]) {
+            // 지도에서 폴리라인을 제거
+            polyline[dayNum].setMap(null);
+            // 해당 dayNum의 polyline 객체 초기화
+            delete polyline[dayNum];
+        }
+    });
+    console.log('---clearAllPolyline---');
 }
 
 /**

@@ -2,6 +2,7 @@ package com.example.omg_project.domain.joinpost.controller;
 
 import com.example.omg_project.domain.joinpost.dto.JoinPostReplyDto;
 import com.example.omg_project.domain.joinpost.service.JoinPostReplyService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class JoinPostReplyApiController {
      * 일행 모집 대댓글 등록
      */
     @PostMapping("/{commentId}/replies")
-    public ResponseEntity<JoinPostReplyDto.Response> createReply(@PathVariable Long commentId, @RequestBody JoinPostReplyDto.Request replyRequest) {
+    public ResponseEntity<JoinPostReplyDto.Response> createReply(@PathVariable Long commentId, @RequestBody JoinPostReplyDto.Request replyRequest) throws JsonProcessingException {
         JoinPostReplyDto.Response reply = joinPostReplyService.createReply(commentId, replyRequest.getUserId(), replyRequest);
         return ResponseEntity.ok(reply);
     }

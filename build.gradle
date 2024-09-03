@@ -23,6 +23,11 @@ repositories {
     mavenCentral()
 }
 
+// 매개변수 이름 인식문제 해결 (ex) @RequestParam, @PathVariable, ..)
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters"
+}
+
 dependencies {
     // email smtp
     implementation 'org.springframework.boot:spring-boot-starter-mail'
@@ -73,8 +78,18 @@ dependencies {
     // validation
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 
-// email smtp
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // AWS S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // json parsing
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+    // Jackson에 Java 8 날짜와 시간 유형을 처리할 수 있도록 jackson-datatype-jsr310 모듈을 추가
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
+
 
 }
 
