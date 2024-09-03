@@ -9,6 +9,19 @@ pipeline {
                     credentialsId: 'hjinnny_github_id'
             }
         }
+        stage('Add Env') {
+            steps {
+                dir('src/main/resources') {
+                    withCredentials([file(credentialsId: 'yml', variable: 'YML_FILE')]) {
+                        sh """
+                        echo "Copying configuration file..."
+                        cp ${YML_FILE} application.yml
+                        ls -l
+                        """
+                    }
+                }
+            }
+        }
 
         stage('Build') {
             steps {
