@@ -4,7 +4,7 @@ pipeline {
         AWS_DEFAULT_REGION = 'ap-northeast-2'
         S3_BUCKET = 'omg-build'
         JAR_FILE = 'build/libs/OMG_project-0.0.1-SNAPSHOT.jar'
-        APP_NAME = 'OMG_project'
+        APP_NAME = 'OMG'
         DEPLOY_GROUP = 'OMG-group-name'
         DEPLOY_ZIP = 'deployment.zip'
     }
