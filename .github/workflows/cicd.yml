@@ -57,8 +57,9 @@ jobs:
           host: ${{ secrets.HYEJU_EC2_HOST }}
           username: ${{ secrets.HYEJU_EC2_USER }}
           key: ${{ secrets.HYEJU_EC2_SSH_KEY }}
+          port: ${{ secrets.HYEJU_EC2_SSH_PORT }} # 접속포트번호 (보통 22)
           script: |
-            mkdir -p ~/app/OMG_project
+            mkdir /home/ec2-user/app/OMG_project
             cp build/libs/OMG_project-0.0.1-SNAPSHOT.jar ~/app/OMG_project/
 
       - name: Deploy JAR to EC2
