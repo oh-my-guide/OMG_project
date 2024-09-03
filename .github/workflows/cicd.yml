@@ -24,10 +24,8 @@ jobs:
       # GitHub Secret에서 환경 변수 값 가져오기
       - name: Set environment variables from secrets
         run: |
-          # JSON 데이터 가져와서 파싱
-          echo ${{ secrets.HYEJU_ENV_SECRET }} | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
-        env:
-          ENV_SECRET: ${{ secrets.HYEJU_ENV_SECRET }}
+          echo "${{ secrets.HYEJU_ENV_SECRET }}" > secrets.json
+          export $(jq -r 'to_entries | .[] | "\(.key)=\(.value)"' secrets.json) >> $GITHUB_ENV
 
       # 환경 변수 사용
       - name: Use environment variables
