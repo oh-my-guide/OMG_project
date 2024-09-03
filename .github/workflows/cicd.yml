@@ -51,6 +51,9 @@ jobs:
           name: OMG_project-0.0.1-SNAPSHOT
           path: build/libs
 
+      - name: List downloaded files
+        run: ls -la build/libs
+
       - name: Copy JAR file to EC2
         uses: appleboy/ssh-action@v0.1.9
         with:
