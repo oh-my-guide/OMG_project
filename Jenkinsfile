@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'hyeonjin-cicd',
+                git branch: 'hjin-cicd',
                     url: 'https://github.com/oh-my-guide/OMG_project.git',
                     credentialsId: 'hjinnny_github_id'
             }
