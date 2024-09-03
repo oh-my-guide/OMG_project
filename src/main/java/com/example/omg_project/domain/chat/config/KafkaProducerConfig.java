@@ -23,7 +23,7 @@ public class KafkaProducerConfig {
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> config = new HashMap<>();   // 설정을 담을 맵 생성
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "54.180.237.173:9092");  // Kafka 서버 주소 설정
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "54.66.163.19:9092");  // Kafka 서버 주소 설정
 
         // 키와 값의 시리얼라이저 설정
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
