@@ -10,32 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest  # 실행 환경 지정
 
-    # 환경 변수 설정
-    env:
-      OMG_PUBLIC_IP: ${{ secrets.HYEJU_OMG_PUBLIC_IP }}
-      OMG_DATASOURCE_URL: ${{ secrets.HYEJU_OMG_DATASOURCE_URL }}
-      OMG_DATASOURCE_USERNAME: ${{ secrets.HYEJU_OMG_DATASOURCE_USERNAME }}
-      OMG_DATASOURCE_PASSWORD: ${{ secrets.HYEJU_OMG_DATASOURCE_PASSWORD }}
-      KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
-      KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
-      NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
-      NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-      REDIS_PORT: ${{ secrets.REDIS_PORT }}
-      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      JWT_REFRESH: ${{ secrets.JWT_REFRESH }}
-      S3_ACCESS: ${{ secrets.HYEJU_S3_ACCESS }}
-      S3_SECRET: ${{ secrets.HYEJU_S3_SECRET }}
-      WEATHER_API_SECRET: ${{ secrets.WEATHER_API_SECRET }}
-      TOUR_API_SECRET: ${{ secrets.TOUR_API_SECRET }}
-      CHANNEL_API_SECRET: ${{ secrets.CHANNEL_API_SECRET }}
-      OMG_ADMIN_USERNAME: ${{ secrets.OMG_ADMIN_USERNAME }}
-      OMG_ADMIN_PASSWORD: ${{ secrets.OMG_ADMIN_PASSWORD }}
-
     # 실행 스텝 지정
     steps:
       # 깃허브에서 제공하는 checkout 엑션 사용
@@ -47,6 +21,14 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+
+      # secrets 내용을 읽어 yml 파일을 특정 위치에 생성
+      - name: Make application.yml
+        run: |
+          mkdir -p ./src/main/resources
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.HYEJU_YML }}" > ./application.yml
 
       # gradle wrapper 파일에 실행 권한을 부여
       - name: Grant execute permission for gradlew
