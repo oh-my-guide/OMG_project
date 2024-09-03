@@ -71,3 +71,6 @@ jobs:
           script: | # 실행될 스크립트
             cd /home/ec2-user/app/OMG_project
             nohup java -jar build/libs/OMG_project-0.0.1-SNAPSHOT.jar &
+            
+
+# 테스트용 커밋
