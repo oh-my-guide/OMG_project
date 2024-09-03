@@ -13,9 +13,9 @@ jobs:
     # 환경 변수 설정
     env:
       OMG_PUBLIC_IP: ${{ secrets.HYEJU_OMG_PUBLIC_IP }}
-      SPRING_DATASOURCE_URL: ${{ secrets.HYEJU_OMG_DATASOURCE_URL }}
-      SPRING_DATASOURCE_USERNAME: ${{ secrets.HYEJU_OMG_DATASOURCE_USERNAME }}
-      SPRING_DATASOURCE_PASSWORD: ${{ secrets.HYEJU_OMG_DATASOURCE_PASSWORD }}
+      OMG_DATASOURCE_URL: ${{ secrets.HYEJU_OMG_DATASOURCE_URL }}
+      OMG_DATASOURCE_USERNAME: ${{ secrets.HYEJU_OMG_DATASOURCE_USERNAME }}
+      OMG_DATASOURCE_PASSWORD: ${{ secrets.HYEJU_OMG_DATASOURCE_PASSWORD }}
       KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
       KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
       NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
@@ -47,7 +47,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
-
 
       # gradle wrapper 파일에 실행 권한을 부여
       - name: Grant execute permission for gradlew
