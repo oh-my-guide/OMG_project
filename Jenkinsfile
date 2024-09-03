@@ -1,5 +1,13 @@
 pipeline {
     agent any
+    environment {
+        AWS_DEFAULT_REGION = 'ap-northeast-2'
+        S3_BUCKET = 'omg-build'
+        JAR_FILE = 'build/libs/OMG_project-0.0.1-SNAPSHOT.jar'
+        APP_NAME = 'OMG_project'
+        DEPLOY_GROUP = 'OMG-group-name'
+        DEPLOY_ZIP = 'deployment.zip'
+    }
 
     stages {
         stage('Checkout') {
@@ -26,7 +34,9 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh './gradlew clean build' // Gradle을 사용한 빌드
+                echo 'Building...'
+                sh 'cmhod 755 ./gradlew'
+                sh './gradlew build'
             }
         }
 
@@ -48,7 +58,12 @@ pipeline {
             steps {
                 echo 'Deploying...'
                 withAWS(credentials: 'aws_omg') {
-                sh 'aws s3 cp build/libs/OMG_project-0.0.1-SNAPSHOT.jar s3://omg-build/'
+                sh """
+                aws deploy create-deployment \
+                    --application-name ${env.APP_NAME} \
+                    --deployment-group-name ${env.DEPLOY_GROUP} \
+                    --s3-location bucket=${env.S3_BUCKET},key=${env.DEPLOY_ZIP},bundleType=zip
+                """
                 }
             }
         }
