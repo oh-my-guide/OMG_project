@@ -34,23 +34,17 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                sh './gradlew clean build' // Gradle을 사용한 빌드
+                sh 'chmod 755 ./gradlew'
+                sh './gradlew build'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Testing...'
-                sh './gradlew test' // Gradle을 사용한 테스트 실행
             }
         }
 
-        stage('Archive Artifacts') {
-            steps {
-                echo 'Archiving JAR...'
-                archiveArtifacts artifacts: 'build/libs/*.jar', allowEmptyArchive: false // 생성된 JAR 파일을 Jenkins에 저장
-            }
-        }
         stage('Prepare Deployment Package') {
             steps {
                 echo 'Preparing deployment package...'
@@ -59,10 +53,11 @@ pipeline {
                 zip -r ${env.DEPLOY_ZIP} appspec.yml scripts/
                 mv ${env.DEPLOY_ZIP} ../
                 cd ..
-                zip -r ${env.DEPLOY_ZIP} -g build/libs/OMG_project-0.0.1-SNAPSHOT.jar
+                zip -r ${env.DEPLOY_ZIP} -g ${env.JAR_FILE}
                 """
             }
         }
+
         stage('Upload to S3') {
             steps {
                 withAWS(credentials: 'aws_omg') {
