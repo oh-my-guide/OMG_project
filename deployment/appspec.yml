@@ -1,0 +1,23 @@
+version: 0.0
+os: linux
+files:
+  - source: build/libs/OMG_project-0.0.1-SNAPSHOT.jar
+    destination: /home/ec2-user/app/
+
+hooks:
+  ApplicationStop:
+    - location: scripts/stop_server.sh
+      timeout: 300
+      runas: ec2-user
+  BeforeInstall:
+    - location: scripts/install_dependencies.sh
+      timeout: 300
+      runas: ec2-user
+  AfterInstall:
+    - location: scripts/change_permissions.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_server.sh
+      timeout: 300
+      runas: ec2-user
