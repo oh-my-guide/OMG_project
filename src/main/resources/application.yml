@@ -2,9 +2,9 @@ spring:
   application:
     name: OMG_project
   datasource:
-    url: ${HYEJU_OMG_DATASOURCE_URL}
-    username: ${HYEJU_OMG_DATASOURCE_USERNAME}
-    password: ${HYEJU_OMG_DATASOURCE_PASSWORD}
+    url: ${OMG_DATASOURCE_URL}
+    username: ${OMG_DATASOURCE_USERNAME}
+    password: ${OMG_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -24,7 +24,7 @@ spring:
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
             authorization-grant-type: authorization_code
-            redirect-uri: http://${HYEJU_OMG_PUBLIC_IP}:8080/login/oauth2/code/kakao
+            redirect-uri: http://${OMG_PUBLIC_IP}:8080/login/oauth2/code/kakao
             client-name: Kakao
             client-authentication-method: client_secret_post
             scope:
@@ -34,7 +34,7 @@ spring:
           naver:
             client-id: ${NAVER_CLIENT_ID}
             client-secret: ${NAVER_CLIENT_SECRET}
-            redirect-uri: http://${HYEJU_OMG_PUBLIC_IP}:8080/login/oauth2/code/naver
+            redirect-uri: http://${OMG_PUBLIC_IP}:8080/login/oauth2/code/naver
             client-name: Naver
             authorization-grant-type: authorization_code
             scope:
@@ -46,7 +46,7 @@ spring:
             client-secret: ${GOOGLE_CLIENT_SECRET}
             client-name: google
             authorization-grant-type: authorization_code
-            redirect-uri: http://${HYEJU_OMG_PUBLIC_IP}:8080/login/oauth2/code/google
+            redirect-uri: http://${OMG_PUBLIC_IP}:8080/login/oauth2/code/google
             scope:
               - profile
               - email
@@ -83,18 +83,18 @@ spring:
 
   kafka:
     consumer:
-      bootstrap-servers: ${HYEJU_OMG_PUBLIC_IP}:9092 # Kafka 서버 주소 설정
+      bootstrap-servers: ${OMG_PUBLIC_IP}:9092 # Kafka 서버 주소 설정
       group-id: chat-room-listener # Kafka 소비자 그룹 ID 설정
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer # 키 디시리얼라이저 설정
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer # 값 디시리얼라이저 설정
     producer:
-      bootstrap-servers: ${HYEJU_OMG_PUBLIC_IP}:9092 # Kafka 서버 주소 설정
+      bootstrap-servers: ${OMG_PUBLIC_IP}:9092 # Kafka 서버 주소 설정
       key-serializer: org.apache.kafka.common.serialization.StringSerializer # 키 시리얼라이저 설정
       value-serializer: org.apache.kafka.common.serialization.StringSerializer # 값 시리얼라이저 설정
 
   data:
     redis:
-      host: ${HYEJU_OMG_PUBLIC_IP}
+      host: ${OMG_PUBLIC_IP}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
 
@@ -117,8 +117,8 @@ cloud:
     stack.auto: false
     region.static: ap-northeast-2
     credentials:
-      accessKey: ${HYEJU_S3_ACCESS}
-      secretKey: ${HYEJU_S3_SECRET}
+      accessKey: ${S3_ACCESS}
+      secretKey: ${S3_SECRET}
 
 weather:
   api:
