@@ -93,7 +93,7 @@ public class UserController {
                 String username = jwtTokenizer.getUsernameFromToken(accessToken);
                 User user = userService.findByUsername(username).orElse(null);
                 model.addAttribute("user", user);
-                return "/user/mypageEdit";
+                return "user/mypageEdit";
             }
             return "redirect:/signin";
         } catch (RuntimeException e) {
@@ -137,7 +137,7 @@ public class UserController {
      */
     @GetMapping("/users/reset-user-password")
     public String showResetPasswordForm() {
-        return "/user/findPassword";
+        return "user/findPassword";
     }
 
     /**

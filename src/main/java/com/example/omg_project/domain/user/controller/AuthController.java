@@ -36,7 +36,7 @@ public class AuthController {
             User user = userService.findByUsername(username).orElse(null);
             model.addAttribute("user", user);
         }
-        return "/user/home";
+        return "user/home";
     }
 
     /**
@@ -44,7 +44,7 @@ public class AuthController {
      */
     @GetMapping("/signup")
     public String signup() {
-        return "/main/signupform";
+        return "main/signupform";
     }
 
     @PostMapping("/signup")
@@ -54,7 +54,7 @@ public class AuthController {
             return "redirect:/signin";
         } catch (Exception e) {
             e.printStackTrace();
-            return "/main/signupform";
+            return "main/signupform";
         }
     }
 
@@ -63,7 +63,7 @@ public class AuthController {
      */
     @GetMapping("/signin")
     public String showLoginForm() {
-        return "/main/loginform";
+        return "main/loginform";
     }
 
     /**
@@ -79,7 +79,7 @@ public class AuthController {
             model.addAttribute("user", user);
         }
 
-        return "/main/service";
+        return "main/service";
     }
 
     /**
@@ -93,6 +93,6 @@ public class AuthController {
             User user = userService.findByUsername(username).orElse(null);
             model.addAttribute("user", user);
         }
-        return "/main/faq";
+        return "main/faq";
     }
 }
