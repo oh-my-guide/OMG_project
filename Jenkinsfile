@@ -12,7 +12,7 @@ pipeline {
         stage('Add Env') {
             steps {
                 dir('src/main/resources') {
-                    withCredentials([file(credentialsId: 'yml', variable: 'YML_FILE')]) {
+                    withCredentials([file(credentialsId: 'OMGyml', variable: 'YML_FILE')]) {
                         sh """
                         echo "Copying configuration file..."
                         cp ${YML_FILE} application.yml
