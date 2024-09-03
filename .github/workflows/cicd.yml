@@ -53,9 +53,9 @@ jobs:
       - name: Copy JAR file to EC2
         uses: appleboy/ssh-action@v0.1.9
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.HYEJU_EC2_HOST }}
+          username: ${{ secrets.HYEJU_EC2_USER }}
+          key: ${{ secrets.HYEJU_EC2_SSH_KEY }}
           script: |
             mkdir -p ~/app/OMG_project
             cp build/libs/OMG_project-0.0.1-SNAPSHOT.jar ~/app/OMG_project/
@@ -63,10 +63,10 @@ jobs:
       - name: Deploy JAR to EC2
         uses: appleboy/ssh-action@v0.1.9 # ssh 접속하는 오픈소스
         with:
-          host: ${{ secrets.EC2_HOST }} # EC2 인스턴스 IP
-          username: ${{ secrets.EC2_USER }} # 아마존 리눅스 아이디 (보통 ec2-user)
-          key: ${{ secrets.EC2_SSH_KEY }} # EC2 인스턴스 pem key
-          port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트번호 (보통 22)
+          host: ${{ secrets.HYEJU_EC2_HOST }} # EC2 인스턴스 IP
+          username: ${{ secrets.HYEJU_EC2_USER }} # 아마존 리눅스 아이디 (보통 ec2-user)
+          key: ${{ secrets.HYEJU_EC2_SSH_KEY }} # EC2 인스턴스 pem key
+          port: ${{ secrets.HYEJU_EC2_SSH_PORT }} # 접속포트번호 (보통 22)
           script: | # 실행될 스크립트
             cd /home/ec2-user/app/OMG_project
             nohup java -jar build/libs/OMG_project-0.0.1-SNAPSHOT.jar &

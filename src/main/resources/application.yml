@@ -2,9 +2,9 @@ spring:
   application:
     name: OMG_project
   datasource:
-   url: ${OMG_DATASOURCE_URL}
-     username: ${OMG_DATASOURCE_USERNAME}
-     password: ${OMG_DATASOURCE_PASSWORD}
+    url: ${OMG_DATASOURCE_URL}
+    username: ${OMG_DATASOURCE_USERNAME}
+    password: ${OMG_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
