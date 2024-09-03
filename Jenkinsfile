@@ -13,22 +13,42 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                // build steps
+                sh './gradlew clean build' // Gradle을 사용한 빌드
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Testing...'
-                // test steps
+                sh './gradlew test' // Gradle을 사용한 테스트 실행
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                echo 'Archiving JAR...'
+                archiveArtifacts artifacts: 'build/libs/*.jar', allowEmptyArchive: false // 생성된 JAR 파일을 Jenkins에 저장
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
-                // deploy steps
+                // 배포 관련 스크립트 또는 명령어를 추가
+                // 예: SCP로 JAR 파일을 서버로 복사, Docker 이미지를 빌드 및 배포 등
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
