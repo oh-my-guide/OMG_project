@@ -1,0 +1,72 @@
+# 워크플로의 이름 지정
+name: CI/CD
+
+# 워크플로가 시작될 조건 지정
+on:
+  push:
+    branches: [hyeju-cicd]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 실행 환경 지정
+    # 실행 스텝 지정
+    steps:
+      # 깃허브에서 제공하는 checkout 엑션 사용
+      - uses: actions/checkout@v4
+
+      # JDK 21 설정
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      # gradle wrapper 파일에 실행 권한을 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Gradle 빌드 엑션을 이용해서 프로젝트 빌드
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2.6.0
+        with:
+          arguments: build
+
+      # 빌드해서 생긴 JAR 파일을 깃허브 아티팩트로 업로드
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build/libs/OMG_project-0.0.1-SNAPSHOT.jar
+
+  # 배포
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest # 실행될 인스턴스 OS와 버전
+
+    # 위의 빌드작업한 JAR 파일 = 아티팩트를 다운로드
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: OMG_project
+          path: build/libs
+
+      - name: Copy JAR file to EC2
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            mkdir -p ~/app/OMG_project
+            cp build/libs/OMG_project-0.0.1-SNAPSHOT.jar ~/app/OMG_project/
+
+      - name: Deploy JAR to EC2
+        uses: appleboy/ssh-action@v0.1.9 # ssh 접속하는 오픈소스
+        with:
+          host: ${{ secrets.EC2_HOST }} # EC2 인스턴스 IP
+          username: ${{ secrets.EC2_USER }} # 아마존 리눅스 아이디 (보통 ec2-user)
+          key: ${{ secrets.EC2_SSH_KEY }} # EC2 인스턴스 pem key
+          port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트번호 (보통 22)
+          script: | # 실행될 스크립트
+            cd /home/ec2-user/app/OMG_project
+            nohup java -jar build/libs/OMG_project-0.0.1-SNAPSHOT.jar &
