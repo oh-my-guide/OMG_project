@@ -57,10 +57,16 @@ jobs:
       - name: List downloaded files
         run: ls -la build/libs
 
-      - name: Copy JAR file to EC2
-        run: scp -i ${{ secrets.HYEJU_EC2_SSH_KEY }} -o StrictHostKeyChecking=no build/libs/OMG_project-0.0.1-SNAPSHOT.jar ${{ secrets.HYEJU_EC2_USER }}@${{ secrets.HYEJU_EC2_HOST }}:/home/ec2-user/app/OMG_project/
+      - name: Save SSH key to file
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HYEJU_EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
-#      - name: Copy JAR file to EC2
+      - name: Copy JAR file to EC2
+        run: scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no build/libs/OMG_project-0.0.1-SNAPSHOT.jar ${{ secrets.HYEJU_EC2_USER }}@${{ secrets.HYEJU_EC2_HOST }}:/home/ec2-user/app/OMG_project/
+
+      #      - name: Copy JAR file to EC2
 #        uses: appleboy/ssh-action@v0.1.9
 #        with:
 #          host: ${{ secrets.HYEJU_EC2_HOST }}
