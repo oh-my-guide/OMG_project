@@ -110,7 +110,7 @@ jobs:
           key: ${{ secrets.HYEJU_EC2_SSH_KEY }} # EC2 인스턴스 pem key
           port: ${{ secrets.HYEJU_EC2_SSH_PORT }} # 접속포트번호 (보통 22)
           script: | # 실행될 스크립트
-            source ~/.bashrc  # EC2에 설정된 환경 변수 불러오기
+            source ~/.bash_profile  # EC2에 설정된 환경 변수 불러오기
             cd /home/ec2-user/app/OMG_project
             nohup java -jar OMG_project-0.0.1-SNAPSHOT.jar &
 
