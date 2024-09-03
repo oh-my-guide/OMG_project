@@ -25,7 +25,8 @@ jobs:
       - name: Set environment variables from secrets
         run: |
           echo "${{ secrets.HYEJU_ENV_SECRET }}" > secrets.json
-          export $(jq -r 'to_entries | .[] | "\(.key)=\(.value)"' secrets.json) >> $GITHUB_ENV
+          cat secrets.json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env
+          export $(cat .env | xargs)
 
       # 환경 변수 사용
       - name: Use environment variables
