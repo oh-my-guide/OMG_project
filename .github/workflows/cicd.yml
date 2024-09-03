@@ -21,39 +21,41 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # GitHub Secret에서 환경 변수 값 가져오기
-      - name: Set environment variables from secrets
-        run: |
-          echo "${{ secrets.HYEJU_ENV_SECRET }}" > secrets.json
-          cat secrets.json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env
-          export $(cat .env | xargs)
 
-      # 환경 변수 사용
-      - name: Use environment variables
-        run: |
-          echo "OMG_PUBLIC_IP is $OMG_PUBLIC_IP"
-          echo "OMG_DATASOURCE_URL is $OMG_DATASOURCE_URL"
-          echo "OMG_DATASOURCE_USERNAME is $OMG_DATASOURCE_USERNAME"
-          echo "OMG_DATASOURCE_PASSWORD is $OMG_DATASOURCE_PASSWORD"
-          echo "KAKAO_CLIENT_ID is $KAKAO_CLIENT_ID"
-          echo "KAKAO_CLIENT_SECRET is $KAKAO_CLIENT_SECRET"
-          echo "NAVER_CLIENT_ID is $NAVER_CLIENT_ID"
-          echo "NAVER_CLIENT_SECRET is $NAVER_CLIENT_SECRET"
-          echo "GOOGLE_CLIENT_ID is $GOOGLE_CLIENT_ID"
-          echo "GOOGLE_CLIENT_SECRET is $GOOGLE_CLIENT_SECRET"
-          echo "MAIL_USERNAME is $MAIL_USERNAME"
-          echo "MAIL_PASSWORD is $MAIL_PASSWORD"
-          echo "REDIS_PORT is $REDIS_PORT"
-          echo "REDIS_PASSWORD is $REDIS_PASSWORD"
-          echo "JWT_SECRET is $JWT_SECRET"
-          echo "REFRESH is $REFRESH"
-          echo "S3_ACCESS is $S3_ACCESS"
-          echo "S3_SECRET is $S3_SECRET"
-          echo "WEATHER_API_SECRET is $WEATHER_API_SECRET"
-          echo "TOUR_API_SECRET is $TOUR_API_SECRET"
-          echo "CHANNEL_API_SECRET is $CHANNEL_API_SECRET"
-          echo "OMG_ADMIN_USERNAME is $OMG_ADMIN_USERNAME"
-          echo "OMG_ADMIN_PASSWORD is $OMG_ADMIN_PASSWORD"
+
+#      # GitHub Secret에서 환경 변수 값 가져오기
+#      - name: Set environment variables from secrets
+#        run: |
+#          echo "${{ secrets.HYEJU_ENV_SECRET }}" > secrets.json
+#          cat secrets.json | jq -r 'to_entries | .[] | "\(.key)=\(.value)"' > .env
+#          export $(cat .env | xargs)
+#
+#      # 환경 변수 사용
+#      - name: Use environment variables
+#        run: |
+#          echo "OMG_PUBLIC_IP is $OMG_PUBLIC_IP"
+#          echo "OMG_DATASOURCE_URL is $OMG_DATASOURCE_URL"
+#          echo "OMG_DATASOURCE_USERNAME is $OMG_DATASOURCE_USERNAME"
+#          echo "OMG_DATASOURCE_PASSWORD is $OMG_DATASOURCE_PASSWORD"
+#          echo "KAKAO_CLIENT_ID is $KAKAO_CLIENT_ID"
+#          echo "KAKAO_CLIENT_SECRET is $KAKAO_CLIENT_SECRET"
+#          echo "NAVER_CLIENT_ID is $NAVER_CLIENT_ID"
+#          echo "NAVER_CLIENT_SECRET is $NAVER_CLIENT_SECRET"
+#          echo "GOOGLE_CLIENT_ID is $GOOGLE_CLIENT_ID"
+#          echo "GOOGLE_CLIENT_SECRET is $GOOGLE_CLIENT_SECRET"
+#          echo "MAIL_USERNAME is $MAIL_USERNAME"
+#          echo "MAIL_PASSWORD is $MAIL_PASSWORD"
+#          echo "REDIS_PORT is $REDIS_PORT"
+#          echo "REDIS_PASSWORD is $REDIS_PASSWORD"
+#          echo "JWT_SECRET is $JWT_SECRET"
+#          echo "REFRESH is $REFRESH"
+#          echo "S3_ACCESS is $S3_ACCESS"
+#          echo "S3_SECRET is $S3_SECRET"
+#          echo "WEATHER_API_SECRET is $WEATHER_API_SECRET"
+#          echo "TOUR_API_SECRET is $TOUR_API_SECRET"
+#          echo "CHANNEL_API_SECRET is $CHANNEL_API_SECRET"
+#          echo "OMG_ADMIN_USERNAME is $OMG_ADMIN_USERNAME"
+#          echo "OMG_ADMIN_PASSWORD is $OMG_ADMIN_PASSWORD"
 
       # gradle wrapper 파일에 실행 권한을 부여
       - name: Grant execute permission for gradlew
@@ -108,5 +110,6 @@ jobs:
           key: ${{ secrets.HYEJU_EC2_SSH_KEY }} # EC2 인스턴스 pem key
           port: ${{ secrets.HYEJU_EC2_SSH_PORT }} # 접속포트번호 (보통 22)
           script: | # 실행될 스크립트
+            source ~/.bashrc  # EC2에 설정된 환경 변수 불러오기
             cd /home/ec2-user/app/OMG_project
             nohup java -jar OMG_project-0.0.1-SNAPSHOT.jar &
