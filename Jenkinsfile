@@ -34,9 +34,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...'
-                echo 'Building...'
-                sh 'cmhod 755 ./gradlew'
-                sh './gradlew build'
+                sh './gradlew clean build' // Gradle을 사용한 빌드
             }
         }
 
