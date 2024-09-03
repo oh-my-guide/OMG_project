@@ -60,7 +60,7 @@ jobs:
           port: ${{ secrets.HYEJU_EC2_SSH_PORT }} # 접속포트번호 (보통 22)
           script: |
             mkdir -p /home/ec2-user/app/OMG_project
-            cp build/libs/OMG_project-0.0.1-SNAPSHOT.jar ~/app/OMG_project/
+            cp cp build/libs/OMG_project-0.0.1-SNAPSHOT.jar /home/ec2-user/app/OMG_project/
 
       - name: Deploy JAR to EC2
         uses: appleboy/ssh-action@v0.1.9 # ssh 접속하는 오픈소스
