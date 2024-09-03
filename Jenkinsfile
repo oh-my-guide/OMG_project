@@ -47,8 +47,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
-                // 배포 관련 스크립트 또는 명령어를 추가
-                // 예: SCP로 JAR 파일을 서버로 복사, Docker 이미지를 빌드 및 배포 등
+                withAWS(credentials: 'aws_omg') {
+                sh 'aws s3 cp build/libs/OMG_project-0.0.1-SNAPSHOT.jar s3://omg-build/'
+                }
             }
         }
     }
