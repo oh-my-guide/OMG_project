@@ -4,7 +4,7 @@ name: CI/CD
 # 워크플로가 시작될 조건 지정
 on:
   push:
-    branches: [hyeju-cicd]
+    branches: [yujin-cicd]
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
           mkdir -p ./src/main/resources
           cd ./src/main/resources
           touch ./application.yml
-          echo "${{ secrets.HYEJU_YML }}" > ./application.yml
+          echo "${{ secrets.YUJIN_YML }}" > ./application.yml
 
       # gradle wrapper 파일에 실행 권한을 부여
       - name: Grant execute permission for gradlew
@@ -69,23 +69,23 @@ jobs:
       - name: Save SSH key to file
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.HYEJU_EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.YUJIN_EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
       - name: Kill process using port 8080
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.HYEJU_EC2_USER }}@${{ secrets.HYEJU_EC2_HOST }} "sudo lsof -t -i:8080 | xargs sudo kill -9"
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.YUJIN_EC2_USER }}@${{ secrets.YUJIN_EC2_HOST }} "sudo lsof -t -i:8080 | xargs sudo kill -9"
 
       - name: Copy JAR file to EC2
-        run: scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no build/libs/OMG_project-0.0.1-SNAPSHOT.jar ${{ secrets.HYEJU_EC2_USER }}@${{ secrets.HYEJU_EC2_HOST }}:/home/ec2-user/app/OMG_project/
+        run: scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no build/libs/OMG_project-0.0.1-SNAPSHOT.jar ${{ secrets.YUJIN_EC2_USER }}@${{ secrets.YUJIN_EC2_HOST }}:/home/ec2-user/app/OMG_project/
 
       - name: Deploy JAR to EC2
         uses: appleboy/ssh-action@v0.1.9 # ssh 접속하는 오픈소스
         with:
-          host: ${{ secrets.HYEJU_EC2_HOST }} # EC2 인스턴스 IP
-          username: ${{ secrets.HYEJU_EC2_USER }} # 아마존 리눅스 아이디 (보통 ec2-user)
-          key: ${{ secrets.HYEJU_EC2_SSH_KEY }} # EC2 인스턴스 pem key
-          port: ${{ secrets.HYEJU_EC2_SSH_PORT }} # 접속포트번호 (보통 22)
+          host: ${{ secrets.YUJIN_EC2_HOST }} # EC2 인스턴스 IP
+          username: ${{ secrets.YUJIN_EC2_USER }} # 아마존 리눅스 아이디 (보통 ec2-user)
+          key: ${{ secrets.YUJIN_EC2_SSH_KEY }} # EC2 인스턴스 pem key
+          port: ${{ secrets.YUJIN_EC2_SSH_PORT }} # 접속포트번호 (보통 22)
           script: | # 실행될 스크립트
             cd /home/ec2-user/app/OMG_project
             nohup java -jar OMG_project-0.0.1-SNAPSHOT.jar > /home/ec2-user/app/OMG_project/app.log 2>&1 &
