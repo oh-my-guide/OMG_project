@@ -55,7 +55,6 @@ public class SecurityConfig {
             "/faq",          // 고객센터
             "/api/weather/coords",
             "/api/channel"
-
     };
 
     // 관리자 페이지
