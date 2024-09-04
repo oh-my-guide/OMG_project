@@ -52,7 +52,10 @@ public class SecurityConfig {
             "/reviewPost/", // 여행 후기 게시글 목록
             "/joinPost/",    // 일행 모집 게시글 목록
             "/api/weather",  // 날씨 API
-            "/faq"          // 고객센터
+            "/faq",          // 고객센터
+            "/api/weather/coords",
+            "/api/channel"
+
     };
 
     // 관리자 페이지
