@@ -28,8 +28,9 @@
         }
 
         #postList {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 20px;
         }
 
         .post-item {
@@ -89,8 +90,9 @@
         }
 
         #postListHeader {
-            max-width: 800px;
-            margin: 20px auto;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: flex-end;
@@ -191,7 +193,7 @@
 </head>
 <body>
 <div th:replace="fragments/header :: headerFragment"></div>
-<h1>일행 모집 게시판</h1>
+<h1 style="font-weight: bold;">일행 모집 게시판</h1>
 
 <div id="postListHeader">
     <button id="createPostButton" onclick="location.href='/joinPost/createPost'">글 작성</button>
