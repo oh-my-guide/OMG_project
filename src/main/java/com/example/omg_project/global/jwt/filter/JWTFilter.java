@@ -53,7 +53,7 @@ public class JWTFilter extends OncePerRequestFilter {
             "/css/.*", "/js/.*", "/files/.*",
             "/api/users/reset-password", "/api/users/verify-temporary-password",
             "/service", "/reviewPost/", "/joinPost/", "/users/reset-user-password",
-            "/api/weather", "/faq"
+            "/api/weather", "/faq", "/api/weather/coords", "/api/channel"
     );
 
     /**
