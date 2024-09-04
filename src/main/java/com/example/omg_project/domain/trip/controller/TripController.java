@@ -97,7 +97,7 @@ public class TripController {
         User user = userService.findByUsername(username).orElseThrow();
         model.addAttribute("user", user);
         model.addAttribute("trip", trip);
-        return "trip/updateTrip";
+        return "trip/updatetrip";
     }
 
     @GetMapping("/select")
