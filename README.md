@@ -16,20 +16,18 @@
 
 **목차**
 
-1. [프로젝트 개요 (Overview)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-2. [기술 스택 (Tech Stack)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-3. [설치 및 실행 방법 (Installation & Setup)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-4. [주요 기능 (Features)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-5. [프로젝트 구조 (Project Structure)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-6. [데모 (Demo)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-7. [테스트 (Testing)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-8. [기여 방법 (Contributing)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-9. [라이선스 (License)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-10. [문제 해결 (Troubleshooting) 및 FAQ](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-11. [팀 소개 (Team)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-12. [향후 계획 (Future Work)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-13. [기타 참고 자료 (Additional Resources)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-
+1. [프로젝트 개요 (Overview)](#프로젝트-개요-overview)
+2. [기술 스택 (Tech Stack)](#기술-스택-tech-stack)
+3. [설치 및 실행 방법 (Installation & Setup)](#설치-및-실행-방법-installation--setup)
+4. [주요 기능 (Features)](#주요-기능-features)
+5. [프로젝트 구조 (Project Structure)](#프로젝트-구조-project-structure)
+6. [데모 (Demo)](#데모-demo)
+7. [테스트 (Testing)](#테스트-testing)
+8. [기여 방법 (Contributing)](#기여-방법-contributing)
+9. [라이선스 (License)](#라이선스-license)
+10. [문제 해결 (Troubleshooting) 및 FAQ](#문제-해결-troubleshooting-및-faq)
+11. [향후 계획 (Future Work)](#향후-계획-future-work)
+12. [기타 참고 자료 (Additional Resources)](#기타-참고-자료-additional-resources)
 ---
 
 ## 프로젝트 개요 (Overview)
