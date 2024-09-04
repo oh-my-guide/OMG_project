@@ -23,6 +23,11 @@ repositories {
     mavenCentral()
 }
 
+// plain이 아닌 의존성을 포함한 일반 jar 파일만 생성하도록 변경
+jar {
+    enabled = false
+}
+
 // 매개변수 이름 인식문제 해결 (ex) @RequestParam, @PathVariable, ..)
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
