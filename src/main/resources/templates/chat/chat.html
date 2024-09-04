@@ -200,6 +200,7 @@
     });
 
     var socket = new WebSocket("ws://3.39.43.41:8080/chat/" + roomId);
+    var socket = new WebSocket("ws://13.124.241.122:8080/chat/" + roomId);
 
     socket.onopen = function() {
       console.log("WebSocket 서버에 연결되었습니다.");
