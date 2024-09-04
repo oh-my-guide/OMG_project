@@ -26,7 +26,6 @@ public class KafkaConsumerConfig {
         Map<String, Object> config = new HashMap<>();   // 설정을 담을 맵 생성
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "3.39.43.41:9092");  // Kafka 서버 주소 설정
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "13.124.241.122:9092");  // Kafka 서버 주소 설정
 
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "chat-room-listener");   // 그룹 ID 설정
 
