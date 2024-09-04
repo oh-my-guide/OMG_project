@@ -17,7 +17,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 120px auto 50px auto;
             padding: 20px;
             background-color: #fff;
@@ -191,6 +191,7 @@
             border: none;
             cursor: pointer;
             padding: 0;
+            margin-right: 5px;
             font-size: 1em;
             text-decoration: none;
             transition: color 0.3s ease;
@@ -487,12 +488,12 @@
                         <span class="comment-date">${comment.formattedCreatedAt}</span>
                     </div>
                     <div class="comment-buttons">`;
-                        if (comment.userId === parseInt(userId)) {
-                            contentHTML += `
+            if (comment.userId === parseInt(userId)) {
+                contentHTML += `
                         <button class="edit-btn" onclick="editComment(${comment.id})">수정</button>
                         <button class="edit-btn" onclick="deleteComment(${comment.id})">삭제</button>`;
-                        }
-                        contentHTML += `
+            }
+            contentHTML += `
                         <button class="edit-btn" onclick="toggleReplyForm(${comment.id})">답글 달기</button>
                     </div>
                 </div>
