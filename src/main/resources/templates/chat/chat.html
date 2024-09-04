@@ -199,7 +199,7 @@
       console.error('Fetch operation error:', textStatus, errorThrown);
     });
 
-    var socket = new WebSocket("ws://13.124.241.122:8080/chat/" + roomId);
+    var socket = new WebSocket("ws://15.165.236.189:8080/chat/" + roomId);
 
     socket.onopen = function() {
       console.log("WebSocket 서버에 연결되었습니다.");
