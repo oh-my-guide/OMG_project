@@ -9,181 +9,181 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/translations/ko.js"></script>
     <title>후기 게시글 작성</title>
     <style>
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: 'Arial', sans-serif;
-        background-color: #f8f9fa;
-        color: #333;
-    }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
 
-    h1 {
-        color: #8fc6ff;
-        padding: 10px 20px;
-        text-align: center;
-        font-size: 20px;
-        margin: 90px auto 0 auto;
-        background-color: #fff;
-        border: 2px solid #8fc6ff;
-        border-radius: 25px;
-        display: block;
-        width: fit-content;
-    }
+        h1 {
+            color: #8fc6ff;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 20px;
+            margin: 90px auto 0 auto;
+            background-color: #fff;
+            border: 2px solid #8fc6ff;
+            border-radius: 25px;
+            display: block;
+            width: fit-content;
+        }
 
-    #createPostForm {
-        max-width: 1000px;
-        margin: 30px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    }
+        #createPostForm {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
 
-    label {
-        font-weight: bold;
-        margin-bottom: 8px;
-        display: block;
-        font-size: 14px;
-        color: #555;
-    }
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 14px;
+            color: #555;
+        }
 
-    input, textarea, select {
-        display: block;
-        margin-bottom: 20px;
-        width: 100%;
-        padding: 10px;
-        font-size: 14px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
-        transition: border-color 0.3s;
-    }
+        input, textarea, select {
+            display: block;
+            margin-bottom: 20px;
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
 
-    input:focus, textarea:focus, select:focus {
-        border-color: #8fc6ff;
-        outline: none;
-    }
+        input:focus, textarea:focus, select:focus {
+            border-color: #8fc6ff;
+            outline: none;
+        }
 
-    button {
-        width: 100%;
-        padding: 15px;
-        background-color: #8fc6ff;
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #8fc6ff;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    button:hover {
-        background-color: #7bb4e6;
-    }
+        button:hover {
+            background-color: #7bb4e6;
+        }
 
-    button:active {
-        background-color: #6ba0d6;
-    }
+        button:active {
+            background-color: #6ba0d6;
+        }
 
-    .trip-info {
-        margin-top: 20px;
-        margin-bottom: 10px;
-        padding: 0;
-    }
+        .trip-info {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            padding: 0;
+        }
 
-    .trip-info h3 {
-        font-size: 18px;
-        color: #333;
-        margin-top: 15px;
-        margin-bottom: 10px;
-        border-bottom: 2px solid #8fc6ff;
-        padding-bottom: 5px;
-    }
+        .trip-info h3 {
+            font-size: 18px;
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #8fc6ff;
+            padding-bottom: 5px;
+        }
 
-    details {
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-    }
+        details {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
 
-    summary {
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        color: #555;
-        padding: 5px;
-    }
+        summary {
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #555;
+            padding: 5px;
+        }
 
-    summary:hover {
-        color: #333;
-    }
+        summary:hover {
+            color: #333;
+        }
 
-    summary::marker {
-        color: #8fc6ff;
-    }
+        summary::marker {
+            color: #8fc6ff;
+        }
 
-    ul {
-        display: block;
-        list-style-type: none;
-        margin-block-start: 10px;
-        margin-block-end: 10px;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        padding-inline-start: 20px;
-        padding-inline-end: 20px;
-        unicode-bidi: isolate;
-    }
+        ul {
+            display: block;
+            list-style-type: none;
+            margin-block-start: 10px;
+            margin-block-end: 10px;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            padding-inline-start: 20px;
+            padding-inline-end: 20px;
+            unicode-bidi: isolate;
+        }
 
-    .location-item {
-        padding: 7px;
-        margin-bottom: 10px;
-        background-color: #f4f4f4;
-        border-radius: 5px;
-    }
+        .location-item {
+            padding: 7px;
+            margin-bottom: 10px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
 
-    .location-item-header {
-        display: flex;
-        align-items: center;
-    }
+        .location-item-header {
+            display: flex;
+            align-items: center;
+        }
 
-    .location-item-header .location-name {
-        flex-grow: 1;
-        font-weight: 600;
-        font-size: 15px;
-        color: #555;
-    }
+        .location-item-header .location-name {
+            flex-grow: 1;
+            font-weight: 600;
+            font-size: 15px;
+            color: #555;
+        }
 
-    .location-item-header .edit-icon {
-        cursor: pointer;
-        margin-right: 10px;
-        font-size: 18px;
-        color: #555;
-    }
+        .location-item-header .edit-icon {
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 18px;
+            color: #555;
+        }
 
-    .location-item-header .edit-icon:hover {
-        color: #8fc6ff;
-    }
+        .location-item-header .edit-icon:hover {
+            color: #8fc6ff;
+        }
 
-    .location-textarea {
-        margin-top: 10px;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        width: 100%;
-        font-size: 14px;
-        box-sizing: border-box;
-        display: none; /* 처음에는 textarea가 보이지 않도록 설정 */
-    }
+        .location-textarea {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 14px;
+            box-sizing: border-box;
+            display: none; /* 처음에는 textarea가 보이지 않도록 설정 */
+        }
 
-    /* ckeditor css 설정 */
-    .ck-editor__editable_inline {
-        min-height: 300px;
-    }
+        /* ckeditor css 설정 */
+        .ck-editor__editable_inline {
+            min-height: 300px;
+        }
 
-    .ck-content {
-        font-size: 14px; /* 원하는 폰트 사이즈로 변경 */
-    }
+        .ck-content {
+            font-size: 14px; /* 원하는 폰트 사이즈로 변경 */
+        }
     </style>
 </head>
 <body>
