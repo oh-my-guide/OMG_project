@@ -18,6 +18,9 @@ public class JoinPostLikeApiController {
     private final JoinPostLikeService joinPostLikeService;
     private final UserService userService;
 
+    /**
+     * 좋아요 상태 조회
+     */
     @GetMapping("/{joinPostId}/likes")
     public ResponseEntity<Map<String, Object>> getLikeInfo (@PathVariable Long joinPostId, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName()).orElseThrow();
@@ -25,6 +28,9 @@ public class JoinPostLikeApiController {
         return ResponseEntity.ok(likeInfo);
     }
 
+    /**
+     * 좋아요 토글
+     */
     @PostMapping("/{joinPostId}/likes")
     public ResponseEntity<Void> toggleLike(@PathVariable Long joinPostId, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName()).orElseThrow();

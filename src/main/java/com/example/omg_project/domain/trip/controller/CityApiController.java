@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 @RestController
 @RequestMapping("/api/cities")
 @RequiredArgsConstructor
 
-//도시 이름으로 도시 id 조회
+/**
+ * 도시 이름으로 도시 ID 조회
+ *
+ * @param cityName 조회할 도시의 이름
+ * @return 도시 ID
+ */
 public class CityApiController {
     private final CityService cityService;
 
@@ -29,7 +33,5 @@ public class CityApiController {
         cityDTO.setName(city.getName());
 
         return ResponseEntity.ok(cityDTO);
-
-
     }
 }

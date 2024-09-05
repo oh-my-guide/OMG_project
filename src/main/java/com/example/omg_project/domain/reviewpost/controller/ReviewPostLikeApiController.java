@@ -18,6 +18,9 @@ public class ReviewPostLikeApiController {
     private final ReviewPostLikeService reviewPostLikeService;
     private final UserService userService;
 
+    /**
+     * 좋아요 상태 조회
+     */
     @GetMapping("/{reviewPostId}/likes")
     public ResponseEntity<Map<String, Object>> getLikeInfo (@PathVariable Long reviewPostId, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName()).orElseThrow();
@@ -25,6 +28,9 @@ public class ReviewPostLikeApiController {
         return ResponseEntity.ok(likeInfo);
     }
 
+    /**
+     * 좋아요 토글
+     */
     @PostMapping("/{reviewPostId}/likes")
     public ResponseEntity<Void> toggleLike(@PathVariable Long reviewPostId, Authentication authentication) {
         User user = userService.findByUsername(authentication.getName()).orElseThrow();

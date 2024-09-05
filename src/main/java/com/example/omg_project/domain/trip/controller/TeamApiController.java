@@ -23,6 +23,11 @@ public class TeamApiController {
     private final TeamService teamService;
     private final UserRepository userRepository;
 
+    /**
+     * 팀 가입 요청
+     *
+     * @param inviteCode 팀 가입을 위한 초대 코드
+     */
     @PostMapping("/join")
     public ResponseEntity<String> joinTeam(@RequestParam String inviteCode) {
         try {
@@ -65,6 +70,11 @@ public class TeamApiController {
         }
     }
 
+    /**
+     * 현재 사용자가 가입한 팀 목록 조회
+     *
+     * @return 현재 사용자가 가입한 팀 목록과 HTTP 상태 코드
+     */
     @GetMapping("/myteam")
     public ResponseEntity<List<Map<String, Object>>> getMyTeams() {
         try {
@@ -93,6 +103,11 @@ public class TeamApiController {
         }
     }
 
+    /**
+     * 팀 탈퇴 요청 처리
+     *
+     * @param request 팀 탈퇴를 위한 요청 데이터 (teamId)
+     */
     @PostMapping("/leave")
     public ResponseEntity<String> leaveTeam(@RequestBody Map<String, Long> request) {
         try {

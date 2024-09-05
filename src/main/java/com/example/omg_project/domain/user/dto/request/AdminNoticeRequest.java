@@ -1,12 +1,13 @@
 package com.example.omg_project.domain.user.dto.request;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+/**
+ * 관리자 공지사항 dto
+ */
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

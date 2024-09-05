@@ -22,6 +22,9 @@ public class ReviewPostLikeServiceImpl implements ReviewPostLikeService {
     private final UserRepository userRepository;
     private final ReviewPostRepository reviewPostRepository;
 
+    /**
+     * 좋아요 상태 조회
+     */
     @Override
     public Map<String, Object> getLikeInfo(Long userId, Long postId) {
         // 좋아요 여부 확인
@@ -37,6 +40,9 @@ public class ReviewPostLikeServiceImpl implements ReviewPostLikeService {
         return response;
     }
 
+    /**
+     * 좋아요 토글
+     */
     @Override
     public void toggleLike(Long userId, Long postId) {
         User user = userRepository.findById(userId)
