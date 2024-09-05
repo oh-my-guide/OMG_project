@@ -91,3 +91,5 @@ jobs:
             nohup java -jar OMG_project-0.0.1-SNAPSHOT.jar > /home/ec2-user/app/OMG_project/app.log 2>&1 &
 
 
+
+
