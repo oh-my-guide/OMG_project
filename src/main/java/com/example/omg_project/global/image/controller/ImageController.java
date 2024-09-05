@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
@@ -21,16 +22,14 @@ public class ImageController {
 
     /**
      * CKEditor 이미지 업로드 핸들러
-     * @param request MultipartRequest 객체
+     * CKEditor에서 이미지 파일을 보내줄 때 'upload'라는 key에 이미지 파일을 저장해서 보내줌 -> request에서 이미지 파일 뽑아냄
+     * @param image MultipartRequest 객체
      * @return 업로드 결과와 이미지 URL을 포함하는 ResponseEntity 객체
      */
     @PostMapping("/image/upload")
-    public ResponseEntity<Map<String, Object>> imageUpload(MultipartRequest request){
+    public ResponseEntity<Map<String, Object>> imageUpload(@RequestParam("upload") MultipartFile image){
         // CKEditor에서 이미지를 올리면 두 가지 응답 값을 받음 (uploaded: 업로드가 잘 되었는지, url: 어디에 업로드되었는지)
         Map<String, Object> responseData = new HashMap<>();
-
-        // CKEditor에서 이미지 파일을 보내줄 때 'upload'라는 key에 이미지 파일을 저장해서 보내줌 -> request에서 이미지 파일 뽑아냄
-        MultipartFile image = request.getFile("upload");
 
         try {
             // S3 버킷에 업로드
