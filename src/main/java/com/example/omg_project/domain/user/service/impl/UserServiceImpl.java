@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 회원가입 메서드
+     * @param userSignUpDto 회원가입 dto
      */
     @Override
     @Transactional
@@ -75,11 +76,21 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    /**
+     * 회원 아이디 조회
+     * @param id 회원 아이디
+     * @return 응답
+     */
     @Override
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
+    /**
+     * 회원 이름 조회
+     * @param username 회원 이름
+     * @return 응답
+     */
     @Override
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -87,6 +98,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 회원 탈퇴
+     * @param userId 회원 아이디
      */
     @Override
     @Transactional
@@ -126,6 +138,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 닉네임 중복 확인
+     * @param usernick 닉네임
+     * @return 응답
      */
     @Override
     public boolean existsByUsernick(String usernick) {
@@ -134,6 +148,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 이메일 중복 확인
+     * @param username 이름
+     * @return 응답
      */
     @Override
     public boolean existsByUsername(String username) {
@@ -142,6 +158,9 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 사용자 페이지 수정
+     * @param username 이름
+     * @param userEditDto 회원정보 수정 dto
+     * @return 응답
      */
     @Override
     public Optional<User> updateUser(String username, UserEditRequest userEditDto) {
@@ -160,6 +179,9 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Oauth2 로그인 시 추가 정보 입력
+     * @param username 이름
+     * @param oauth2LoginDto 추가정보 dto
+     * @return 응답
      */
     @Override
     public Optional<User> updateOauth2(String username, Oauth2LoginRequest oauth2LoginDto) {
@@ -178,7 +200,8 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 모든 사용자 정보 가져오기
+     * 모든 사용자 정보
+     * @return 응답
      */
     @Override
     public List<User> findAllUsers() {
@@ -187,6 +210,9 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 비밀번호 재설정
+     * @param username 이름
+     * @param userPasswordChangeRequest 비밀번호 재설정 dto
+     * @return 응답
      */
     @Override
     public boolean changePassword(String username, UserPasswordChangeRequest userPasswordChangeRequest) {

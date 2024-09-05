@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Table(name = "admin_notices")
 @Entity
@@ -19,21 +18,16 @@ public class AdminNotice {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String title; // 관리자 공지사항 제목
 
     @Column(nullable = false)
-    private String content;
+    private String content; // 관지가 공지사항 내용
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt; // 관리자 공지사항 작성일
 
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
-    }
-
-    public String getFormattedCreatedAt() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-        return createdAt.format(formatter);
     }
 }

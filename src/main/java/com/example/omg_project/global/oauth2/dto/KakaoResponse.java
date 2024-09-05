@@ -8,7 +8,6 @@ public class KakaoResponse implements OAuth2Response{
 
     public KakaoResponse(Map<String, Object> attribute) {
         this.attribute = attribute;
-        System.out.println("Kakao attributes: " + attribute);
     }
 
     @Override
@@ -19,7 +18,7 @@ public class KakaoResponse implements OAuth2Response{
     @Override
     public String getProviderId() {
         return attribute.get("id").toString();
-    } // 2632890179
+    }
 
     @Override
     public String getEmail() {

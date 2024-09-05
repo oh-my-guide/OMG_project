@@ -32,6 +32,9 @@ public class AdminController {
 
     /**
      * 모든 사용자 조회
+     * @param model 데이터 전달
+     * @param request 클라이언트 요청 정보
+     * @return HTML 폼
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/userboard")
@@ -47,6 +50,12 @@ public class AdminController {
         return "user/admin-all-user";
     }
 
+    /**
+     * 모든 여행 후기 게시글 조회
+     * @param model 데이터 전달
+     * @param request 클라이언트 요청 정보
+     * @return HTML 폼
+     */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/reviewboard")
     public String adminPageAllReviewForm(Model model, HttpServletRequest request) {
@@ -62,6 +71,8 @@ public class AdminController {
 
     /**
      * 회원 정지 API
+     * @param userId 회원 아이디
+     * @return 응답
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/{userId}")
@@ -78,6 +89,8 @@ public class AdminController {
 
     /**
      * 게시글 정지 API
+     * @param postId 게시글 아이디
+     * @return 응답
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/admin/posts/{postId}")
@@ -94,6 +107,9 @@ public class AdminController {
 
     /**
      * 공지사항 작성 폼
+     * @param model 데이터 전달
+     * @param request 클라이언트 요청 정보
+     * @return HTML 폼
      */
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/create/notice")
@@ -111,6 +127,8 @@ public class AdminController {
 
     /**
      * 공지사항 작성 API
+     * @param notice 공지사항 dto
+     * @return 응답
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/notices")
@@ -129,6 +147,9 @@ public class AdminController {
 
     /**
      * 모든 공지글 확인 폼
+     * @param model 데이터 전달
+     * @param request 클라이언트 요청 정보
+     * @return HTML 폼
      */
     @GetMapping("/notices")
     public String listNoticeForm(Model model, HttpServletRequest request) {
@@ -146,6 +167,10 @@ public class AdminController {
 
     /**
      * 공지글 상세보기 폼
+     * @param id 공지사항 아이디
+     * @param model 데이터 전달
+     * @param request 클라이언트 요청 정보
+     * @return HTML 폼
      */
     @GetMapping("/notices/{id}")
     public String viewNoticeDetail(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
