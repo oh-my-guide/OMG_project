@@ -9,5 +9,6 @@ import java.util.List;
 public interface JoinPostReplyRepository extends JpaRepository<JoinPostReply, Long> {
     // 특정 댓글에 대한 모든 대댓글 조회
     List<JoinPostReply> findAllByJoinPostCommentId(Long joinPostCommentId);
+    // 특정 사용자의 모든 대댓글 조회
     List<JoinPostReply> findByUserId(Long userId);
 }

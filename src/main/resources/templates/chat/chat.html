@@ -149,10 +149,8 @@
   $(document).ready(function() {
     var pathArray = window.location.pathname.split('/');
     var roomId = pathArray[pathArray.length - 1];
-    console.log("채팅방 번호: " + roomId);
 
     var currentUserNickname = '[[${user.usernick}]]';
-    console.log("현재 사용자 닉네임: " + currentUserNickname);
 
     function appendMessage(messageData) {
       var chat = $('#chat');
@@ -191,7 +189,6 @@
     }
 
     $.getJSON(`/api/chat/rooms/${roomId}/messages`, function(messages) {
-      console.log(messages);
       messages.forEach(function(message) {
         appendMessage(message);
       });
@@ -199,7 +196,7 @@
       console.error('Fetch operation error:', textStatus, errorThrown);
     });
 
-    var socket = new WebSocket("ws://ec2-43-202-189-185.ap-northeast-2.compute.amazonaws.com:8080/chat/" + roomId);
+    var socket = new WebSocket("ws://localhost:8080/chat/" + roomId);
 
     socket.onopen = function() {
       console.log("WebSocket 서버에 연결되었습니다.");
@@ -207,7 +204,6 @@
 
     socket.onmessage = function(event) {
       var messageData = JSON.parse(event.data);
-      console.log(messageData);
       appendMessage(messageData);
     };
 
@@ -239,11 +235,13 @@
       }
     });
 
-    $('#uploadButton').click(function() {
+    // 파일 업로드 버튼 클릭 이벤트 등록
+    $('#uploadButton').off('click').on('click', function() {
       $('#fileInput').click();
     });
 
-    $('#fileInput').change(function(event) {
+    // 파일 입력 변경 이벤트 등록
+    $('#fileInput').off('change').on('change', function(event) {
       var file = event.target.files[0];
       if (file) {
         var formData = new FormData();
@@ -257,8 +255,11 @@
           processData: false,
           success: function(response) {
             var imageUrl = response; // 서버에서 반환한 이미지 URL
-            console.log(imageUrl);
-            socket.send(JSON.stringify({ imageUrl: imageUrl }));
+            if (imageUrl) {
+              socket.send(JSON.stringify({ imageUrl: imageUrl }));
+            } else {
+              console.error("서버로부터 이미지 URL을 받을 수 없습니다.");
+            }
           },
           error: function(jqXHR, textStatus, errorThrown) {
             console.error('Upload error:', textStatus, errorThrown);

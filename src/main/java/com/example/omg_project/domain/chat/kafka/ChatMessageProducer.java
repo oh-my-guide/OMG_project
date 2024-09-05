@@ -1,10 +1,12 @@
 package com.example.omg_project.domain.chat.kafka;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ChatMessageProducer {
 
@@ -19,12 +21,12 @@ public class ChatMessageProducer {
     public void sendMessage(String roomId, String message) {
         String topicName = "chatTopic"; // 채팅 메시지를 전송할 Kafka 토픽 이름 설정
 
-        System.out.println("채팅방 ID: " + roomId + ", 토픽: " + topicName + ", 메시지: " + message);
+        log.info("채팅방 ID: " + roomId + ", 토픽: " + topicName + ", 메시지: " + message);
 
-        // roomId와 메시지를 결합하여 최종 메시지 형식을 만듭니다.
+        // roomId와 메시지를 결합하여 최종 메시지 형식을 생성
         message = roomId + ":" + message;
 
-        // KafkaTemplate을 사용해 메시지를 해당 토픽으로 전송합니다.
+        // KafkaTemplate을 사용해 메시지를 해당 토픽으로 전송
         kafkaTemplate.send(topicName, message);
     }
 }

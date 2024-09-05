@@ -14,20 +14,18 @@
 
 **목차**
 
-1. [프로젝트 개요 (Overview)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-2. [기술 스택 (Tech Stack)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-3. [설치 및 실행 방법 (Installation & Setup)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-4. [주요 기능 (Features)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-5. [프로젝트 구조 (Project Structure)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-6. [데모 (Demo)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-7. [테스트 (Testing)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-8. [기여 방법 (Contributing)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-9. [라이선스 (License)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-10. [문제 해결 (Troubleshooting) 및 FAQ](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-11. [팀 소개 (Team)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-12. [향후 계획 (Future Work)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-13. [기타 참고 자료 (Additional Resources)](https://www.notion.so/7fc6cf4574554e988f683b6373234680?pvs=21)
-
+1. [프로젝트 개요 (Overview)](#프로젝트-개요-overview)
+2. [기술 스택 (Tech Stack)](#기술-스택-tech-stack)
+3. [설치 및 실행 방법 (Installation & Setup)](#설치-및-실행-방법-installation--setup)
+4. [주요 기능 (Features)](#주요-기능-features)
+5. [프로젝트 구조 (Project Structure)](#프로젝트-구조-project-structure)
+6. [데모 (Demo)](#데모-demo)
+7. [테스트 (Testing)](#테스트-testing)
+8. [기여 방법 (Contributing)](#기여-방법-contributing)
+9. [라이선스 (License)](#라이선스-license)
+10. [문제 해결 (Troubleshooting) 및 FAQ](#문제-해결-troubleshooting-및-faq)
+11. [향후 계획 (Future Work)](#향후-계획-future-work)
+12. [기타 참고 자료 (Additional Resources)](#기타-참고-자료-additional-resources)
 ---
 
 ## 프로젝트 개요 (Overview)
@@ -173,7 +171,7 @@ OMG(Oh My Guide)는 사용자가 **여행을 계획**하고 **동행자를 모�
    # MySQL 서비스 실행
    cd ../mysql
    docker-compose up -d
-   
+
 4. **데이터베이스에 데이터 추가**: local에서 처음으로 프로젝트를 진행하려고 할 때 city와 role에 관한 초기 데이터를 추가합니다.
     ```sql
     INSERT INTO cities (name) VALUES ('서울'), ('부산'), ('대구'), ('인천'), ('광주'), ('대전'), ('울산'), ('세종'), ('춘천'), ('원주'), ('강릉'), ('동해'), ('태백'), ('속초'), ('삼척'), ('홍천'), ('횡성'), ('평창'), ('정선'), ('영월'), ('수원'), ('고양'), ('용인'), ('성남'), ('부천'), ('남양주'), ('안산'), ('안양'), ('평택'), ('의정부'), ('군포'), ('오산'), ('시흥'), ('하남'), ('의왕'), ('양주'), ('파주'), ('광명'), ('구리'), ('여주'), ('창원'), ('김해'), ('진주'), ('양산'), ('거제'), ('통영'), ('사천'), ('밀양'), ('함안'), ('거창'), ('창녕'), ('산청'), ('의령'), ('고성'), ('하동'), ('합천'), ('포항'), ('경주'), ('구미'), ('김천'), ('안동'), ('영주'), ('상주'), ('문경'), ('경산'), ('영천'), ('청송'), ('영양'), ('봉화'), ('울릉'), ('예천'), ('성주'), ('군위'), ('의성'), ('천안'), ('아산'), ('서산'), ('공주'), ('보령'), ('논산'), ('계룡'), ('당진'), ('홍성'), ('예산'), ('서천'), ('청양'), ('부여'), ('금산'), ('청주'), ('충주'), ('제천'), ('단양'), ('음성'), ('진천'), ('괴산'), ('보은'), ('옥천'), ('영동'), ('여수'), ('순천'), ('목포'), ('나주'), ('광양'), ('담양'), ('곡성'), ('구례'), ('고흥'), ('보성'), ('장흥'), ('강진'), ('해남'), ('완도'), ('진도'), ('신안'), ('무안'), ('영암'), ('전주'), ('군산'), ('익산'), ('남원'), ('정읍'), ('김제'), ('완주'), ('진안'), ('무주'), ('장수'), ('고창'), ('임실'), ('순창'), ('제주'), ('서귀포');
@@ -196,18 +194,24 @@ OMG(Oh My Guide)는 사용자가 **여행을 계획**하고 **동행자를 모�
 
 ## 프로젝트 구조 (Project Structure)
 
-- **/src**: 소스 코드 디렉토리
-    - **/domain**: 도메인 모델 정의
-      - **/config**: 설정 파일들
-      - **/controller**: 컨트롤러 레이어
-      - **/service**: 서비스 레이어
-          - **/impl**: 서비스 구현체
-      - **/repository**: 데이터베이스 접근 레이어
-      - **/dto**: 데이터 전송 객체
-      - **/entity**: 엔티티 클래스
-    - **/global**: 글로벌 설정 및 공통 유틸리티
+    /src                            # 소스 코드 루트 디렉토리
+    └── /domain                     # 도메인 모델 정의 관련 코드
+        ├── /config                 # 도메인 관련 설정 파일들
+        ├── /controller             # 컨트롤러 레이어 (API 엔드포인트)
+        ├── /service                # 서비스 레이어 (비즈니스 로직)
+        │   └── /impl               # 서비스 구현체
+        ├── /repository             # 데이터베이스 접근 레이어 (DAO)
+        ├── /dto                    # 데이터 전송 객체 (Data Transfer Objects)
+        └── /entity                 # 엔티티 클래스 (DB 매핑 객체)
+    
+    └── /global                     # 글로벌 설정 및 공통 유틸리티
+        ├── /config                 # 전역 설정 파일들
+        ├── /exception              # 전역 예외 처리 클래스
+        ├── /image                  # 이미지 처리 유틸리티
+        ├── /jwt                    # JWT 관련 유틸리티 및 구성
+        ├── /oauth2                 # OAuth2 관련 유틸리티 및 구성
+        └── /security               # 보안 관련 설정 및 유틸리티
 
----
 
 ## 데모 (Demo)
 

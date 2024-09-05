@@ -2,7 +2,6 @@ package com.example.omg_project.domain.user.controller;
 
 import com.example.omg_project.domain.role.entity.Role;
 import com.example.omg_project.domain.user.dto.request.UserLoginRequest;
-import com.example.omg_project.domain.user.dto.request.UserSignUpRequest;
 import com.example.omg_project.domain.user.dto.response.UserLoginResponse;
 import com.example.omg_project.domain.user.entity.RandomNickname;
 import com.example.omg_project.domain.user.entity.User;
@@ -47,14 +46,15 @@ public class UserApiController {
 
     /**
      * 로그인 요청 시 jwt 토큰 발급
+     * @param userLoginDto 로그인 dto
+     * @param bindingResult 필드 에러 확인
+     * @param response 클라이언트 응답 정보
+     * @return 응답
      */
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserLoginRequest userLoginDto,
                                 BindingResult bindingResult,
                                 HttpServletResponse response){
-        log.info("로그인 요청이 들어왔습니다.");
-        log.info("아이디 :: {}", userLoginDto.getUsername());
-        log.info("비밀번호 :: {}", userLoginDto.getPassword());
 
         if(bindingResult.hasErrors()){ // 필드 에러 확인
             return new ResponseEntity("필드 에러 발생", HttpStatus.BAD_REQUEST);
@@ -109,12 +109,14 @@ public class UserApiController {
 
     /**
      * 로그아웃 요청
+     * @param accessToken 엑세스토큰
+     * @param refreshToken 리프레시토큰
+     * @param response 클라이언트 응답 정보
      */
     @GetMapping("/logout")
     public void logout(@CookieValue(name = "accessToken", required = false) String accessToken,
                        @CookieValue(name = "refreshToken", required = false) String refreshToken,
                        HttpServletResponse response) {
-        log.info("로그아웃 요청이 들어왔습니다.");
         if (accessToken == null) {
 
             try {
@@ -133,8 +135,6 @@ public class UserApiController {
                 .parseClaimsJws(jwt)
                 .getBody()
                 .getExpiration();
-
-        log.info("accessToken 만료시간 :: {}" , expirationTime);
 
         // 블랙리스트에 추가
         redisBlackTokenService.addBlacklistedToken(accessToken, expirationTime.getTime() - System.currentTimeMillis());
@@ -166,6 +166,7 @@ public class UserApiController {
 
     /**
      * 랜덤 닉네임 생성
+     * @return 랜덤 닉네임 생성
      */
     @GetMapping("/randomNickname")
     public String getRandomNickname() {
@@ -174,6 +175,11 @@ public class UserApiController {
 
     /**
      * 회원 탈퇴
+     * @param userId 사용자 아이디
+     * @param accessToken 엑세스토큰
+     * @param refreshToken 리프레시토큰
+     * @param response 클라이언트 응답 정보
+     * @return 응답
      */
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable("userId") Long userId,

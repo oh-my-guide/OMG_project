@@ -12,9 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 
 @Service
 @RequiredArgsConstructor
@@ -23,15 +20,22 @@ public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
 
-    @Override
-    public Team saveTeam(Team team) {
-        return teamRepository.save(team);
-    }
-
+    /**
+     * 초대 코드를 통해 팀을 조회하는 메서드
+     *
+     * @param inviteCode 조회할 팀의 초대 코드
+     */
     @Override
     public Team findByInviteCode(String inviteCode) {
         return teamRepository.findByInviteCode(inviteCode);
     }
+
+    /**
+     * 초대 코드를 통해 팀에 사용자를 추가하는 메서드
+     *
+     * @param inviteCode 사용자가 참여할 팀의 초대 코드
+     * @param userId     추가할 사용자의 ID
+     */
     @Override
     public void addUserToTeam(String inviteCode, Long userId) {
         Team team = teamRepository.findByInviteCode(inviteCode);
@@ -50,6 +54,12 @@ public class TeamServiceImpl implements TeamService {
         }
     }
 
+    /**
+     * 사용자를 팀에서 제거하는 메서드
+     *
+     * @param teamId 사용자가 제거될 팀의 ID
+     * @param userId 제거할 사용자의 ID
+     */
     @Override
     public void removeUserFromTeam(Long teamId, Long userId) {
         Team team = teamRepository.findById(teamId).orElse(null);
@@ -66,6 +76,11 @@ public class TeamServiceImpl implements TeamService {
         }
     }
 
+    /**
+     * 사용자의 팀 목록을 조회하는 메서드
+     *
+     * @param userId 조회할 사용자의 ID
+     */
     @Override
     public List<Map<String, Object>> getUserTeams(Long userId) {
         User user = userRepository.findById(userId).orElse(null);
@@ -93,7 +108,11 @@ public class TeamServiceImpl implements TeamService {
                 .collect(Collectors.toList());
     }
 
-    // 팀의 채팅방 ID와 사용자 ID를 기반으로 사용자 포함 여부 확인
+    /**
+     * 팀의 채팅방 ID를 통해 팀을 조회하는 메서드
+     *
+     * @param chatRoomId 조회할 팀의 채팅방 ID
+     */
     @Override
     public Team findByChatRoomId(Long chatRoomId) {
         Optional<Team> teamOptional = teamRepository.findByChatRoomId(chatRoomId);
@@ -102,11 +121,22 @@ public class TeamServiceImpl implements TeamService {
         );
     }
 
+    /**
+     * 팀 ID를 통해 팀을 조회하는 메서드
+     *
+     * @param tripId 조회할 팀의 여행 일정 ID
+     */
     @Override
     public Team findById(Long tripId) {
         return teamRepository.findById(tripId).orElse(null);
     }
 
+    /**
+     * 사용자가 팀에 속해 있는지 확인하는 메서드
+     *
+     * @param userId 확인할 사용자의 ID
+     * @param teamId 확인할 팀의 ID
+     */
     @Override
     public boolean isUserInTeam(Long userId, Long teamId) {
         // 팀에서 해당 사용자가 이미 속해 있는지 확인

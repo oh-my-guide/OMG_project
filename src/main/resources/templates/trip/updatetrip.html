@@ -210,9 +210,9 @@
     };
 
     let tripDatesCounter = 0;
-    let markers = {};   // 마커를 저장할 객체 (key: dayNum, value: marker 객체 배열)
-    let selectedPlaces = {};    // 선택된 장소를 저장할 객체
-    let selectedDateDiv = null; // 선택된 날짜의 div 요소
+    let markers = {};   // 마커 객체를 저장하는 객체 (key: dayNum / value: kakao.maps.Marker 객체)
+    let selectedPlaces = {};    // 선택한 장소를 저장하는 객체 (key: dayNum / value: 선택된 장소 데이터)
+    let selectedDateDiv = null; // 클릭한 버튼이 속한 가장 가까운 .tripDate 요소
 
     // 수정 버튼 클릭 이벤트 핸들러
     document.getElementById('editButton').addEventListener('click', function(event) {
@@ -271,9 +271,9 @@
     });
 
     /**
-     * 마커 이미지 색상과 장소명 앞 span 태그의 글자 색상 연관 짓기
-     * @param index
-     * @returns {string}
+     * 마커 이미지 색상과 장소명 앞 span 태그의 글자 색상을 연관 짓기 위해 색상을 받아오는 함수입니다.
+     * @param index - (dayNum % 6) === 0 ? 6 : (dayNum % 6) 을 해서 나온 1 ~ 6 사이 값
+     * @returns {string} - 색상 코드
      */
     function getColorCode(index) {
         const colors = [
@@ -288,9 +288,9 @@
     }
 
     /**
-     * fetchTripData에서 호출되어 각 여행 날짜 동적으로 생성
-     * 여행 장소 상세는 createTripLocationHtml에서 생성
-     * @param tripDateData
+     * fetchTripData에서 호출되어 각 여행 날짜를 동적으로 생성하고, 해당 날짜에 관련된 여행 장소를 표시하는 함수입니다.
+     * 여행 장소 상세는 createTripLocationHtml 함수를 사용하여 생성됩니다.
+     * @param tripDateData - 여행 날짜와 관련된 데이터 객체
      */
     function addTripDate(tripDateData = {}) {
         const tripDateId = tripDatesCounter++;
@@ -312,9 +312,12 @@
 
         document.getElementById('tripDatesContainer').appendChild(tripDateElement);
 
-        // 받아온 데이터를 기반으로 selectedPlaces 객체 초기화
+        // 받아온 데이터를 기반으로 selectedPlaces 객체와 markers 객체 초기화
         const dayNum = tripDateId + 1;
+
+        // tripDateData에 tripLocations가 있는 경우
         if (tripDateData.tripLocations) {
+            // selectedPlaces 객체에 해당 dayNum과 관련된 장소 데이터를 저장
             selectedPlaces[dayNum] = tripDateData.tripLocations.map(loc => ({
                 placeName: loc.placeName,
                 latitude: loc.latitude,
@@ -322,6 +325,7 @@
             }));
 
             markers[dayNum] = [];
+            // 각 장소에 대해 마커와 폴리라인을 지도에 표시
             tripDateData.tripLocations.forEach((loc) => {
                 // 받아온 데이터 기반으로 이미 추가되어있던 장소의 마커를 지도에 표시하기
                 addSavedPlacesMarker(loc.latitude, loc.longitude, markers[dayNum].length, dayNum);
@@ -336,13 +340,15 @@
     }
 
     /**
-     * 여행 장소 추가 함수
-     * @param button
-     * @returns {null|string}
+     * 장소 추가 버튼 클릭 시 검색창을 열고 해당 날짜 정보를 저장 및 selectedPlaces, markers 객체를 초기화하는 함수입니다.
+     * @param button - 클릭된 장소 추가 버튼 요소
+     * @returns {null|string} - 클릭한 장소 추가 버튼이 몇 일차인지 날짜 번호 (예: 1)
      */
     function addTripLocation(button) {
+        // 장소 추가 버튼을 누를 시 menu_wrap이 보이도록 설정
         document.getElementById('menu_wrap').style.display = 'block';
 
+        // 클릭한 버튼이 속한 가장 가까운 .tripDate 요소를 찾아서 selectedDateDiv 변수에 할당
         selectedDateDiv = button.closest('.trip-date');
 
         // 여행 몇째 날인지 추출 (ex. 1, 2, ..)
@@ -355,72 +361,31 @@
                 const dayText = dayCountSpan.textContent.trim();
                 // "Day 1"에서 숫자 부분만 추출
                 const dayNum = dayText.replace('Day ', '');
-                // reorderLocations();
 
-                // selectedPlaces 객체에서 dayNum에 해당하는 배열이 없으면 초기화
+                // selectedPlaces 객체와 markers 객체에서 dayNum에 해당하는 배열이 없으면 초기화
                 if (!selectedPlaces[dayNum]) {
                     selectedPlaces[dayNum] = [];
                 }
-
                 if (!markers[dayNum]) {
                     markers[dayNum] = [];
                 }
 
-                return dayNum;   // 예: "1"
+                return dayNum;  // 예: 1
             } else {
-                console.error('Day count span not found in selectedDateDiv.');
+                console.error('selectedDateDiv 내에서 dayCountLabel 요소를 찾을 수 없습니다.');
             }
         } else {
-            console.error('selectedDateDiv is not set.');
+            console.error('selectedDateDiv가 설정되지 않았습니다.');
         }
         return null;
     }
 
-    // function handleSelectCompleteBtnClick() {
-    //     if (selectedPlaces.length === 0) {
-    //         alert('선택된 장소가 없습니다. 장소를 추가해 주세요.');
-    //         return;
-    //     }
-    //
-    //     if (!selectedDateDiv) {
-    //         alert('장소를 추가할 날짜를 선택해 주세요.');
-    //         return;
-    //     }
-    //
-    //     const locationsContainer = selectedDateDiv.querySelector('.trip-locations');
-    //     selectedPlaces.forEach((place, index) => {
-    //         const tripLocationElement = document.createElement('div');
-    //         tripLocationElement.className = 'trip-location';
-    //         tripLocationElement.dataset.id = place.id || '';
-    //
-    //         const formattedLatitude = parseFloat(place.y).toFixed(6);
-    //         const formattedLongitude = parseFloat(place.x).toFixed(6);
-    //
-    //         tripLocationElement.innerHTML = `
-    //         <div class="placeNameContainer">
-    //             <span id="${uniqueId}" style="color: ${getColorCode(index)};">${index + 1}</span>
-    //             <input type="text" class="placeNameInput" value="${place.place_name}" readonly />
-    //         </div>
-    //         <input type="hidden" class="longitudeInput" value="${formattedLongitude}" />
-    //         <input type="hidden" class="latitudeInput" value="${formattedLatitude}" />
-    //     `;
-    //
-    //         locationsContainer.appendChild(tripLocationElement);
-    //         reorderLocations();
-    //     });
-    //
-    //     selectedPlaces = [];
-    //     selectedDateDiv = null;
-    //     $('#menu_wrap').hide();
-    //
-    // }
-
     /**
-     * 여행 장소 상세 HTML 생성
-     * @param tripLocationData
-     * @param dayNum
-     * @param placeIndex
-     * @returns {string}
+     * 각 여행 장소 데이터를 기반으로 HTML을 생성하는 함수입니다.
+     * @param tripLocationData - 여행 장소에 대한 데이터 객체
+     * @param dayNum - 해당 여행 일차
+     * @param placeIndex - 해당 날짜의 몇 번째 장소인지에 대한 인덱스
+     * @returns {string} - 생성된 HTML 문자열
      */
     function createTripLocationHtml(tripLocationData, dayNum, placeIndex) {
         // 장소의 고유 ID 생성 (ex. 몇일차-몇번째장소: 1-1, 1-2, 2-1, ..)
@@ -443,7 +408,7 @@
 
 
     /**
-     * 여행 데이터 가져와서 HTML에 채워넣기
+     * 여행 데이터를 가져와서 HTML에 채워넣는 함수입니다.
      */
     function fetchTripData() {
         // tripId를 사용하여 서버에서 여행 데이터를 가져옴
@@ -456,35 +421,11 @@
 
                 // 각 여행 날짜에 대한 정보를 추가
                 trip.tripDates.forEach(tripDate => addTripDate(tripDate));
-                reorderLocations();
             });
     }
 
-    // function reorderLocations() {
-    //     // 각 날짜의 .trip-date 요소를 순회
-    //     document.querySelectorAll('.trip-date').forEach((dateElement) => {
-    //         let locationCounter = 1; // 각 날짜의 장소 번호를 1부터 시작
-    //         // 해당 날짜의 모든 .trip-location 요소를 순회하며 번호를 재정렬
-    //         dateElement.querySelectorAll('.trip-location').forEach((locationElement) => {
-    //             const placeNumberElement = locationElement.querySelector('span');
-    //             if (placeNumberElement) {
-    //                 placeNumberElement.textContent = locationCounter++; // 번호 갱신
-    //             } else {
-    //                 // 만약 'span' 요소가 없다면 새로 생성해서 추가
-    //                 const newPlaceNumberElement = document.createElement('span');
-    //                 newPlaceNumberElement.textContent = locationCounter++;
-    //                 locationElement.insertBefore(newPlaceNumberElement, locationElement.firstChild);
-    //             }
-    //         });
-    //     });
-    // }
-
-    function reorderLocations() {
-
-    }
-
     /**
-     * 날짜 카운트 업데이트 (Day 숫자 업데이트)
+     * 날짜 카운트를 업데이트(Day 숫자 업데이트) 하는 함수입니다.
      */
     function updateDayCount() {
         const tripDateInputs = document.querySelectorAll('.tripDateInput');
@@ -501,17 +442,21 @@
         });
     }
 
-    // 페이지 로드 시 여행 데이터를 가져옴
+    /**
+     * 페이지 로드 시 여행 데이터를 가져옴
+     */
     const tripId = window.location.pathname.split('/').pop();
     fetchTripData();
 
-    // 창 닫기 버튼 클릭 시 #menu_wrap 숨기기
+    /**
+     * 창 닫기 버튼 클릭 시 #menu_wrap 숨기기
+     */
     document.getElementById('closeBtn').addEventListener('click', function() {
         $('#menu_wrap').hide();
     });
 
     /**
-     * 날짜 변경 시 일정을 조정하는 함수
+     * 날짜 변경 시 일정을 조정하는 함수입니다.
      */
     function updateTripDates() {
         tripDatesCounter = 0;
@@ -542,8 +487,6 @@
             };
         });
 
-        console.log('existingTripData --- {}', existingTripData);
-
         // 새로운 날짜 범위에 따라 addTripDate()를 사용해 화면에 새로운 여행 날짜 추가 후 해당 날짜에 맞는 기존 데이터를 매칭해 설정
         const newTripDatesContainer = document.getElementById('tripDatesContainer');
         // 새로운 여행 날짜를 표시할 컨테이너를 선택하고 기존 내용을 비움
@@ -571,11 +514,6 @@
             });
 
             newDateIndex++;
-
-            console.log('tripDateData --- {}', tripDateData);
-            console.log('newDateIndex --- ', newDateIndex);
-            console.log('existingTripData.length --- ', existingTripData.length);
-
         }
 
         // 만약 새로운 날짜 범위가 기존 날짜보다 짧다면, 남는 날짜의 장소들을 마지막 날로 합침
@@ -631,13 +569,17 @@
         updateDayCount();
         // 날짜 변경 시 날짜 변경 전에 띄워둔 검색창 숨기기
         $('#menu_wrap').hide();
-        // reorderLocations();
     }
 
+    /**
+     * 여행 시작 일자와 종료 일자가 변경되면 updateTripDates() 함수를 호출
+     */
     document.getElementById('startDate').addEventListener('change', updateTripDates);
     document.getElementById('endDate').addEventListener('change', updateTripDates);
 
-    //도시 관련 데이터 추출
+    /**
+     * 도시 관련 데이터 추출
+     */
     document.addEventListener('DOMContentLoaded', function() {
         const tripId = window.location.pathname.split('/').pop(); // URL에서 tripId 추출
 
@@ -666,6 +608,9 @@
             });
     });
 
+    /**
+     * 페이지 로드 후 API 키를 가져오는 함수입니다.
+     */
     fetch('/api/key')
         .then(response => response.text())
         .then(key => {
@@ -756,7 +701,6 @@
             toggleButton.textContent = '열기';
         }
     });
-
 
 </script>
 <script type="text/javascript"

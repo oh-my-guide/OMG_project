@@ -19,7 +19,11 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    // CKEditor 이미지 업로드
+    /**
+     * CKEditor 이미지 업로드 핸들러
+     * @param request MultipartRequest 객체
+     * @return 업로드 결과와 이미지 URL을 포함하는 ResponseEntity 객체
+     */
     @PostMapping("/image/upload")
     public ResponseEntity<Map<String, Object>> imageUpload(MultipartRequest request){
         // CKEditor에서 이미지를 올리면 두 가지 응답 값을 받음 (uploaded: 업로드가 잘 되었는지, url: 어디에 업로드되었는지)

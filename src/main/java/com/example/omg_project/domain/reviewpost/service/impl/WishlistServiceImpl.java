@@ -23,6 +23,9 @@ public class WishlistServiceImpl implements WishlistService {
     private final UserRepository userRepository;
     private final ReviewPostRepository reviewPostRepository;
 
+    /**
+     * 찜하기 토글
+     */
     @Override
     public void toggleWishlist(WishlistDto.Request request) {
         User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND_EXCEPTION));
@@ -38,11 +41,17 @@ public class WishlistServiceImpl implements WishlistService {
         }
     }
 
+    /**
+     * 찜하기 상태 확인
+     */
     @Override
     public boolean isPostInWishlist(Long userId, Long postId) {
         return wishlistRepository.existsByUserIdAndReviewPostId(userId, postId);
     }
 
+    /**
+     * 찜한 게시글 전체 조회
+     */
     @Override
     public List<WishlistDto.Response> getWishlistByUserId(Long userId) {
         List<Wishlist> wishlists = wishlistRepository.findAllByUserId(userId);

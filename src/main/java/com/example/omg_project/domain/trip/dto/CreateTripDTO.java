@@ -15,6 +15,12 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
+
+/**
+ * 여행 정보를 담는 데이터 전송 객체 (DTO) 클래스
+ *
+ * 여행의 ID, 이름, 시작 날짜, 종료 날짜, 도시 ID, 그리고 날짜별 여행 일정 목록을 포함
+ */
 public class CreateTripDTO {
     private Long tripId;
     private String tripName;
