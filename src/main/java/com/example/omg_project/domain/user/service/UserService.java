@@ -29,7 +29,7 @@ public interface UserService {
 
     List<User> findAllUsers(); // 관리자 모든 사용자 조회
 
-    boolean changePassword(String username, UserPasswordChangeRequest userPasswordChangeRequest);
+    boolean changePassword(String username, UserPasswordChangeRequest userPasswordChangeRequest); // 비밀번호 변경
 
     void updateProfileImage(String username, String imageUrl);
 }

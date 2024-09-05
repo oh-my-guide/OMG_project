@@ -28,7 +28,12 @@ public class TripApiController {
     private final TripService tripService;
     private final JwtTokenizer jwtTokenizer;
 
-    //여행 일정 생성
+    /**
+     * 새로운 여행 일정 생성
+     *
+     * @param createTripDTO 여행 일정 생성에 필요한 데이터
+     * @param request       HTTP 요청 객체
+     */
     @PostMapping
     public ResponseEntity<Map<String, String>> createTrip(@RequestBody CreateTripDTO createTripDTO, HttpServletRequest request) {
         try {
@@ -61,7 +66,12 @@ public class TripApiController {
         }
     }
 
-    // 다른 사용자의 여행 일정 복사
+    /**
+     * 다른 사용자의 여행 일정을 현재 사용자 일정으로 가져오기
+     *
+     * @param tripId  복사할 여행 일정의 ID
+     * @param request HTTP 요청 객체
+     */
     @PostMapping("/{tripId}/copy")
     public ResponseEntity<?> copyTripToCurrentUser(@PathVariable Long tripId, HttpServletRequest request) {
         try {
@@ -81,16 +91,17 @@ public class TripApiController {
             }
 
             System.out.println("Received JWT Token: " + jwtToken);
+
             // JWT 토큰 파싱하여 사용자 정보 추출
             Claims claims = jwtTokenizer.parseAccessToken(jwtToken);
             claims.getSubject();
 
-            // 일정 복사
+            // 일정 가져오기
             Trip copiedTrip = tripService.copyTripToUser(tripId, jwtToken);
 
             Map<String, Object> successResponse = new HashMap<>();
             successResponse.put("message", "이 여행 일정을 나의 일정에 저장하였습니다.");
-            successResponse.put("tripId", copiedTrip.getId());  // 복사된 일정의 ID 포함
+            successResponse.put("tripId", copiedTrip.getId());
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
             Map<String, String> errorResponse = new HashMap<>();
@@ -99,7 +110,11 @@ public class TripApiController {
         }
     }
 
-    //tripId로 일정 조회
+    /**
+     * 주어진 ID로 여행 일정 조회
+     *
+     * @param id 여행 일정의 ID
+     */
     @GetMapping("/{id}")
     public ResponseEntity<ReadTripDTO> getTripById(@PathVariable Long id) {
         ReadTripDTO trip = tripService.getTripById(id);
@@ -110,14 +125,23 @@ public class TripApiController {
         }
     }
 
-    //userId로 일정 조회
+    /**
+     * 주어진 사용자 ID로 여행 일정 조회
+     *
+     * @param userId 사용자의 ID
+     */
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ReadTripDTO>> getTripsByUserId(@PathVariable Long userId) {
         List<ReadTripDTO> trips = tripService.getTripsByUserId(userId);
         return ResponseEntity.ok(trips);
     }
 
-    //여행 일정 수정
+    /**
+     * 주어진 ID의 여행 일정 수정
+     *
+     * @param id 여행 일정의 ID
+     * @param updateTripDTO 수정할 여행 일정 데이터
+     */
     @PutMapping("/{id}")
     public ResponseEntity<UpdateTripDTO> updateTrip(@PathVariable Long id, @RequestBody UpdateTripDTO updateTripDTO) {
         UpdateTripDTO updatedTrip = tripService.updateTrip(id, updateTripDTO);
@@ -128,7 +152,11 @@ public class TripApiController {
         }
     }
 
-    //여행 일정 삭제
+    /**
+     * 주어진 ID의 여행 일정 삭제
+     *
+     * @param id 여행 일정의 ID
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrip(@PathVariable Long id) {
         tripService.deleteTrip(id);
