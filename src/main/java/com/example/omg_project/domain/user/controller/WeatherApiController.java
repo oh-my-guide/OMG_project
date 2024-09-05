@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * 캘린더와 연동해서 위도와 경도 추가 후 날씨 표시하기
+ * API 호출 클래스
  */
 @RestController
 @RequiredArgsConstructor
@@ -27,12 +27,20 @@ public class WeatherApiController {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
+    /**
+     * 채널 톡 API 호출
+     * @return 채널톡 key
+     */
     @GetMapping("/api/channel")
     public ResponseEntity<String> getChannelKey() {
         return ResponseEntity.ok(channelKey);
     }
 
-    // 위치 이름으로 날씨 가져오기
+    /**
+     * 캘린더 기반으로 위도와 경도 가져오기
+     * @param location 위치
+     * @return 위치 정보
+     */
     @GetMapping("/api/weather")
     public ResponseEntity<String> getWeather(@RequestParam String location) {
         String geocodeUrl = String.format(
@@ -61,7 +69,12 @@ public class WeatherApiController {
         }
     }
 
-    // 위도와 경도로 날씨 가져오기
+    /**
+     * 위도와 경도로 날씨 가져오기
+     * @param lat 위도
+     * @param lon 경도
+     * @return 날씨 정보
+     */
     @GetMapping("/api/weather/coords")
     public ResponseEntity<String> getWeatherByCoords(@RequestParam double lat, @RequestParam double lon) {
         try {
@@ -79,6 +92,4 @@ public class WeatherApiController {
         String forecastResponse = restTemplate.getForObject(forecastUrl, String.class);
         return ResponseEntity.ok(forecastResponse);
     }
-
-
 }

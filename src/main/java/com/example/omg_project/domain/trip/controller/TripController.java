@@ -2,7 +2,6 @@ package com.example.omg_project.domain.trip.controller;
 
 import com.example.omg_project.domain.trip.dto.ReadTripDTO;
 import com.example.omg_project.domain.trip.entity.Team;
-import com.example.omg_project.domain.trip.entity.Trip;
 import com.example.omg_project.domain.trip.repository.TeamRepository;
 import com.example.omg_project.domain.trip.service.TripService;
 import com.example.omg_project.domain.user.entity.User;
@@ -31,7 +30,9 @@ public class TripController {
     private final JwtTokenizer jwtTokenizer;
     private final UserService userService;
 
-    // 여행 일정 생성 페이지
+    /**
+     * 여행 일정 생성 페이지 표시
+     */
     @GetMapping("/create")
     public String createTripPage(Model model, HttpServletRequest request) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
@@ -42,7 +43,14 @@ public class TripController {
         return "trip/createtrip";
     }
 
-    //여행 세부 정보 표시
+
+    /**
+     * 여행 일정의 세부 정보 표시
+     *
+     * @param id 여행 일정의 ID
+     * @param model 모델 객체에 여행 일정 및 관련 정보 추가
+     * @param request HTTP 요청 객체
+     */
     @GetMapping("/{id}")
     public String viewTripDetails(@PathVariable Long id, Model model, HttpServletRequest request) {
         // JWT 토큰에서 사용자 정보 추출
@@ -74,8 +82,13 @@ public class TripController {
         return "trip/viewtripdetails"; // HTML 파일 이름을 반환합니다.
     }
 
-
-    //사용자의 일정 리스트 표시
+    /**
+     * 특정 사용자의 여행 일정 리스트 표시
+     *
+     * @param userId 사용자의 ID
+     * @param model 모델 객체에 사용자 및 일정 정보 추가
+     * @param request HTTP 요청 객체
+     */
     @GetMapping("/user/{userId}")
     public String viewTripsByUserIdPage(@PathVariable Long userId, Model model, HttpServletRequest request) {
         List<ReadTripDTO> trips = tripService.getTripsByUserId(userId);
@@ -88,7 +101,13 @@ public class TripController {
         return "trip/usertrip";
     }
 
-    //여행 일정 수정 페이지
+    /**
+     * 여행 일정 수정 페이지 표시
+     *
+     * @param id 여행 일정의 ID
+     * @param model 모델 객체에 여행 일정 정보 추가
+     * @param request HTTP 요청 객체
+     */
     @GetMapping("/update/{id}")
     public String showUpdateTripPage(@PathVariable Long id, Model model, HttpServletRequest request) {
         ReadTripDTO trip = tripService.getTripById(id);
@@ -100,6 +119,9 @@ public class TripController {
         return "trip/updatetrip";
     }
 
+    /**
+     * 여행 일정 선택 페이지 표시
+     */
     @GetMapping("/select")
     public String selectTripPage() {
         return "trip/createorjoin";

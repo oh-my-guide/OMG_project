@@ -28,6 +28,9 @@ public class ReviewPostCommentServiceImpl implements ReviewPostCommentService {
     private final ReviewPostRepository reviewPostRepository;
     private final NotificationService notificationService;
 
+    /**
+     * 댓글 작성
+     */
     @Override
     @Transactional
     public ReviewPostCommentDto.Response createComment(Long postId, Long userId, ReviewPostCommentDto.Request commentRequest) throws JsonProcessingException {
@@ -47,6 +50,9 @@ public class ReviewPostCommentServiceImpl implements ReviewPostCommentService {
         return ReviewPostCommentDto.Response.fromEntity(reviewPostComment);
     }
 
+    /**
+     * 댓글 전체 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ReviewPostCommentDto.Response> findAllByPostId(Long postId) {
@@ -55,6 +61,9 @@ public class ReviewPostCommentServiceImpl implements ReviewPostCommentService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 댓글 수정
+     */
     @Override
     @Transactional
     public ReviewPostCommentDto.Response updateComment(Long commentId, ReviewPostCommentDto.Request commentRequest) {
@@ -67,12 +76,18 @@ public class ReviewPostCommentServiceImpl implements ReviewPostCommentService {
         return ReviewPostCommentDto.Response.fromEntity(reviewPostComment);
     }
 
+    /**
+     * 댓글 삭제
+     */
     @Override
     @Transactional
     public void deleteComment(Long commentId) {
         reviewPostCommentRepository.deleteById(commentId);
     }
 
+    /**
+     * 댓글 전체 삭제
+     */
     @Override
     @Transactional
     public void deleteByUserId(Long userId) {

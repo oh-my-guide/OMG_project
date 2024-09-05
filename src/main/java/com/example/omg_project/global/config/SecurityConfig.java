@@ -51,10 +51,9 @@ public class SecurityConfig {
             "/service",     // 프로젝트 소개 글
             "/reviewPost/", // 여행 후기 게시글 목록
             "/joinPost/",    // 일행 모집 게시글 목록
-            "/api/weather",  // 날씨 API
+            "/api/weather", "/api/weather/coords",  // 날씨 API
             "/faq",          // 고객센터
-            "/api/weather/coords",
-            "/api/channel"
+            "/api/channel"   // 채널톡
     };
 
     // 관리자 페이지
