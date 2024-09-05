@@ -21,6 +21,9 @@ public class JoinPostController {
     private final UserService userService;
     private final JwtTokenizer jwtTokenizer;
 
+    /**
+     * 게시글 작성 화면으로 이동
+     */
     @GetMapping("/createPost")
     public String createPost(HttpServletRequest request, Model model) {
         // 로그인한 사용자 정보 가져오기
@@ -33,6 +36,9 @@ public class JoinPostController {
         return "join/createpost";
     }
 
+    /**
+     * 목록 화면으로 이동
+     */
     @GetMapping("/")
     public String listPosts(HttpServletRequest request, Model model) {
         // 로그인한 사용자 정보 가져오기
@@ -45,6 +51,9 @@ public class JoinPostController {
         return "join/listposts";
     }
 
+    /**
+     * 게시글 상세 화면으로 이동
+     */
     @GetMapping("/{postId}")
     public String viewPost(@PathVariable Long postId, HttpServletRequest request, Model model) {
         // 게시글 가져오기
@@ -69,6 +78,9 @@ public class JoinPostController {
         return "join/viewpost";
     }
 
+    /**
+     * 게시글 수정 화면으로 이동
+     */
     @GetMapping("/{postId}/updatePost")
     public String updatePost(@PathVariable Long postId, HttpServletRequest request, Model model) {
         model.addAttribute("post", joinPostService.findJoinPostById(postId));
