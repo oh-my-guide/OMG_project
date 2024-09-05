@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 public class PlaceReviewServiceImpl implements PlaceReviewService {
     private final PlaceReviewRepository placeReviewRepository;
 
+    /**
+     * 장소별 후기 전체 조회
+     */
     @Override
     public List<PlaceReviewDto.Response> findByReviewPostId(Long reviewPostId) {
         return placeReviewRepository.findByReviewPostId(reviewPostId).stream().map(PlaceReviewDto.Response::fromEntity).collect(Collectors.toList());

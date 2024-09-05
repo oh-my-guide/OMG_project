@@ -25,7 +25,9 @@ public class JoinPostServiceImpl implements JoinPostService {
     private final UserRepository userRepository;
     private final TripRepository tripRepository;
 
-    // 게시글 생성
+    /**
+     * 게시글 작성
+     */
     @Override
     @Transactional
     public JoinPostDto.Response createJoinPost(JoinPostDto.Request joinPostRequest) {
@@ -45,8 +47,9 @@ public class JoinPostServiceImpl implements JoinPostService {
         return JoinPostDto.Response.fromEntity(joinPost);
     }
 
-
-    // 모든 게시글 조회 - 정렬
+    /**
+     * 게시글 전체 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public List<JoinPostDto.Response> findAllJoinPost(String sort) {
@@ -61,7 +64,9 @@ public class JoinPostServiceImpl implements JoinPostService {
                 .collect(Collectors.toList());
     }
 
-    // 특정 사용자가 작성한 게시글 전체 조회
+    /**
+     * 특정 사용자의 게시글 전체 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public List<JoinPostDto.Response> findJoinPostsByUserId(Long userId) {
@@ -69,7 +74,9 @@ public class JoinPostServiceImpl implements JoinPostService {
         return joinPostRepository.findJoinPostByUserId(user.getId()).stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
-    // 도시별 게시글 전체 조회
+    /**
+     * 지역별 게시글 전체 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public List<JoinPostDto.Response> findJoinPostsByCity(Long cityId, String sort) {
@@ -84,7 +91,9 @@ public class JoinPostServiceImpl implements JoinPostService {
                 .collect(Collectors.toList());
     }
 
-    // 게시글 검색
+    /**
+     * 게시글 검색
+     */
     @Override
     @Transactional(readOnly = true)
     public List<JoinPostDto.Response> searchJoinPosts(String searchOption, String keyword) {
@@ -108,7 +117,9 @@ public class JoinPostServiceImpl implements JoinPostService {
         return results.stream().map(JoinPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
-    // 게시글 상세 조회
+    /**
+     * 게시글 상세 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public JoinPostDto.Response findJoinPostById(Long id) {
@@ -116,7 +127,9 @@ public class JoinPostServiceImpl implements JoinPostService {
         return JoinPostDto.Response.fromEntity(joinPost);
     }
 
-    // 게시글 수정
+    /**
+     * 게시글 수정
+     */
     @Override
     @Transactional
     public JoinPostDto.Response updateJoinPost(Long id, JoinPostDto.Request joinPostRequest) {
@@ -128,21 +141,27 @@ public class JoinPostServiceImpl implements JoinPostService {
         return JoinPostDto.Response.fromEntity(originPost);
     }
 
-    // 게시글 삭제
+    /**
+     * 게시글 삭제
+     */
     @Override
     @Transactional
     public void deleteJoinPost(Long id) {
         joinPostRepository.deleteById(id);
     }
 
-    // 특정 여행의 게시글 존재 여부 체크
+    /**
+     * 여행에 대한 게시글 중복 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public boolean existsJoinPostByTripId(Long tripId) {
         return joinPostRepository.existsJoinPostByTripId(tripId);
     }
 
-    // 조회수 증가
+    /**
+     * 조회수 증가
+     */
     @Override
     @Transactional
     public void incrementViews(Long id) {

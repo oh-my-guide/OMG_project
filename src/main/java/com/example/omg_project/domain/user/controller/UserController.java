@@ -28,6 +28,9 @@ public class UserController {
 
     /**
      * 로그인 회원의 마이페이지
+     * @param model 데이터 전달
+     * @param request 클라이언트의 요청 정보
+     * @return HTML 폼
      */
     @GetMapping("/my")
     public String myPage(Model model, HttpServletRequest request) {
@@ -49,6 +52,9 @@ public class UserController {
 
     /**
      * OAuth2 로그인 회원 추가 정보 기입 페이지 이동
+     * @param model 데이터 전달
+     * @param request 클라이언트 요청 정보
+     * @return HTML 폼
      */
     @GetMapping("/oauthPage")
     public String addOauth2Form(Model model, HttpServletRequest request) {
@@ -69,6 +75,12 @@ public class UserController {
         }
     }
 
+    /**
+     * OAuth2 로그인 회원 추가 정보 저장 API
+     * @param oauth2LoginDto 추가정보 기입 dto
+     * @param request 클라이언트 요청 정보
+     * @return 응답
+     */
     @PostMapping("/oauthPage")
     @ResponseBody
     public ResponseEntity<String> addOauth2(@RequestBody Oauth2LoginRequest oauth2LoginDto, HttpServletRequest request) {
@@ -82,7 +94,10 @@ public class UserController {
     }
 
     /**
-     * 회원 정보 수정 페이지 이동
+     * 회원정보 수정 폼
+     * @param model 데이터 전달
+     * @param request 클라이언트 요청 정보
+     * @return HTML 폼
      */
     @GetMapping("/my/profile")
     public String userEditForm(Model model, HttpServletRequest request) {
@@ -133,7 +148,8 @@ public class UserController {
     }
 
     /**
-     * 비밀번호 재발급 페이지 이동
+     * 비밀번호 재발급 폼
+     * @return HTML 폼
      */
     @GetMapping("/users/reset-user-password")
     public String showResetPasswordForm() {
@@ -141,7 +157,10 @@ public class UserController {
     }
 
     /**
-     * 비밀번호 재설정 페이지 이동
+     * 비밀번호 재설정 폼
+     * @param request 클라이언트 요청 정보
+     * @param model 데이터 전달
+     * @return HTML 폼
      */
     @GetMapping("/my/change-password")
     public String changePasswordForm(HttpServletRequest request, Model model) {
@@ -164,6 +183,9 @@ public class UserController {
 
     /**
      * 비밀번호 재설정 API
+     * @param request 클라이언트 요청 정보
+     * @param userPasswordChangeRequest 비밀번호 재설덜 dto
+     * @return 응답
      */
     @PutMapping("/api/users/change-password")
     @ResponseBody

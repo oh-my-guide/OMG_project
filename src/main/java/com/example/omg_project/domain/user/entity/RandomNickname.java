@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 사용자 랜덤 닉네임 생성 클래스
+ */
 public class RandomNickname {
 
     public static String generateRandomNickname() {

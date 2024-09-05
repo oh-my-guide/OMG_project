@@ -13,14 +13,13 @@ import java.util.Optional;
 public class CityServiceImpl implements CityService {
     private final CityRepository cityRepository;
 
-    //도시 이름 검색
+    /**
+     * 도시 이름을 통해 도시 정보를 조회하는 메서드
+     *
+     * @param cityName 조회할 도시의 이름
+     */
     @Override
     public Optional<City> getCityByName(String cityName) {
         return cityRepository.findByName(cityName);
-    }
-
-    @Override
-    public Optional<City> getCityById(Long cityId) {
-        return cityRepository.findById(cityId);
     }
 }

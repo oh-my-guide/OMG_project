@@ -28,6 +28,9 @@ public class ReviewPostReplyServiceImpl implements ReviewPostReplyService {
     private final ReviewPostCommentRepository reviewPostCommentRepository;
     private final NotificationService notificationService;
 
+    /**
+     * 대댓글 작성
+     */
     @Override
     @Transactional
     public ReviewPostReplyDto.Response createReply(Long commentId, Long userId, ReviewPostReplyDto.Request replyRequest) throws JsonProcessingException {
@@ -46,6 +49,9 @@ public class ReviewPostReplyServiceImpl implements ReviewPostReplyService {
         return ReviewPostReplyDto.Response.fromEntity(reviewPostReply);
     }
 
+    /**
+     * 대댓글 전체 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ReviewPostReplyDto.Response> findAllByCommentId(Long commentId) {
@@ -54,6 +60,9 @@ public class ReviewPostReplyServiceImpl implements ReviewPostReplyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 대댓글 수정
+     */
     @Override
     @Transactional
     public ReviewPostReplyDto.Response updateReply(Long replyId, ReviewPostReplyDto.Request replyRequest) {
@@ -66,12 +75,18 @@ public class ReviewPostReplyServiceImpl implements ReviewPostReplyService {
         return ReviewPostReplyDto.Response.fromEntity(reviewPostReply);
     }
 
+    /**
+     * 대댓글 삭제
+     */
     @Override
     @Transactional
     public void deleteReply(Long replyId) {
         reviewPostReplyRepository.deleteById(replyId);
     }
 
+    /**
+     * 대댓글 전체 삭제
+     */
     @Override
     @Transactional
     public void deleteByUserId(Long userId) {

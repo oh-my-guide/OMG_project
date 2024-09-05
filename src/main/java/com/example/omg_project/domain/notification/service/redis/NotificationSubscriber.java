@@ -20,10 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class NotificationSubscriber implements MessageListener {
 
-    // WebSocket 메시지를 전송하기 위한 SimpMessagingTemplate 인스턴스
     private final SimpMessagingTemplate messagingTemplate;
-
-    // Redis 메시지를 Notification 객체로 변환하기 위한 ObjectMapper 인스턴스
     private final ObjectMapper objectMapper;
 
     /**
@@ -37,20 +34,15 @@ public class NotificationSubscriber implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            // Redis에서 받은 바이트 배열을 Notification 객체로 변환합니다.
+            // Redis에서 받은 바이트 배열을 Notification 객체로 변환
             Notification notification = (Notification) deserialize(message.getBody());
 
-            // 변환된 Notification 객체가 null이 아닌 경우에만 처리합니다.
             if (notification != null) {
-                // 알림 타입을 기반으로 WebSocket 경로를 구성하고, 해당 경로로 알림을 전송합니다.
+                // 알림 타입을 기반으로 WebSocket 경로를 구성하고, 해당 경로로 알림을 전송
                 String notificationType = notification.getNotificationType();
                 messagingTemplate.convertAndSend("/topic/notifications/" + notificationType + "/" + notification.getUserId(), notification);
-            } else {
-                // Notification 객체가 null인 경우, 적절한 로깅 처리 및 후속 조치를 수행합니다.
-                // 현재는 추가 로깅 및 알림 처리가 필요할 수 있습니다.
             }
         } catch (Exception e) {
-            // 메시지 처리 중 오류가 발생하면 공통 예외를 발생시킵니다.
             throw new CustomException(ErrorCode.NOTIFICATION_PROCESSING_ERROR);
         }
     }
@@ -67,7 +59,6 @@ public class NotificationSubscriber implements MessageListener {
         try {
             return objectMapper.readValue(bytes, Notification.class);
         } catch (IOException e) {
-            // JSON 파싱 중 오류가 발생하면 CustomException을 발생시킵니다.
             throw new CustomException(ErrorCode.DESERIALIZATION_ERROR);
         }
     }

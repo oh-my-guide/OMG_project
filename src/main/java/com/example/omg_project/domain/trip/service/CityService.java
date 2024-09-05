@@ -6,5 +6,4 @@ import java.util.Optional;
 
 public interface CityService {
     Optional<City> getCityByName(String cityName);
-    Optional<City> getCityById(Long cityId);
 }

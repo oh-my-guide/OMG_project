@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -15,16 +14,21 @@ public class BadWordServiceImpl implements BadWordService {
 
     private final BadWordRepository badWordRepository;
 
+    /**
+     * 주어진 메시지에서 비속어를 필터링하여 반환
+     *
+     * @param message 필터링할 메시지
+     * @return 비속어가 필터링된 메시지
+     */
     @Override
     public String filterMessage(String message) {
-        List<BadWord> badWords = badWordRepository.findAll();
+        List<BadWord> badWords = badWordRepository.findAll();  // 비속어 목록 조회
 
         for (BadWord badWord : badWords) {
-            // 정규 표현식을 사용하여 비속어 필터링
             if(message.contains(badWord.getWord())) {
                 message = message.replaceAll(badWord.getWord(), "삐약삐약");
             }
         }
-        return message;
+        return message;  // 필터링된 메시지 반환
     }
 }

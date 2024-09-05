@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/notification")
 public class NotificationApiController {
 
-    // NotificationService를 주입받습니다. 서비스 계층에서 알림 관련 비즈니스 로직을 처리합니다.
     private final NotificationService notificationService;
 
     /**
@@ -32,14 +31,9 @@ public class NotificationApiController {
     @GetMapping("/count")
     public ResponseEntity<Long> getUnreadNotificationCount(@RequestParam("userId") Long userId) {
         try {
-            // NotificationService를 사용하여 읽지 않은 알림 개수를 조회합니다.
             long count = notificationService.getUnreadNotificationCount(userId);
-
-            // 조회된 개수를 ResponseEntity에 담아 HTTP 200 OK와 함께 반환합니다.
             return new ResponseEntity<>(count, HttpStatus.OK);
         } catch (Exception e) {
-            // 예외가 발생하면 상태 코드 500과 함께 에러 메시지를 반환합니다.
-            // 이 경우 상세한 오류 메시지는 반환하지 않으며, 일반적인 내부 서버 오류를 클라이언트에 전달합니다.
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
