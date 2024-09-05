@@ -13,28 +13,35 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import java.util.HashMap;
 import java.util.Map;
 
-
-@EnableKafka    // Kafka 사용을 활성화하는 애너테이션
+@EnableKafka
 @Configuration
 public class KafkaProducerConfig {
 
-    // Kafka 생산자 팩토리 빈 정의
+    /**
+     * Kafka 생산자 팩토리 빈을 정의합니다.
+     *
+     * @return ProducerFactory<String, String> Kafka 생산자 팩토리 인스턴스
+     */
     @Bean
     public ProducerFactory<String, String> producerFactory() {
-        Map<String, Object> config = new HashMap<>();   // 설정을 담을 맵 생성
+        Map<String, Object> config = new HashMap<>();   // Kafka 설정을 담을 맵 생성
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "15.165.236.189:9092");  // Kafka 서버 주소 설정
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");  // Kafka 서버 주소 설정
 
-        // 키와 값의 시리얼라이저 설정ㅊ
+        // 키와 값의 시리얼라이저 설정
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        return new DefaultKafkaProducerFactory<>(config);   // DefaultKafkaProducerFactory를 사용하여 생산자 팩토리 생성
+        return new DefaultKafkaProducerFactory<>(config);
     }
 
-    // Kafka 템플릿 빈 정의
+    /**
+     * Kafka 템플릿 빈을 정의합니다.
+     *
+     * @return KafkaTemplate<String, String> Kafka 템플릿 인스턴스
+     */
     @Bean
     public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());  // Kafka 템플릿 생성
+        return new KafkaTemplate<>(producerFactory());
     }
 }

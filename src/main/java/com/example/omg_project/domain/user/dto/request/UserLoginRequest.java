@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * JWT 로그인 요청
+ */
 @Getter
 @Builder
 @NoArgsConstructor

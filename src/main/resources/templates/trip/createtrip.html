@@ -63,7 +63,7 @@
         <div id="menu_wrap" class="bg_white">
             <div class="option">
                 <div>
-                    <!-- 검색 폼 제출 시 searchPlaces() 호출 -->
+                    <!-- 검색 폼 제출 시 키워드로 장소 검색하는 searchPlaces() 호출 -->
                     <form onsubmit="searchPlaces(); return false;">
                         <input type="text" placeholder="장소명을 입력해주세요." id="keyword" size="15">
                         <button type="submit" id="searchBtn">검색하기</button>
@@ -241,14 +241,28 @@
         "서귀포": { lat: 33.2530, lng: 126.5617 }
     };
 
-
-    let markers = {};
-    let selectedDateDiv = null;
-    let selectedPlaces = {};
+    let markers = {};   // 마커 객체를 저장하는 객체 (key: dayNum / value: kakao.maps.Marker 객체)
+    let selectedPlaces = {};    // 선택한 장소를 저장하는 객체 (key: dayNum / value: 선택된 장소 데이터)
+    let selectedDateDiv = null; // 클릭한 버튼이 속한 가장 가까운 .tripDate 요소
     let selectedCityName = '';  // 전역 변수로 selectedCityName 정의
     let apiKey = '';
 
-    // 도시 선택 시 선택된 도시 이름 저장
+    /**
+     * 페이지 로드 후 API 키를 가져오는 함수입니다.
+     */
+    fetch('/api/key')
+        .then(response => response.text())
+        .then(key => {
+            apiKey = key;  // API 키를 전역 변수에 저장
+            // 이 API 키를 사용하여 다른 API 호출을 수행합니다.
+        })
+        .catch(error => {
+            console.error('Error fetching API key:', error);
+        });
+
+    /**
+     * 도시 선택 시 선택된 도시 이름 저장하는 함수입니다.
+     */
     document.getElementById('citySelect').addEventListener('change', function() {
         selectedCityName = this.value;  // 도시 선택 시 selectedCityName에 값 저장
         console.log('Selected city:', selectedCityName);
@@ -287,16 +301,6 @@
             })
             .catch(error => console.error('Error fetching city by name:', error));
     });
-
-    fetch('/api/key')
-        .then(response => response.text())
-        .then(key => {
-            apiKey = key;  // API 키를 전역 변수에 저장
-            // 이 API 키를 사용하여 다른 API 호출을 수행합니다.
-        })
-        .catch(error => {
-            console.error('Error fetching API key:', error);
-        });
 
     function filterPlaces(contentTypeId) {
         if (!selectedCityName) {
@@ -341,7 +345,10 @@
             });
     }
 
-    // 결과 화면에 띄우기
+    /**
+     * 결과 화면에 띄우는 함수입니다.
+     * @param places
+     */
     function displayFilteredPlaces(places) {
         const listEl = document.getElementById('filteredPlacesList');
         listEl.innerHTML = '';
@@ -370,7 +377,7 @@
     }
 
     /**
-     * 여행 일정 폼 제출 처리
+     * 여행 일정 폼 제출 처리하는 함수입니다.
      */
     document.getElementById('tripForm').addEventListener('submit', function (event) {
         event.preventDefault();
@@ -434,7 +441,7 @@
     });
 
     /**
-     * 여행 날짜 업데이트 함수
+     * 여행 날짜를 업데이트하는 함수입니다.
      */
     function updateTripDates() {
         const startDate = document.getElementById('startDate').value;
@@ -470,8 +477,8 @@
         // 날짜 변경 시 날짜 변경 전에 띄워둔 검색창 숨기기
         $('#menu_wrap').hide();
 
-        // updateTripDates() 호출되면 기존 데이터들 모두 지우기
-        // 추가된 장소 배열인 selectedPlaces 객체 & 폴리라인을 구성하는 좌표 배열인 linePath 객체를 초기화시킴
+        // updateTripDates() 호출되면 기존 데이터들 모두 지움
+        // 추가된 장소 데이터인 selectedPlaces 객체 & 폴리라인을 구성하는 좌표 배열인 linePath 객체를 초기화
         selectedPlaces = {};
         linePath = {};
         // 지도 위에 표시되고 있는 마커와 폴리라인을 제거
@@ -485,14 +492,15 @@
     }
 
     /**
-     * 장소 추가 버튼 클릭 시 검색창을 열고 해당 날짜 정보를 저장 및 selectedPlaces, markers 객체 초기화
-     * @param button
-     * @returns {null|string}
+     * 장소 추가 버튼 클릭 시 검색창을 열고 해당 날짜 정보를 저장 및 selectedPlaces, markers 객체를 초기화하는 함수입니다.
+     * @param button - 클릭된 장소 추가 버튼 요소
+     * @returns {null|string} - 클릭한 장소 추가 버튼이 몇 일차인지 날짜 번호 (예: 1)
      */
     function addLocation(button) {
         // 장소 추가 버튼을 누를 시 menu_wrap이 보이도록 설정
         document.getElementById('menu_wrap').style.display = 'block';
 
+        // 클릭한 버튼이 속한 가장 가까운 .tripDate 요소를 찾아서 selectedDateDiv 변수에 할당
         selectedDateDiv = button.closest('.tripDate');
 
         // 여행 몇째 날인지 추출 (ex. 1, 2, ..)
@@ -503,35 +511,37 @@
             if (dayCountSpan) {
                 // "Day 1"과 같은 텍스트를 가져옴
                 const dayText = dayCountSpan.textContent.trim();
-
                 // "Day 1"에서 숫자 부분만 추출
                 const dayNum = dayText.replace('Day ', '');
 
-                // selectedPlaces 객체에서 dayNum에 해당하는 배열이 없으면 초기화
+                // selectedPlaces 객체와 markers 객체에서 dayNum에 해당하는 배열이 없으면 초기화
                 if (!selectedPlaces[dayNum]) {
                     selectedPlaces[dayNum] = [];
                 }
-
                 if (!markers[dayNum]) {
                     markers[dayNum] = [];
                 }
 
-                return dayNum; // 예: "1"
+                return dayNum;  // 예: 1
             } else {
-                console.error('Day count span not found in selectedDateDiv.');
+                console.error('selectedDateDiv 내에서 dayCountLabel 요소를 찾을 수 없습니다.');
             }
         } else {
-            console.error('selectedDateDiv is not set.');
+            console.error('selectedDateDiv가 설정되지 않았습니다.');
         }
         return null;
     }
 
-    // 창 닫기 버튼 클릭 시 #menu_wrap 숨기기
+    /**
+     * 창 닫기 버튼 클릭 시 #menu_wrap 숨기기
+     */
     document.getElementById('closeBtn').addEventListener('click', function() {
         $('#menu_wrap').hide();
     });
 
-    //여행 명소 추천 창 접었다 열기 토글
+    /**
+     * 여행 명소 추천 창 접었다 열기 토글
+     */
     document.getElementById('toggleButton').addEventListener('click', function() {
         const filterWrap = document.getElementById('filter_wrap');
         const toggleButton = document.getElementById('toggleButton');

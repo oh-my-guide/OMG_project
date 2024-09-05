@@ -183,10 +183,10 @@ public class ChatMessageListener {
     }
 
     /**
-     * JSON 문자열에서 메시지 필드 값 추출
+     * JSON 문자열에서 메시지 또는 이미지 URL 필드 값 추출
      *
-     * @param jsonString JSON 문자열 (형식: '{"message" : "안녕"}')
-     * @return 추출된 메시지 내용
+     * @param jsonString JSON 문자열 (예: '{"message" : "안녕"}' 또는 '{"imageUrl" : "http://example.com/image.jpg"}')
+     * @return 추출된 메시지 내용 또는 이미지 URL
      */
     private String parseJsonMessage(String jsonString) {
         try {
@@ -196,8 +196,14 @@ public class ChatMessageListener {
             // JSON 문자열을 JsonNode로 변환
             JsonNode jsonNode = objectMapper.readTree(jsonString);
 
-            // "message" 필드에서 값 추출
-            return jsonNode.get("message").asText();
+            // "message" 또는 "imageUrl" 필드에서 값 추출
+            if (jsonNode.has("message")) {
+                return jsonNode.get("message").asText();
+            } else if (jsonNode.has("imageUrl")) {
+                return jsonNode.get("imageUrl").asText();
+            } else {
+                throw new CustomException(ErrorCode.INVALID_MESSAGE_FORMAT); // 필드가 없는 경우 사용자 정의 예외 발생
+            }
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error parsing JSON message", e);
             throw new CustomException(ErrorCode.INVALID_MESSAGE_FORMAT); // JSON 파싱 오류를 사용자 정의 예외로 처리

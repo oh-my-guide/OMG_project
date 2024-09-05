@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/team")
@@ -17,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class TeamController {
     private final JwtTokenizer jwtTokenizer;
     private final UserService userService;
-    // 팀에 가입하는 폼
+
+    /**
+     * 팀 가입 폼
+     */
     @GetMapping("/join")
     public String showJoinTeamForm(Model model, HttpServletRequest request) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
@@ -27,6 +29,9 @@ public class TeamController {
         return "team/join";
     }
 
+    /**
+     * 현재 사용자가 가입한 팀 목록
+     */
     @GetMapping("/myteam")
     public String showTeamsPage(Model model, HttpServletRequest request) {
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);

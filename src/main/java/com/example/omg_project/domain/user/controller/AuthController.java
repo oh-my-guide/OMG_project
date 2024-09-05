@@ -26,7 +26,10 @@ public class AuthController {
     private final JwtTokenizer jwtTokenizer;
 
     /**
-     * 메인 홈 페이지
+     * 메인 홈 폼
+     * @param request 클라이언트 요청 정보
+     * @param model 데이터 전달
+     * @return HTML 폼
      */
     @GetMapping("/")
     public String home(HttpServletRequest request, Model model) {
@@ -41,6 +44,7 @@ public class AuthController {
 
     /**
      * 회원가입
+     * @return HTML 폼
      */
     @GetMapping("/signup")
     public String signup() {
@@ -59,7 +63,7 @@ public class AuthController {
     }
 
     /**
-     * 로그인
+     * 로그인 폼
      */
     @GetMapping("/signin")
     public String showLoginForm() {
@@ -67,7 +71,10 @@ public class AuthController {
     }
 
     /**
-     * 서비스 소개 페이지
+     * 서비스 소개 폼
+     * @param request 클라이언트 요청 정보
+     * @param model 데이터 전달
+     * @return HTML 폼
      */
     @GetMapping("/service")
     public String showServiceInfo(HttpServletRequest request, Model model){
@@ -83,7 +90,10 @@ public class AuthController {
     }
 
     /**
-     * 고객센터 페이지
+     * 고객센터 폼
+     * @param request 클라이언트 요청 정보
+     * @param model 데이터 전달
+     * @return HTML 폼
      */
     @GetMapping("/faq")
     public String adminPageAllFaqForm(Model model, HttpServletRequest request) {

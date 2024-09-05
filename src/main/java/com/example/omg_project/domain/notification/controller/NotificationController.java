@@ -23,13 +23,8 @@ import java.util.List;
 @RequestMapping("/notifications")
 public class NotificationController {
 
-    // NotificationService를 주입받아 알림 관련 비즈니스 로직을 처리합니다.
     private final NotificationService notificationService;
-
-    // JwtTokenizer를 주입받아 JWT 토큰을 처리합니다.
     private final JwtTokenizer jwtTokenizer;
-
-    // UserService를 주입받아 사용자 정보를 조회합니다.
     private final UserService userService;
 
     /**
@@ -43,25 +38,18 @@ public class NotificationController {
      */
     @GetMapping
     public String getNotificationsPage(HttpServletRequest request, Model model) {
-        // 요청에서 JWT 토큰을 추출합니다.
+        // 사용자 정보 추출
         String accessToken = jwtTokenizer.getAccessTokenFromCookies(request);
-
-        // JWT 토큰에서 사용자 이름을 추출합니다.
         String username = jwtTokenizer.getUsernameFromToken(accessToken);
-
-        // 사용자 이름을 사용하여 사용자 정보를 조회합니다.
         User user = userService.findByUsername(username).orElse(null);
 
         if (user != null) {
-            // 사용자가 존재하는 경우, 해당 사용자의 알림을 조회합니다.
+            // 사용자가 존재하는 경우, 해당 사용자의 알림을 조회
             List<Notification> notifications = notificationService.getUserNotifications(user);
 
-            // 모델에 사용자 정보와 알림 리스트를 추가합니다.
             model.addAttribute("user", user);
             model.addAttribute("notifications", notifications);
         }
-
-        // 알림 페이지 뷰를 반환합니다.
         return "notification/notification";
     }
 
@@ -75,10 +63,7 @@ public class NotificationController {
     @PostMapping("/{id}/read")
     @ResponseBody
     public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
-        // 알림 ID를 기반으로 알림을 읽음 상태로 변경합니다.
         notificationService.markAsRead(id);
-
-        // 요청이 성공적으로 처리되었음을 나타내는 HTTP 200 OK 상태 코드를 반환합니다.
         return ResponseEntity.ok().build();
     }
 }

@@ -13,6 +13,10 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+
+/**
+ * 읽기 전용 여행 정보를 담는 데이터 전송 객체(DTO) 클래스
+ */
 public class ReadTripDTO {
     private Long id;
     private String tripName;
