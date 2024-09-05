@@ -28,7 +28,7 @@ public class KafkaConsumerConfig {
 
         Map<String, Object> config = new HashMap<>();   // Kafka 설정을 담을 맵 생성
 
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");  // Kafka 서버 주소 설정
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "ec2-54-253-66-249.ap-southeast-2.compute.amazonaws.com:9092");  // Kafka 서버 주소 설정
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "chat-room-listener");   // Kafka 소비자 그룹 ID 설정
 
         // 키와 값의 디시리얼라이저 설정
