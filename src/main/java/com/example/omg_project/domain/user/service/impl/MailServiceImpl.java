@@ -28,12 +28,13 @@ public class MailServiceImpl implements MailService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender; // JAVAMailSender 를 주입받아 이메일 전송 가능
     private static final String senderEmail = "ch9800113@gmail.com";
     private static final Map<String, Integer> verificationCodes = new HashMap<>();
 
     /**
-     * 인증 코드 자동 생성 메서드
+     * 회원 가입시 인증 코드 자동 생성 메서드
+     * @param email 이메일 주소
      */
     private static void createNumber(String email){
         SecureRandom random = new SecureRandom();
@@ -43,6 +44,7 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 이메일 전송
+     * @param mail 이메일 주소
      */
     @Override
     public MimeMessage createMail(String mail){
@@ -64,7 +66,9 @@ public class MailServiceImpl implements MailService {
     }
 
     /**
-     * createMail() 메서드의 내용을 이메일 전송
+     * createMail() 메서드의 내용을 바탕으로 이메일 전송
+     * @param mail 이메일 주소
+     * @return 응답
      */
     @Async
     @Override
@@ -76,6 +80,9 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 이메일 인증 코드 검증
+     * @param mail 이메일 주소
+     * @param code 인증 코드
+     * @return 응답
      */
     @Override
     public boolean verifyCode(String mail, int code) {
@@ -85,6 +92,7 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 임시 비밀번호 자동 생성 메서드
+     * @return 응답
      */
     private static String generateRandomPassword() {
         int length = 8;
@@ -99,7 +107,9 @@ public class MailServiceImpl implements MailService {
     }
 
     /**
-     * 임시 비밀번호 전송
+     * 임시 비밀번호 메일 내용 작성
+     * @param mail 이메일 주소
+     * @param tempPassword 임시 비밀번호 코드
      */
     @Override
     public void sendTemporaryPasswordMail(String mail, String tempPassword) {
@@ -119,6 +129,8 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 임시 비밀번호 생성 및 DB 업데이트
+     * @param mail 이메일 주소
+     * @return 응답
      */
     @Override
     public String createTemporaryPassword(String mail) {
@@ -132,6 +144,9 @@ public class MailServiceImpl implements MailService {
 
     /**
      * 임시 비밀번호 검증
+     * @param mail 이메일 즈소
+     * @param tempPassword 임시 비밀번호 코드
+     * @return 응답
      */
     @Override
     public boolean verifyTemporaryPassword(String mail, String tempPassword) {

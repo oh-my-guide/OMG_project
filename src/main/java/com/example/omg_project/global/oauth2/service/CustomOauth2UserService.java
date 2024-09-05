@@ -33,21 +33,17 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        log.info("OAuth2User attributes: {}", oAuth2User.getAttributes());
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
 
         switch (registrationId) {
             case "naver":
-                log.info("naver 로그인");
                 oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
                 break;
             case "kakao":
-                log.info("kakao 로그인");
                 oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
                 break;
             case "google":
-                log.info("google 로그인");
                 oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
                 break;
             default:
@@ -82,7 +78,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 .providerId(oAuth2Response.getProviderId())
                 .provider(oAuth2Response.getProvider())
                 .password("")
-                // 마이페이지에서 직접 설정할 필드들
+                // 로그인 후 추가정보 기입
                 .phoneNumber("01000000000")
                 .birthdate(LocalDate.from(LocalDateTime.now()))
                 .gender("default")
@@ -91,8 +87,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
                 .status("ACTIVE")
                 .build();
         userRepository.save(newUser);
-
-        log.info("새로운 유저 생성: {}", username);
 
         return new CustomOAuth2User(oAuth2Response, roleName);
     }

@@ -30,7 +30,7 @@ public class JwtTokenizer {
     public static Long ACCESS_TOKEN_EXPIRE_COUNT = 30 * 60 * 1000L; // 30분
     public static Long REFRESH_TOKEN_EXPIRE_COUNT = 7 * 24 * 60 * 60 * 1000L; // 7일
 
-    // .yml 파일에 secretKey, refreshKey 값이 있어야 한다.
+    // .yml 파일에 secretKey, refreshKey 값 존재
     public JwtTokenizer(@Value("${jwt.secretKey}") String accessSecret,
                         @Value("${jwt.refreshKey}") String refreshSecret){
         this.accessSecret = accessSecret.getBytes(StandardCharsets.UTF_8);
@@ -71,7 +71,6 @@ public class JwtTokenizer {
                 .compact();
     }
 
-    //----------------------------------------------------------------------------------추가-------------------------------//
     /**
      * JWT 토큰에서 사용자 ID 추출
      * @param token JWT 토큰
@@ -102,7 +101,6 @@ public class JwtTokenizer {
         return claims.get("roles", List.class);
     }
 
-//---------------------------------------------------------------------------------------------------------------------//
     /**
      * access token 파싱
      * @param accessToken access token
