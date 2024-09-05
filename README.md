@@ -5,10 +5,10 @@
 
 ## 👨‍👨‍👦‍👦 팀원
 
-|                                               [전현진](https://github.com/HyeonJinJeon)                                                |                                                    [곽유진](https://github.com/jinijavac)                                                     |                                                    [손설빈](https://github.com/seolbb)                                                     |                                                    [김혜주](https://github.com/kimoju01)                                                     |                                                    [박경서](https://github.com/kyongseo)                                                     |
-|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|
-| <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | 
-|                                                                팀장                                                                 |                                                                팀원                                                                 |                                                                팀원                                                                 |                                                                팀원                                                                 |                                                                팀원                                                                 | 
+|                                               [전현진](https://github.com/HyeonJinJeon)                                                |                                                    [곽유진](https://github.com/jinijavac)                                                     |                                                    [손설빈](https://github.com/seolbb)                                                     |                                          [김혜주](https://github.com/kimoju01)                                          |                                                    [박경서](https://github.com/kyongseo)                                                     |
+|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://github.com/user-attachments/assets/8d5bb1bb-d84f-4b09-af8a-315f82271388"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | 
+|                                                                팀장                                                                 |                                                                팀원                                                                 |                                                                팀원                                                                 |                                                     카페인 대신 초콜릿🍫                                                     |                                                                팀원                                                                 | 
 
 
 
@@ -271,17 +271,10 @@ OMG(Oh My Guide)는 사용자가 **여행을 계획**하고 **동행자를 모�
 
 ## 기여 방법 (Contributing)
 
-- **이슈 제출**: 명확한 제목과 설명으로 이슈를 제출합니다.
-- **Pull Request (PR) 작성**:
-    - **제목 형식**: `[#[이슈번호]] 제목` 형식으로 작성합니다.
-    - **설명**: 변경 사항과 관련된 정보를 상세히 기술합니다.
-    - **체크리스트**: 코드 스타일 가이드 준수, 테스트 작성 등 확인.
-- **코드 스타일 가이드**:
-    - **Indentation**: 공백 4칸.
-    - **Naming Conventions**: camelCase, PascalCase 등 사용.
-    - **Braces**: 새 줄에 작성.
-    - **Comments**: 주요 로직에 주석 추가.
-    - **Error Handling**: 예외 처리 및 로그 작성.
+- **브랜치 생성**: 📑[Branch Convention](https://github.com/oh-my-guide/OMG_project/wiki/Branch-Convention)
+- **이슈 제출**: 📑[Issue Convention](https://github.com/oh-my-guide/OMG_project/wiki/Issue-Convention)
+- **Pull Request (PR) 작성**: 📑[PR Convention](https://github.com/oh-my-guide/OMG_project/wiki/PR-Convention)
+- **코드 스타일 가이드**: 📑[Coding Convention](https://github.com/oh-my-guide/OMG_project/wiki/Coding-Convention)
 
 ---
 
