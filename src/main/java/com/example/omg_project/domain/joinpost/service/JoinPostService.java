@@ -25,5 +25,4 @@ public interface JoinPostService {
     boolean existsJoinPostByTripId(Long tripId);
     // 조회수 증가
     void incrementViews(Long id);
-
 }

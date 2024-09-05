@@ -27,6 +27,9 @@ public class JoinPostReplyServiceImpl implements JoinPostReplyService {
     private final JoinPostCommentRepository joinPostCommentRepository;
     private final NotificationService notificationService;
 
+    /**
+     * 대댓글 작성
+     */
     @Override
     @Transactional
     public JoinPostReplyDto.Response createReply(Long commentId, Long userId, JoinPostReplyDto.Request replyRequest) throws JsonProcessingException {
@@ -45,6 +48,9 @@ public class JoinPostReplyServiceImpl implements JoinPostReplyService {
         return JoinPostReplyDto.Response.fromEntity(joinPostReply);
     }
 
+    /**
+     * 대댓글 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public List<JoinPostReplyDto.Response> findAllByCommentId(Long commentId) {
@@ -53,6 +59,9 @@ public class JoinPostReplyServiceImpl implements JoinPostReplyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 대댓글 수정
+     */
     @Override
     @Transactional
     public JoinPostReplyDto.Response updateReply(Long replyId, JoinPostReplyDto.Request replyRequest) {
@@ -65,12 +74,18 @@ public class JoinPostReplyServiceImpl implements JoinPostReplyService {
         return JoinPostReplyDto.Response.fromEntity(joinPostReply);
     }
 
+    /**
+     *  대댓글 삭제
+     */
     @Override
     @Transactional
     public void deleteReply(Long replyId) {
         joinPostReplyRepository.deleteById(replyId);
     }
 
+    /**
+     * 대댓글 전체 삭제
+     */
     @Override
     @Transactional
     public void deleteByUserId(Long userId) {
