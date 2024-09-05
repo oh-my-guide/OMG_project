@@ -215,13 +215,57 @@ OMG(Oh My Guide)는 사용자가 **여행을 계획**하고 **동행자를 모�
 
 ## 데모 (Demo)
 
+### 로그인
+![img_18.png](src/main/resources/static/readmeImage/img_18.png)
 
+### 회원가입
+![img_19.png](src/main/resources/static/readmeImage/img_19.png)
 
----
+### 메인 페이지
+![img_1.png](src/main/resources/static/readmeImage/img_1.png)
 
-## 테스트 (Testing)
+### 여행 일정 생성 방법 선택
+![img_2.png](src/main/resources/static/readmeImage/img_2.png)
 
+### 일정 생성
+#### - 직접 생성
+![img_3.png](src/main/resources/static/readmeImage/img_3.png)
+#### - 기존 일정 참여
+![img_10.png](src/main/resources/static/readmeImage/img_10.png)
 
+### 일정 상세
+![img_4.png](src/main/resources/static/readmeImage/img_4.png)
+
+### 게시판
+#### - 게시글 목록 (모집 게시글 목록도 동일)
+![img_5.png](src/main/resources/static/readmeImage/img_5.png)
+
+#### - 후기 게시글 작성
+![img_7.png](src/main/resources/static/readmeImage/img_7.png)
+![img_8.png](src/main/resources/static/readmeImage/img_8.png)
+
+#### - 모집 게시글 작성
+![img_9.png](src/main/resources/static/readmeImage/img_9.png)
+
+### 찜하기
+![img_12.png](src/main/resources/static/readmeImage/img_12.png)
+![img_13.png](src/main/resources/static/readmeImage/img_13.png)
+
+### 내 정보(생성한 일정 및 작성한 글 목록)
+![img_11.png](src/main/resources/static/readmeImage/img_11.png)
+![img_15.png](src/main/resources/static/readmeImage/img_15.png)
+![img_14.png](src/main/resources/static/readmeImage/img_14.png)
+
+### 채팅 
+![img_16.png](src/main/resources/static/readmeImage/img_16.png)
+
+### 알림
+![img_17.png](src/main/resources/static/readmeImage/img_17.png)
+
+### 관리자
+![img_20.png](src/main/resources/static/readmeImage/img20.png)
+![img_21.png](src/main/resources/static/readmeImage/img_21.png)
+![img_22.png](src/main/resources/static/readmeImage/img_22.png)
 
 ---
 
