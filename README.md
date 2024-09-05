@@ -263,7 +263,7 @@ OMG(Oh My Guide)는 사용자가 **여행을 계획**하고 **동행자를 모�
 ![img_17.png](src/main/resources/static/readmeImage/img_17.png)
 
 ### 관리자
-![img_20.png](src/main/resources/static/readmeImage/img20.png)
+![img_20.png](src/main/resources/static/readmeImage/img_20.png)
 ![img_21.png](src/main/resources/static/readmeImage/img_21.png)
 ![img_22.png](src/main/resources/static/readmeImage/img_22.png)
 
