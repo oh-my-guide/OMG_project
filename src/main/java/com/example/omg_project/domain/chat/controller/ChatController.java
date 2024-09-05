@@ -43,17 +43,14 @@ public class ChatController {
             User user = userService.findByUsername(username).orElseThrow();
 
             try {
-                // 사용자 및 채팅방 검증 로직 호출
                 // user객채와 채팅방 ID를 기반으로 사용자가 해당 채팅방에 참여하고 있는지 확인
                 chatService.validateUserInChatRoom(roomId, user);
             }catch (RuntimeException e){
                 e.printStackTrace();
             }
 
-
             String tripName = chatService.findTripName(roomId);
 
-            // 검증에 성공하면, 모델에 roomId, tripName, user를 추가하고 채팅방 화면으로 이동
             model.addAttribute("roomId", roomId);
             model.addAttribute("tripName", tripName);
             model.addAttribute("user", user);
@@ -61,9 +58,8 @@ public class ChatController {
             return "chat/chat";  // 채팅 화면으로 이동
 
         } catch (RuntimeException e) {
-            // 예외 발생 시, 에러 메시지를 전달하고 홈 화면으로 리다이렉트
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/";  // 홈 화면으로 리다이렉트
+            return "redirect:/";
         }
     }
 }
