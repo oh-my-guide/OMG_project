@@ -33,6 +33,9 @@ public class ReviewPostServiceImpl implements ReviewPostService {
     private final TripLocationRepository tripLocationRepository;
     private final PlaceReviewRepository placeReviewRepository;
 
+    /**
+     * 게시글 작성
+     */
     @Override
     @Transactional
     public ReviewPostDto.Response createReviewPost(ReviewPostDto.Request reviewPostRequest) {
@@ -61,11 +64,17 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         return ReviewPostDto.Response.fromEntity(reviewPost);
     }
 
+    /**
+     * 게시글 전체 조회
+     */
     @Override
     public List<ReviewPostDto.Response> findAllReviewPost() {
         return reviewPostRepository.findAll().stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
+    /**
+     * 게시글 전체 조회 - 정렬
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ReviewPostDto.Response> findAllReviewPost(String sort) {
@@ -76,6 +85,9 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         return reviewPostRepository.findAll(sorting).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
+    /**
+     * 특정 사용자의 게시글 전체 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ReviewPostDto.Response> findReviewPostsByUserId(Long userId) {
@@ -83,6 +95,9 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         return reviewPostRepository.findReviewPostByUserId(user.getId()).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
+    /**
+     * 지역별 게시글 전체 조회
+     */
     @Override
     public List<ReviewPostDto.Response> findReviewPostsByCity(Long cityId, String sort) {
         Sort sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본 정렬: 최신순
@@ -92,6 +107,9 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         return reviewPostRepository.findByTrip_CityId(cityId, sorting).stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
+    /**
+     * 게시글 검색
+     */
     @Override
     public List<ReviewPostDto.Response> searchReviewPosts(String searchOption, String keyword) {
         List<ReviewPost> results;
@@ -114,6 +132,9 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         return results.stream().map(ReviewPostDto.Response::fromEntity).collect(Collectors.toList());
     }
 
+    /**
+     * 게시글 상세 조회
+     */
     @Override
     @Transactional(readOnly = true)
     public ReviewPostDto.Response findReviewPostById(Long id) {
@@ -121,6 +142,9 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         return ReviewPostDto.Response.fromEntity(reviewPost);
     }
 
+    /**
+     * 게시글 수정
+     */
     @Override
     @Transactional
     public ReviewPostDto.Response updateReviewPost(Long id, ReviewPostDto.Request reviewPostRequest) {
@@ -149,12 +173,18 @@ public class ReviewPostServiceImpl implements ReviewPostService {
         return ReviewPostDto.Response.fromEntity(originPost);
     }
 
+    /**
+     * 게시글 삭제
+     */
     @Override
     @Transactional
     public void deleteReviewPost(Long id) {
         reviewPostRepository.deleteById(id);
     }
 
+    /**
+     * 조회수 증가
+     */
     @Override
     @Transactional
     public void incrementViews(Long id) {

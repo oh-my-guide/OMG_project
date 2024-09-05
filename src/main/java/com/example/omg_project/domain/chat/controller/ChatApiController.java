@@ -25,10 +25,10 @@ import java.util.List;
 public class ChatApiController {
 
     @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;  // S3 버킷 이름을 환경 변수에서 주입받음
+    private String bucketName;
 
-    private final ChatService chatService;  // 채팅 서비스 객체
-    private final AmazonS3 amazonS3;  // Amazon S3 클라이언트 객체
+    private final ChatService chatService;
+    private final AmazonS3 amazonS3;
 
     /**
      * 특정 채팅방의 메시지를 조회하는 엔드포인트
@@ -53,20 +53,15 @@ public class ChatApiController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
 
-        // 파일 이름을 현재 시간(밀리초)과 원본 파일 이름을 조합하여 생성
         String fileName = System.currentTimeMillis() + "-" + file.getOriginalFilename();
-        System.out.println(fileName);  // 생성된 파일 이름을 로그에 기록
 
         try (InputStream inputStream = file.getInputStream()) {
-            // 파일을 S3 버킷에 업로드
-            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, null));
-
-            // 업로드된 파일의 URL을 생성하여 반환
-            String fileUrl = amazonS3.getUrl(bucketName, fileName).toString();
-            return ResponseEntity.ok(fileUrl);  // 파일 URL을 포함한 응답 반환
+            amazonS3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, null));// 파일을 S3 버킷에 업로드
+            String fileUrl = amazonS3.getUrl(bucketName, fileName).toString();  // 업로드된 파일의 URL을 생성하여 반환
+            return ResponseEntity.ok(fileUrl);
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");  // 에러 응답 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed");
         }
     }
 }

@@ -18,6 +18,10 @@ public class AdminNoticeServiceImpl implements AdminNoticeService {
 
     private final AdminNoticeRepository omgPosterRepository;
 
+    /**
+     * 공지사항 작성
+     * @param noticeRequest 공지사항 dto
+     */
     @Override
     public void saveNotice(AdminNoticeRequest noticeRequest) {
         String title = noticeRequest.getTitle();

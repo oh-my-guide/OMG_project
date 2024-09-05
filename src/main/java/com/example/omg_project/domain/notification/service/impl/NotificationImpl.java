@@ -21,14 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NotificationImpl implements NotificationService {
 
-    // Notification 엔티티에 대한 데이터베이스 작업을 수행하는 리포지토리
     private final NotificationRepository notificationRepository;
-
-    // Redis를 통한 실시간 알림 전송을 위한 템플릿
     private final RedisTemplate<String, Object> redisTemplate;
-
-    // JSON 처리에 사용되는 ObjectMapper
-    private final ObjectMapper objectMapper;
 
     /**
      * 사용자를 위한 새로운 알림을 생성하고 Redis를 통해 실시간으로 전송합니다.
@@ -49,7 +43,6 @@ public class NotificationImpl implements NotificationService {
             notification.setCreatedAt(LocalDateTime.now()); // 알림 생성 시간 설정
             notification.setRelatedEntityId(relatedEntityId); // 관련된 엔티티 ID 설정
 
-            // 데이터베이스에 알림 저장
             notificationRepository.save(notification);
 
             // Redis를 통해 실시간 알림 전송
@@ -83,14 +76,11 @@ public class NotificationImpl implements NotificationService {
     @Override
     public void markAsRead(Long notificationId) {
         try {
-            // 알림 ID로 알림을 조회하고 없으면 예외를 던짐
             Notification notification = notificationRepository.findById(notificationId)
                     .orElseThrow(() -> new CustomException(ErrorCode.NOTIFICATION_NOT_FOUND));
 
-            // 알림을 읽음 상태로 변경
             notification.setRead(true);
 
-            // 변경된 알림을 데이터베이스에 저장
             notificationRepository.save(notification);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.NOTIFICATION_UPDATE_ERROR);
@@ -106,7 +96,6 @@ public class NotificationImpl implements NotificationService {
     @Override
     public long getUnreadNotificationCount(Long userId) {
         try {
-            // 사용자 ID를 기준으로 읽지 않은 알림의 개수를 조회
             return notificationRepository.countUnreadNotifications(userId);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.NOTIFICATION_COUNT_ERROR);

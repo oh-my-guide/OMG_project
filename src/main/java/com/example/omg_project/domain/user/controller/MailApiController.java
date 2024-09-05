@@ -3,10 +3,8 @@ package com.example.omg_project.domain.user.controller;
 import com.example.omg_project.domain.user.dto.request.MailRequest;
 import com.example.omg_project.domain.user.dto.request.PasswordVerificationRequest;
 import com.example.omg_project.domain.user.dto.request.MailVerificationRequest;
-import com.example.omg_project.domain.user.dto.request.UserPasswordChangeRequest;
 import com.example.omg_project.domain.user.service.MailService;
 import com.example.omg_project.domain.user.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +23,9 @@ public class MailApiController {
     private final UserService userService;
 
     /**
-     * 인증번호 발송 메소드
+     * 인증번호 발송 API
+     * @param mailRequest 메일 전송 dto
+     * @return 응답
      */
     @PostMapping("/api/users/mail")
     public CompletableFuture<String> mailSend(@RequestBody MailRequest mailRequest) {
@@ -34,7 +34,9 @@ public class MailApiController {
     }
 
     /**
-     * 인증번호 검증 메소드
+     * 인증번호 검증 API
+     * @param verificationRequest 메일 검증 dto
+     * @return 응답
      */
     @PostMapping("/api/users/verify-code")
     public ResponseEntity<String> verifyCode(@RequestBody MailVerificationRequest verificationRequest) {
@@ -47,7 +49,7 @@ public class MailApiController {
     }
 
     /**
-     * 이메일 중복 체크 메서드
+     * 이메일 중복 체크 API
      */
     @PostMapping("/api/users/check-email")
     public ResponseEntity<Boolean> checkEmail(@RequestBody Map<String, String> request) {
@@ -55,7 +57,7 @@ public class MailApiController {
     }
 
     /**
-     * 닉네임 중복 체크 메서드
+     * 닉네임 중복 체크 API
      */
     @PostMapping("/api/users/check-usernick")
     public ResponseEntity<Boolean> checkUsernick(@RequestBody Map<String, String> request) {
@@ -63,7 +65,9 @@ public class MailApiController {
     }
 
     /**
-     * 임시 비밀번호 재발급 발송 메서드
+     * 임시 비밀번호 재발급 발송 API
+     * @param mailRequest 메일 전송 dto
+     * @return 응답
      */
     @PostMapping("/api/users/reset-password")
     public ResponseEntity<String> resetPassword(@RequestBody MailRequest mailRequest) {
@@ -79,7 +83,9 @@ public class MailApiController {
     }
 
     /**
-     * 임시 비밀번호 검증 메소드
+     * 임시 비밀번호 검증 API
+     * @param request 메일 전송 dto
+     * @return 응답
      */
     @PostMapping("/api/users/verify-temporary-password")
     public ResponseEntity<String> verifyTemporaryPassword(@RequestBody PasswordVerificationRequest request) {

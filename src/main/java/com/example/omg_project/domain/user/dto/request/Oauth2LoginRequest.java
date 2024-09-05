@@ -3,6 +3,9 @@ package com.example.omg_project.domain.user.dto.request;
 import lombok.*;
 import java.time.LocalDate;
 
+/**
+ * 소셜로그인 추가 정보 기입 dto
+ */
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor

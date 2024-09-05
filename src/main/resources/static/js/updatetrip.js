@@ -1,34 +1,26 @@
-// 마커를 담을 배열
-// let markers = [];
-
-// 선택된 장소들을 저장할 배열
-// let selectedPlaces = [];
-
+// 지도 설정
 const mapContainer = document.getElementById('map'), // 지도를 표시할 div
     mapOption = {
         center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
         level: 3 // 지도의 확대 레벨
     };
 
-// 지도를 생성합니다
+// 지도를 생성
 const map = new kakao.maps.Map(mapContainer, mapOption);
 
-// 지도를 재설정할 범위정보를 가지고 있을 LatLngBounds 객체를 생성
+// 지도 범위를 재설정할 범위 정보를 가지고 있을 LatLngBounds 객체를 생성
 const bounds = new kakao.maps.LatLngBounds();
 
-// 장소 검색 객체를 생성합니다
+// 장소 검색 객체를 생성
 const ps = new kakao.maps.services.Places();
 
-// 키워드로 장소를 검색합니다
-// searchPlaces();
-
-// 선을 구성하는 좌표 배열입니다. 이 좌표들을 이어서 선을 표시합니다.
+// 선을 구성하는 좌표 배열을 저장하는 객체. 이 좌표들을 이어서 선을 표시함. (key: dayNum, value: kakao.maps.LatLng 객체 (위도, 경도 위치 정보))
 let linePath = {};
 
-// 폴리라인(선) 객체 (key: dayNum, value: 단일 kakao.maps.Polyline 객체)
+// 선을 그리는 폴리라인 객체. linePath를 통해 선을 그릴 좌표를 설정함. (key: dayNum, value: kakao.maps.Polyline 객체)
 let polyline = {};
 
-// 마커 이미지가 순환되도록 매핑
+// 마커 이미지가 dayNum에 맞춰 6일마다 순환되도록 매핑
 const markerImages = {
     1: '/files/markers/marker_number_red.png',
     2: '/files/markers/marker_number_yellow.png',
@@ -38,21 +30,22 @@ const markerImages = {
     6: '/files/markers/marker_number_purple.png'
 }
 
+// 하루에 추가할 수 있는 최대 장소 갯수
 const MAX_LOCATIONS = 15;
 
 /**
- * 키워드 검색을 요청하는 함수입니다
+ * 키워드 검색을 요청하는 함수입니다.
  * @returns {boolean} - 키워드가 유효하지 않으면 false
  */
 function searchPlaces() {
     const keyword = document.getElementById('keyword').value;
 
-    if (!keyword.replace(/^\s+|\s+$/g, '')) {   // 키워드가 공백만 있는 경우
+    if (!keyword.replace(/^\s+|\s+$/g, '')) {   // 키워드가 공백만 있는 경우도 포함
         alert('키워드를 입력해주세요!');
         return false;
     }
 
-    // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+    // 장소검색 객체를 통해 키워드로 장소검색을 요청
     ps.keywordSearch(keyword, placesSearchCB);
 }
 
@@ -80,33 +73,7 @@ function placesSearchCB(data, status, pagination) {
 }
 
 /**
- * 장소 데이터를 백단으로 전송하는 함수입니다
- * @param places - 선택된 장소 데이터 배열
- */
-function sendPlaceData(places) {
-    // 백단에서 필요한 데이터만 포함된 배열 생성
-    const filteredPlaces = selectedPlaces.map(place => ({
-        name: place.place_name,
-        longitude: place.x,
-        latitude: place.y
-    }));
-
-    $.ajax({
-        url: '/api/save-location',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(filteredPlaces),
-        success: function (data) {
-            console.log('success:', data);
-        },
-        error: function (error) {
-            console.error('error:', error);
-        }
-    });
-}
-
-/**
- * 선택 버튼 클릭 이벤트 핸들러
+ * 선택 버튼 클릭 이벤트 핸들러입니다.
  * @param event - 이벤트 객체
  * @param place - 선택된 장소 데이터
  * @param placePosition - 장소의 좌표 객체
@@ -163,7 +130,7 @@ function handleSelectBtnClick(event, place, placePosition) {
 }
 
 /**
- * 장소 추가 시 지도에 선 그리기
+ * 장소 추가 시 지도에 선을 그리는 함수입니다.
  * @param dayNum - 여행 일차
  * @param placePosition - kakao.maps.LatLng 객체 (위도, 경도 위치 정보)
  */
@@ -195,12 +162,11 @@ function drawLinePath(dayNum, placePosition) {
 
     // 지도에 선을 표시합니다
     polyline[dayNum].setMap(map);
-    console.log('drawLinePath --- polyline: {}', polyline);
 }
 
 /**
- * 장소 제거 시 지도에 선 알맞게 다시 그리기
- * @param dayNum
+ * 장소 제거 시 지도에 선을 알맞게 다시 그리는 함수입니다.
+ * @param dayNum - 제거해야 할 장소의 일차
  */
 function redrawLinePath(dayNum) {
     // 경로가 비어있으면 폴리라인 삭제
@@ -217,7 +183,7 @@ function redrawLinePath(dayNum) {
 }
 
 /**
- * 제거 버튼 클릭 이벤트 핸들러
+ * 제거 버튼 클릭 이벤트 핸들러입니다.
  * @param event - 이벤트 객체
  * @param placeUniqueId - 선택된 요소의 장소 식별자
  * @param placePositionLa - 장소의 좌표 정보
@@ -272,25 +238,19 @@ function handleRemoveBtnClick(event, placeUniqueId, placePositionLa, placePositi
             linePath[dayNum].splice(pathIndex, 1); // 배열에서 해당 좌표 제거. 인덱스부터 1개의 요소 삭제
         }
 
-        // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 ID를 업데이트
+        // 장소와 마커가 삭제된 후, 나머지 요소들의 인덱스와 span 태그의 id를 업데이트
         updatePlaceIndexes(dayNum);
         // 마커 번호 재정렬
         reorderMarkers(markers[dayNum], dayNum);
         // 장소 지웠으니 선 다시 그리기
         redrawLinePath(dayNum);
-
-        // console.log('삭제 후 selectedPlaces[dayNum].length: ', selectedPlaces[dayNum].length);
-
-        // } else {
-        //     console.error('장소 인덱스가 유효하지 않습니다.');
-        // }
     } else {
         console.error('dayNum이 존재하지 않습니다.');
     }
 }
 
 /**
- * 삭제 후 나머지 장소의 인덱스와 ID를 업데이트하는 함수
+ * 삭제 후 나머지 장소의 장소 인덱스와 span 태그의 id를 업데이트하는 함수입니다.
  * @param dayNum - 선택된 날짜의 번호
  */
 function updatePlaceIndexes(dayNum) {
@@ -306,21 +266,10 @@ function updatePlaceIndexes(dayNum) {
             spanElement.textContent = index + 1; // 새로운 번호 설정
         }
     });
-    console.log('updatePlaceIndexes --- Selected Places:', selectedPlaces);
-    console.log('updatePlaceIndexes --- Markers:', markers);
-    console.log('----------');
-
-}
-
-// 전체 날짜의 장소 인덱스를 재정렬하는 함수
-function updateAllPlaceIndexes() {
-    Object.keys(markers).forEach(dayNum => {
-        updatePlaceIndexes(Number(dayNum));
-    });
 }
 
 /**
- * 검색 결과 목록과 마커를 표출하는 함수입니다
+ * 카카오 지도 장소 검색 결과 목록과 마커를 표출하는 함수입니다.
  * @param places - 검색된 장소 데이터 배열
  */
 function displayPlaces(places) {
@@ -352,7 +301,7 @@ function displayPlaces(places) {
 }
 
 /**
- * 검색결과 항목을 Element로 반환하는 함수입니다
+ * 검색결과 항목을 Element로 반환하는 함수입니다.
  * @param index - 검색 결과 항목의 인덱스
  * @param places - 검색 결과 항목의 데이터
  * @returns {HTMLLIElement} - 검색 결과 항목 Element
@@ -408,17 +357,17 @@ function addSelectedMarker(position, idx, dayNum) {
     marker.setMap(map);
     // markers.push(marker);
     markers[dayNum].push(marker);
-    console.log('addSelectedMarker --- markres: {}', markers);
 
     return marker;
 }
 
 /**
- * 이미 추가되어있던 장소의 마커를 지도에 표시하기
- * @param latitude
- * @param longitude
- * @param idx
- * @returns {kakao.maps.Marker}
+ * 이미 추가되어있던 장소의 마커를 지도에 표시하는 함수입니다.
+ * @param latitude - 위도
+ * @param longitude - 경도
+ * @param idx - markers[dayNum].length
+ * @param dayNum - 해당 일정의 일차
+ * @returns {kakao.maps.Marker} - 생성된 marker 객체
  */
 function addSavedPlacesMarker(latitude, longitude, idx, dayNum) {
     // dayNum % 6 === 0 이면 6으로 매핑(dayNum이 1 또는 7이면 1번째 이미지, 6이면 6번째 이미지, 2 또는 8이면 2번째 이미지, ... 6 단위로 순환)
@@ -440,14 +389,14 @@ function addSavedPlacesMarker(latitude, longitude, idx, dayNum) {
     marker.setMap(map);
     markers[dayNum].push(marker);
     setBounds(new kakao.maps.LatLng(latitude, longitude));
-    console.log('addSavedPlacesMarker --- markers: {}', markers);
 
     return marker;
 }
 
 /**
- * 제거 버튼 클릭 이벤트 발생 시 기존에 있던 마커 번호(마커 이미지)를 재정렬하는 함수
- * @param markers - 선택된 장소들의 마커 배열
+ * 제거 버튼 클릭 이벤트 발생 시 기존에 있던 마커 번호(마커 이미지)를 재정렬하는 함수입니다.
+ * @param markers - markers 객체
+ * @param dayNum - 해당 일정의 일차
  */
 function reorderMarkers(markers, dayNum) {
     for (let i = 0; i < markers.length; i++) {
@@ -470,7 +419,7 @@ function reorderMarkers(markers, dayNum) {
 }
 
 /**
- * 지도 위에 표시되고 있는 모든 날짜에 대한 마커를 모두 제거하는 함수
+ * 지도 위에 표시되고 있는 모든 날짜에 대한 마커를 모두 제거하는 함수입니다.
  */
 function clearAllMarker() {
     // markers 객체에 저장된 모든 dayNum(key)을 순회하며 각 날짜에 대한 marker 처리
@@ -483,11 +432,10 @@ function clearAllMarker() {
         // 마커 배열을 초기화
         markers[dayNum] = [];
     });
-    console.log('---clearAllMarker---');
 }
 
 /**
- * 지도 위에 그려진 모든 폴리라인(선)를 제거하는 함수
+ * 지도 위에 그려진 모든 폴리라인(선)를 제거하는 함수입니다.
  */
 function clearAllPolyline() {
     // polyline 객체에 저장된 모든 dayNum(key)을 순회
@@ -499,11 +447,10 @@ function clearAllPolyline() {
             delete polyline[dayNum];
         }
     });
-    console.log('---clearAllPolyline---');
 }
 
 /**
- * 지도 범위 재설정 함수입니다
+ * 지도 범위 재설정 함수입니다,
  * @param placePosition - 마커의 좌표 객체
  */
 function setBounds(placePosition) {
@@ -515,7 +462,7 @@ function setBounds(placePosition) {
 }
 
 /**
- * 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
+ * 검색결과 목록 하단에 페이지번호를 표시는 함수입니다.
  * @param pagination - 페이지네이션 객체
  */
 function displayPagination(pagination) {
@@ -549,7 +496,7 @@ function displayPagination(pagination) {
 }
 
 /**
- * 검색결과 목록의 자식 Element를 제거하는 함수입니다
+ * 검색결과 목록의 자식 Element를 제거하는 함수입니다.
  * @param el - 검색 결과 목록 요소
  */
 function removeAllChildNods(el) {
@@ -557,6 +504,3 @@ function removeAllChildNods(el) {
         el.removeChild(el.lastChild);
     }
 }
-
-// 선택 완료 버튼에 클릭 이벤트 리스너 추가
-// document.querySelector('button[type="button"]').addEventListener('click', handleSelectCompleteBtnClick);
