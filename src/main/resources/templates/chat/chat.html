@@ -196,7 +196,7 @@
       console.error('Fetch operation error:', textStatus, errorThrown);
     });
 
-    var socket = new WebSocket("ws://ec2-43-202-189-185.ap-northeast-2.compute.amazonaws.com/:8080/chat/" + roomId);
+    var socket = new WebSocket("ws://ec2-43-202-189-185.ap-northeast-2.compute.amazonaws.com:8080/chat/" + roomId);
 
     socket.onopen = function() {
       console.log("WebSocket 서버에 연결되었습니다.");
