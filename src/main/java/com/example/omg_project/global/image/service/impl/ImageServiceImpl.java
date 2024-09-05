@@ -104,8 +104,8 @@ public class ImageServiceImpl implements ImageService {
      * 이미지 파일을 S3에 업로드하고 URL을 반환
      * @param image 업로드할 이미지 파일
      * @return 업로드된 이미지의 S3 URL
-     * @throws IOException
-     * @throws CustomException
+     * @throws IOException 이미지 업로드 중 입출력 오류 발생 시
+     * @throws CustomException 이미지 업로드 중 사용자 정의 예외 발생 시
      */
     @Override
     public String uploadImageToS3(MultipartFile image, String directoryName) throws IOException {
