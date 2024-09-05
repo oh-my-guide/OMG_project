@@ -26,7 +26,7 @@ public class KafkaProducerConfig {
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> config = new HashMap<>();   // Kafka 설정을 담을 맵 생성
 
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");  // Kafka 서버 주소 설정
+        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "15.165.236.189:9092");  // Kafka 서버 주소 설정
 
         // 키와 값의 시리얼라이저 설정
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
