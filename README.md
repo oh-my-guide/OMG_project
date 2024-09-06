@@ -5,10 +5,10 @@
 
 ## 👨‍👨‍👦‍👦 팀원
 
-|                                               [전현진](https://github.com/HyeonJinJeon)                                                |                                                    [곽유진](https://github.com/jinijavac)                                                     |                                                    [손설빈](https://github.com/seolbb)                                                     |                                                    [김혜주](https://github.com/kimoju01)                                                     |                                                    [박경서](https://github.com/kyongseo)                                                     |
-|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|
-| <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | 
-|                                                                팀장                                                                 |                                                                팀원                                                                 |                                                                팀원                                                                 |                                                                팀원                                                                 |                                                                팀원                                                                 | 
+|                                               [전현진](https://github.com/HyeonJinJeon)                                                |                                                    [곽유진](https://github.com/jinijavac)                                                     |                                                    [손설빈](https://github.com/seolbb)                                                     |                                          [김혜주](https://github.com/kimoju01)                                          |                                                    [박경서](https://github.com/kyongseo)                                                     |
+|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------:|
+| <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | <img width="150" height="150" src="https://github.com/user-attachments/assets/8d5bb1bb-d84f-4b09-af8a-315f82271388"> | <img width="150" height="150" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7Axa1JxoAfrkVVHgQmEI49vuREEtRJoQ9Xw&s"> | 
+|                                                                팀장                                                                 |                                                                팀원                                                                 |                                                                팀원                                                                 |                                                     카페인 대신 초콜릿🍫                                                     |                                                                팀원                                                                 | 
 
 
 
@@ -212,76 +212,85 @@ OMG(Oh My Guide)는 사용자가 **여행을 계획**하고 **동행자를 모�
         ├── /oauth2                 # OAuth2 관련 유틸리티 및 구성
         └── /security               # 보안 관련 설정 및 유틸리티
 
+---
 
 ## 데모 (Demo)
 
-### 로그인
-![img_18.png](src/main/resources/static/readmeImage/img_18.png)
-
-### 회원가입
-![img_19.png](src/main/resources/static/readmeImage/img_19.png)
+<div align="center">
 
 ### 메인 페이지
-![img_1.png](src/main/resources/static/readmeImage/img_1.png)
 
-### 여행 일정 생성 방법 선택
-![img_2.png](src/main/resources/static/readmeImage/img_2.png)
+|<img src="src/main/resources/static/readmeImage/img_1.png" width="50%"/>|
+|:------------------------------------------------------------------------:|
+|                                  메인 페이지                                  |
 
-### 일정 생성
-#### - 직접 생성
-![img_3.png](src/main/resources/static/readmeImage/img_3.png)
-#### - 기존 일정 참여
-![img_10.png](src/main/resources/static/readmeImage/img_10.png)
+### 회원 가입 및 로그인
 
-### 일정 상세
-![img_4.png](src/main/resources/static/readmeImage/img_4.png)
+|<img src="src/main/resources/static/readmeImage/img_19.png" width="50%"/>|          <img src="src/main/resources/static/readmeImage/img_18.png" width="50%"/>           |
+|:-----------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|
+|                                  회원 가입                                  |                                             로그인                                              |
 
-### 게시판
-#### - 게시글 목록 (모집 게시글 목록도 동일)
-![img_5.png](src/main/resources/static/readmeImage/img_5.png)
+### 여행 일정 생성
 
-#### - 후기 게시글 작성
-![img_7.png](src/main/resources/static/readmeImage/img_7.png)
-![img_8.png](src/main/resources/static/readmeImage/img_8.png)
+|<img src="src/main/resources/static/readmeImage/img_2.png" width="50%"/>| <img src="src/main/resources/static/readmeImage/img_10.png" width="50%"/> |
+|:----------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+|                             여행 일정 생성 방법 선택                             |                             기존 일정 참여 (초대코드)                              |
+|<img src="src/main/resources/static/readmeImage/img_3.png" width="50%"/>|<img src="src/main/resources/static/readmeImage/img_4.png" width="50%"/>|
+|                                 직접 생성                                  |                                  일정 상세                                   |
 
-#### - 모집 게시글 작성
-![img_9.png](src/main/resources/static/readmeImage/img_9.png)
+### 일행 모집 및 여행 후기 게시판
 
-### 찜하기
-![img_12.png](src/main/resources/static/readmeImage/img_12.png)
-![img_13.png](src/main/resources/static/readmeImage/img_13.png)
+| <img src="src/main/resources/static/readmeImage/img_5.png" width="50%"/> |
+|:------------------------------------------------------------------------:|
+|                           일행 모집 및 여행 후기 게시글 목록                           |
 
-### 내 정보(생성한 일정 및 작성한 글 목록)
-![img_11.png](src/main/resources/static/readmeImage/img_11.png)
-![img_15.png](src/main/resources/static/readmeImage/img_15.png)
-![img_14.png](src/main/resources/static/readmeImage/img_14.png)
+| <img src="src/main/resources/static/readmeImage/img_7.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_8.png" width="50%"/> |
+|:------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+|                             여행 후기 게시글 작성 (1)                             |                             여행 후기 게시글 작성 (2)                             |
 
-### 채팅 
-![img_16.png](src/main/resources/static/readmeImage/img_16.png)
+| <img src="src/main/resources/static/readmeImage/img_9.png" width="50%"/> |
+|:------------------------------------------------------------------------:|
+|                               일행 모집 게시글 작성                               |
+
+| <img src="src/main/resources/static/readmeImage/img_12.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_13.png" width="50%"/> |
+|:------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+|                                여행 일정 찜하기                                 |                                   찜 목록                                   |
+
+### 마이 페이지
+
+| <img src="src/main/resources/static/readmeImage/img_11.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_15.png" width="50%"/> |
+|:-------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|
+|                                 나의 여행 관리                                  |                                 회원 정보 수정                                  |
+
+### 채팅
+
+| <img src="src/main/resources/static/readmeImage/img_16.png" width="50%"/> |
+|:-------------------------------------------------------------------------:|
+|                                   팀 채팅                                    |
 
 ### 알림
-![img_17.png](src/main/resources/static/readmeImage/img_17.png)
 
-### 관리자
-![img_20.png](src/main/resources/static/readmeImage/img_20.png)
-![img_21.png](src/main/resources/static/readmeImage/img_21.png)
-![img_22.png](src/main/resources/static/readmeImage/img_22.png)
+| <img src="src/main/resources/static/readmeImage/img_17.png" width="50%"/> |
+|:-------------------------------------------------------------------------:|
+|                                   댓글 알림                                   |
+
+### 관리자 페이지
+
+| <img src="src/main/resources/static/readmeImage/img_20.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_21.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_22.png" width="50%"/>   |
+|:-------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|:---------------------------------------------------------------------------:|
+|                                  사용자 목록                                   |                                  게시글 목록                                   |                                    공지사항                                     |
+
+
+</div>
 
 ---
 
 ## 기여 방법 (Contributing)
 
-- **이슈 제출**: 명확한 제목과 설명으로 이슈를 제출합니다.
-- **Pull Request (PR) 작성**:
-    - **제목 형식**: `[#[이슈번호]] 제목` 형식으로 작성합니다.
-    - **설명**: 변경 사항과 관련된 정보를 상세히 기술합니다.
-    - **체크리스트**: 코드 스타일 가이드 준수, 테스트 작성 등 확인.
-- **코드 스타일 가이드**:
-    - **Indentation**: 공백 4칸.
-    - **Naming Conventions**: camelCase, PascalCase 등 사용.
-    - **Braces**: 새 줄에 작성.
-    - **Comments**: 주요 로직에 주석 추가.
-    - **Error Handling**: 예외 처리 및 로그 작성.
+- **브랜치 생성**: 📑[Branch Convention](https://github.com/oh-my-guide/OMG_project/wiki/Branch-Convention)
+- **이슈 제출**: 📑[Issue Convention](https://github.com/oh-my-guide/OMG_project/wiki/Issue-Convention)
+- **Pull Request (PR) 작성**: 📑[PR Convention](https://github.com/oh-my-guide/OMG_project/wiki/PR-Convention)
+- **코드 스타일 가이드**: 📑[Coding Convention](https://github.com/oh-my-guide/OMG_project/wiki/Coding-Convention)
 
 ---
 
