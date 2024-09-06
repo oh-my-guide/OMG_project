@@ -212,60 +212,76 @@ OMG(Oh My Guide)는 사용자가 **여행을 계획**하고 **동행자를 모�
         ├── /oauth2                 # OAuth2 관련 유틸리티 및 구성
         └── /security               # 보안 관련 설정 및 유틸리티
 
+---
 
 ## 데모 (Demo)
 
-### 로그인
-![img_18.png](src/main/resources/static/readmeImage/img_18.png)
-
-### 회원가입
-![img_19.png](src/main/resources/static/readmeImage/img_19.png)
+<div align="center">
 
 ### 메인 페이지
-![img_1.png](src/main/resources/static/readmeImage/img_1.png)
 
-### 여행 일정 생성 방법 선택
-![img_2.png](src/main/resources/static/readmeImage/img_2.png)
+|<img src="src/main/resources/static/readmeImage/img_1.png" width="50%"/>|
+|:------------------------------------------------------------------------:|
+|                                  메인 페이지                                  |
 
-### 일정 생성
-#### - 직접 생성
-![img_3.png](src/main/resources/static/readmeImage/img_3.png)
-#### - 기존 일정 참여
-![img_10.png](src/main/resources/static/readmeImage/img_10.png)
+### 회원 가입 및 로그인
 
-### 일정 상세
-![img_4.png](src/main/resources/static/readmeImage/img_4.png)
+|<img src="src/main/resources/static/readmeImage/img_19.png" width="50%"/>|          <img src="src/main/resources/static/readmeImage/img_18.png" width="50%"/>           |
+|:-----------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------:|
+|                                  회원 가입                                  |                                             로그인                                              |
 
-### 게시판
-#### - 게시글 목록 (모집 게시글 목록도 동일)
-![img_5.png](src/main/resources/static/readmeImage/img_5.png)
+### 여행 일정 생성
 
-#### - 후기 게시글 작성
-![img_7.png](src/main/resources/static/readmeImage/img_7.png)
-![img_8.png](src/main/resources/static/readmeImage/img_8.png)
+|<img src="src/main/resources/static/readmeImage/img_2.png" width="50%"/>| <img src="src/main/resources/static/readmeImage/img_10.png" width="50%"/> |
+|:----------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+|                             여행 일정 생성 방법 선택                             |                             기존 일정 참여 (초대코드)                              |
+|<img src="src/main/resources/static/readmeImage/img_3.png" width="50%"/>|<img src="src/main/resources/static/readmeImage/img_4.png" width="50%"/>|
+|                                 직접 생성                                  |                                  일정 상세                                   |
 
-#### - 모집 게시글 작성
-![img_9.png](src/main/resources/static/readmeImage/img_9.png)
+### 일행 모집 및 여행 후기 게시판
 
-### 찜하기
-![img_12.png](src/main/resources/static/readmeImage/img_12.png)
-![img_13.png](src/main/resources/static/readmeImage/img_13.png)
+| <img src="src/main/resources/static/readmeImage/img_5.png" width="50%"/> |
+|:------------------------------------------------------------------------:|
+|                           일행 모집 및 여행 후기 게시글 목록                           |
 
-### 내 정보(생성한 일정 및 작성한 글 목록)
-![img_11.png](src/main/resources/static/readmeImage/img_11.png)
-![img_15.png](src/main/resources/static/readmeImage/img_15.png)
-![img_14.png](src/main/resources/static/readmeImage/img_14.png)
+| <img src="src/main/resources/static/readmeImage/img_7.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_8.png" width="50%"/> |
+|:------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+|                             여행 후기 게시글 작성 (1)                             |                             여행 후기 게시글 작성 (2)                             |
 
-### 채팅 
-![img_16.png](src/main/resources/static/readmeImage/img_16.png)
+| <img src="src/main/resources/static/readmeImage/img_9.png" width="50%"/> |
+|:------------------------------------------------------------------------:|
+|                               일행 모집 게시글 작성                               |
+
+| <img src="src/main/resources/static/readmeImage/img_12.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_13.png" width="50%"/> |
+|:------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+|                                여행 일정 찜하기                                 |                                   찜 목록                                   |
+
+### 마이 페이지
+
+| <img src="src/main/resources/static/readmeImage/img_11.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_15.png" width="50%"/> |
+|:-------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|
+|                                 나의 여행 관리                                  |                                 회원 정보 수정                                  |
+
+### 채팅
+
+| <img src="src/main/resources/static/readmeImage/img_16.png" width="50%"/> |
+|:-------------------------------------------------------------------------:|
+|                                   팀 채팅                                    |
 
 ### 알림
-![img_17.png](src/main/resources/static/readmeImage/img_17.png)
 
-### 관리자
-![img_20.png](src/main/resources/static/readmeImage/img_20.png)
-![img_21.png](src/main/resources/static/readmeImage/img_21.png)
-![img_22.png](src/main/resources/static/readmeImage/img_22.png)
+| <img src="src/main/resources/static/readmeImage/img_17.png" width="50%"/> |
+|:-------------------------------------------------------------------------:|
+|                                   댓글 알림                                   |
+
+### 관리자 페이지
+
+| <img src="src/main/resources/static/readmeImage/img_20.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_21.png" width="50%"/> | <img src="src/main/resources/static/readmeImage/img_22.png" width="50%"/>   |
+|:-------------------------------------------------------------------------:|:-------------------------------------------------------------------------:|:---------------------------------------------------------------------------:|
+|                                  사용자 목록                                   |                                  게시글 목록                                   |                                    공지사항                                     |
+
+
+</div>
 
 ---
 
